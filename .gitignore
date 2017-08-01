@@ -1,2 +1,4 @@
 *.sql
 .idea
+credentials.php
+creds.php

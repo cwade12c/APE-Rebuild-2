@@ -24,7 +24,7 @@ try {
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 }
 catch (PDOException $error) {
-    die('DB Error: ' . $e->getMessage());
+    die('DB Error: ' . $error->getMessage());
 }
 
 session_start();

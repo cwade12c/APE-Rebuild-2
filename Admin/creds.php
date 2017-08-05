@@ -1,8 +1,8 @@
 <?php
-ini_set("display_errors", "On");
+	ini_set('display_errors','On');
 
-$server = "localhost";
-$user = "root";
-$pass = '';
-$dbname = "ape_database";
+	$server = 'localhost';
+	$user = 'root';
+	$pass = 'bB*-7Q7p$M4';
+	$dbname = 'ape_database';
 ?>

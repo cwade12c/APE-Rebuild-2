@@ -19,4 +19,6 @@ function getQueryResults($sql) {
     return $results;
 }
 
+// TODO: make central include, consants/functions/etc
+
 ?>

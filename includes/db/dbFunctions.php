@@ -1,7 +1,6 @@
 <?php
 /**
  * Functions to be used with the database
- * TODO: use static class to handle public/private methods
  * TODO: split functions into separate files, put in own sub directory
  * TODO: use this file to include those (or make common dir?)
  * visibility attribute?
@@ -22,30 +21,6 @@
  * TODO: use classes for return information, or arrays in specific format?
  */
 
-// check if type has given permission
-
-// check if account has exact permission
-// check if account has the temp type
-// check if account has the student type
-// check if account has the grader type
-// check if account has the teacher type
-// check if account has the admin type
-
-// set account type
-/// only for internal use, by other functions
-// set account to no permissions at all
-// set account to only student
-// set account to only grader
-// set account to only grader, teacher
-// set account to only grader, teacher, admin
-
-// upgrade temp student to full student
-
-// search accounts
-/// ewu id, type, first/last name, (student state)
-/// some pre-made searches:
-/// all temp students, all blocked students
-/// all admins
 
 // register student
 // unregister student

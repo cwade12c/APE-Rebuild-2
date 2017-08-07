@@ -8,3 +8,6 @@
 * @subpackage	testing
 */
 echo "hello world - working";
+
+require_once './include.php';
+

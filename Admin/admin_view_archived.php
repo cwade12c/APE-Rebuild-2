@@ -13,7 +13,7 @@
 		<th>Quarter</th><th>Date</th><th>View</th>
 		</tr>
 		<?php
-			include "creds.php";
+			require_once('../config.php'); enforceAuthentication();
 
 			try
 			{

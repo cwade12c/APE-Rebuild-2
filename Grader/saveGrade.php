@@ -1,5 +1,5 @@
 <?php
-	include "../credentials.php";
+	require_once('../config.php'); enforceAuthentication(); enforceAuthentication();
 	$data = array();
 	$assignedId = $_POST["assignedId"];
 	$studentId = $_POST["studentId"];

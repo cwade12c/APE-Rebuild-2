@@ -1,5 +1,5 @@
 <?php
-include "creds.php";
+require_once('../config.php'); enforceAuthentication();
 $lname = $_POST["lname"];
 $fname = $_POST["fname"];
 $id = $_POST["EWUID"];

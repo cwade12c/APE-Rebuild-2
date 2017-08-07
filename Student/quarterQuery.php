@@ -1,5 +1,5 @@
 <?php
-	include 'creds.php';
+	require_once('../config.php');
 	$temp = array();
 	$qt = $_POST["quarter"];
 	try {

@@ -2,7 +2,7 @@
 <html>
 	<img src="../img/ewu_logo.png" alt="EWU Logo">
 	<?php include "teacher_navbar.php";
-		include "creds.php"?>
+		require_once('../config.php');?>
 	<head>
 		<title>Archived APEs</title>
 	</head>

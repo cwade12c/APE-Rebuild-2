@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<img src="../img/ewu_logo.png" alt="EWU Logo">
-	<?php include "admin_navbar.php"; include "creds.php";
+	<?php include "admin_navbar.php"; require_once('../config.php'); enforceAuthentication();
 	
 	$db = new PDO("mysql:host=$server;dbname=$dbname", $user, $pass);
 	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

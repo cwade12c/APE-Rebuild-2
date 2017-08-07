@@ -13,7 +13,7 @@
 		Select APE:
 		<select name="exam">
 	<?php
-		include "creds.php";
+		require_once('../config.php');
 
 		try
 		{

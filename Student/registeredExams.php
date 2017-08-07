@@ -1,5 +1,5 @@
 <?php
-	include 'creds.php';
+	require_once('../config.php');
 	
 	echo '<table border="1" id="apes">';
 	echo '<tr><th>Quarter</th><th>Date</th><th>Location</th><th>Duration</th><th>Actions</th></tr>';

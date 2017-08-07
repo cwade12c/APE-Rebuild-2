@@ -1,5 +1,5 @@
 <?php
-include "creds.php";
+require_once('../config.php'); enforceAuthentication();
 $quarter = $_POST["quarter"];
 $date = $_POST["start_date"];
 $time = $_POST["start_time"];

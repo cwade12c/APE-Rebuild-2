@@ -1,5 +1,5 @@
 <?php
-	include 'creds.php';
+	require_once('../config.php');
 	
 	$id = $_POST["id"];
 	$idStudent = $_POST["student"];
@@ -15,7 +15,7 @@
 		echo $sql . "<br>" . $e->getMessage();
 	}
 	
-	//header("Location: studentp1ND.html");
+	//header("Location: studentp1ND.php");
     //exit;
 	
 ?>

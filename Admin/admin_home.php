@@ -68,7 +68,7 @@
 		<th>Quarter</th><th>Date</th><th>Edit</th>
 		</tr>
 		<?php
-			include "creds.php";
+			require_once('../config.php'); enforceAuthentication();
 
 			try
 			{
@@ -122,8 +122,6 @@
 		<th>Quarter</th><th>Date</th><th>Edit</th>
 		</tr>
 		<?php
-			include "creds.php";
-
 			try
 			{
 				$db = new PDO("mysql:host=$server;dbname=$dbname", $user, $pass);
@@ -176,8 +174,6 @@
 		<th>Quarter</th><th>Date</th><th>Edit</th>
 		</tr>
 		<?php
-			include "creds.php";
-
 			try
 			{
 				$db = new PDO("mysql:host=$server;dbname=$dbname", $user, $pass);

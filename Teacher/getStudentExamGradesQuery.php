@@ -1,6 +1,6 @@
 <?php
 
-	include 'creds.php';
+	require_once('../config.php');
 	$data = array();
 	$examID = $_POST["exam"];
 

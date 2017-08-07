@@ -1,5 +1,5 @@
 <?php
-	include "creds.php";
+	require_once('../config.php'); enforceAuthentication();
 	$id = $_POST['location'];
 	try
 	{

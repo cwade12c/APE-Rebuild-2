@@ -1,3 +1,8 @@
+<?php
+require_once('../config.php');
+enforceAuthentication();
+?>
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -55,7 +60,7 @@
 	<h1 align='center'>Student Home Page</h1>
 	<ul>
 	  <li style='float:right' ><a href='studentp2.php'>APE Info</a></li>
-	  <li style='float:right'><a class='active' href='studentp1ND.html'>Home</a></li>
+	  <li style='float:right'><a class='active' href='studentp1ND.php'>Home</a></li>
 	</ul>
 	<div>
 		<fieldset style='border-color:#F00;'>

@@ -1,5 +1,5 @@
 <?php
-	include "creds.php";
+	require_once('../config.php'); enforceAuthentication();
 	$room = $_POST['room'];
 	$seats = $_POST['seats'];
 	try

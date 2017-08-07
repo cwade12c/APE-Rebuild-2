@@ -2,6 +2,12 @@
 
 require_once('config.php');
 
-echo "Welcome back, " . $_SESSION['firstName'] . " " . $_SESSION['lastName'] . "!";
+if (userIsLoggedIn()) {
+    redirect('home.php');
+}
+
+echo "<nav><a style='float:right;' href='login.php'>Login</a></nav><br><hr />";
+
+getUpcomingExams();
 
 ?>

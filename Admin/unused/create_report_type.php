@@ -1,5 +1,5 @@
 <?php
-include "creds.php";
+include("../../config.php"); enforceAuthentication();
 $report = $_POST["reportName"];
 
 try

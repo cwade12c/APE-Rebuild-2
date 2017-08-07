@@ -1,5 +1,5 @@
 <?php
-	include 'creds.php';
+	require_once('../config.php');
 	$data = array();
 	$idStudent = $_POST["id"];
 	$idExam = $_POST["exam"];

@@ -1,3 +1,8 @@
+<?php
+require_once('../config.php');
+enforceAuthentication();
+?>
+
 <html>
 <head>
 <title>Grading Page</title>
@@ -67,7 +72,7 @@ table, th, td {
 	</table>
 	<br>
 	<input type='button' value="Save Grades" id="saveBtn" style='float: Center;'>
-	<input type='button' onclick="location.href = 'grader1.html';"  value="Back" style='float: Center;'>
+	<input type='button' onclick="location.href = 'grader1.php';" value="Back" style='float: Center;'>
 <br>
 </div>
 </body>

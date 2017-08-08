@@ -1,5 +1,5 @@
 <?php
-	include "../credentials.php";
+    require_once('../config.php');
 	
 	$search = $_POST["search"];
 	$table = $_POST["table"];

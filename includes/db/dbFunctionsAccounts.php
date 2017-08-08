@@ -9,7 +9,7 @@
  * @subpackage	Database
  */
 
-require_once 'include.php';
+//require_once 'include.php';
 
 /**
  * Check if given type has given permission

@@ -10,7 +10,7 @@
  * @subpackage    Database
  */
 
-require_once 'include.php';
+//require_once 'include.php';
 
 /**
  * general query method

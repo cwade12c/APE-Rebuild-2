@@ -3,7 +3,7 @@
 	<img src="../img/ewu_logo.png" alt="EWU Logo">
 	<?php 
 	include "admin_navbar.php";
-	include "../credentials.php";
+	require_once('../config.php');
 	
 	$id = $_POST["id"];
 	$query = $connection->prepare("Select * from student where EWU_ID = $id");

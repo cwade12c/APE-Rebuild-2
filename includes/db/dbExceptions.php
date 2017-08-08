@@ -8,7 +8,7 @@
  * @subpackage	Database
  */
 
-require_once 'include.php';
+//require_once 'include.php';
 
 // use http://php.net/manual/en/language.exceptions.extending.php
 

@@ -1,3 +1,7 @@
 <?php
 
-require_once './db/include.php';
+$path = INCLUDES_PATH . "db/include.php";
+
+require_once($path);
+
+?>

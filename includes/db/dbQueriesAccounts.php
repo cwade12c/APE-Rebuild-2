@@ -8,7 +8,7 @@
 * @subpackage	Database
 */
 
-require_once 'include.php';
+//require_once 'include.php';
 
 // TODO: check account type query ? mySql supports binary operations
 

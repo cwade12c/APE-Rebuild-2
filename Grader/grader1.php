@@ -1,3 +1,10 @@
+<?php
+
+require_once('../config.php');
+enforceAuthentication();
+
+?>
+
 <html>
 <head>
 <title>Home Page</title>

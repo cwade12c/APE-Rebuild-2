@@ -1,15 +1,14 @@
 <?php
 
-include 'creds.php';
-$data = array();
-$examID = $_POST["exam"];
+	include 'creds.php';
+	$data = array();
+	$examID = $_POST["exam"];
 
-try {
-    $db = new PDO("mysql:host=$server;dbname=$dbname", $user, $pass);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	try {
+		$db = new PDO("mysql:host=$server;dbname=$dbname", $user, $pass);
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $stmt = $db->prepare(
-        "SELECT s.EWU_ID, s.f_name, s.l_name, g.exam_id, g.student_id, g.grade, g.passed, g.possible, q.name AS quarter, l.name AS location, e.date, e.duration
+		$stmt = $db->prepare("SELECT s.EWU_ID, s.f_name, s.l_name, g.exam_id, g.student_id, g.grade, g.passed, g.possible, q.name AS quarter, l.name AS location, e.date, e.duration
 		FROM ape_database.exam_grades g
 		INNER JOIN ape_database.student s
 		ON g.student_id=s.EWU_ID
@@ -19,20 +18,20 @@ try {
 		ON q.id=e.quarter
 		INNER JOIN ape_database.location l
 		ON e.location=l.id
-		where g.exam_id = " . $examID
-    );
-    $stmt->execute();
-    $result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $x = 0;
-    while ($row = $stmt->fetch()) {
-        $data[$x] = $row;
-        $x++;
-    }
-
-    $db = null;
-    echo json_encode($data);
-} catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
-}
+		where g.exam_id = " . $examID); 
+		$stmt->execute();
+		$result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
+		$x = 0;
+		while($row = $stmt->fetch())
+		{
+			$data[$x] = $row;
+			$x++;
+		}
+		
+		$db = null;
+		echo json_encode($data);
+	}catch(PDOException $e) {
+		echo "Error: " . $e->getMessage();
+	}
 
 ?>

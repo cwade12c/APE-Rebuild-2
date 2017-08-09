@@ -2,10 +2,10 @@
 /**
  * Main include file for database package
  *
- * @author		Mathew McCain
- * @category	APE
- * @package		APE_includes
- * @subpackage	Database
+ * @author         Mathew McCain
+ * @category       APE
+ * @package        APE_includes
+ * @subpackage     Database
  */
 
 /* exceptions */

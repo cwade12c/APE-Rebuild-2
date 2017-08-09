@@ -1,14 +1,12 @@
 <?php
 /**
-* Query functions for accounts
-*
-* @author		Mathew McCain
-* @category     APE
-* @package		APE_includes
-* @subpackage	Database
-*/
-
-//require_once 'include.php';
+ * Query functions for accounts
+ *
+ * @author         Mathew McCain
+ * @category       APE
+ * @package        APE_includes
+ * @subpackage     Database
+ */
 
 // TODO: check account type query ? mySql supports binary operations
 
@@ -19,10 +17,13 @@
  *
  * @return mixed, type value (int)
  */
-function getAccountTypeQuery(string $accountID) {
+function getAccountTypeQuery(string $accountID)
+{
     $query = "SELECT type FROM `accounts` WHERE (`id` = :id);";
-    $sql = executeQuery($query, array(
-        array(':id', $accountID, PDO::PARAM_STR)));
+    $sql = executeQuery(
+        $query, array(
+        array(':id', $accountID, PDO::PARAM_STR))
+    );
     $type = $sql->fetchColumn();
     return $type;
 }
@@ -33,14 +34,17 @@ function getAccountTypeQuery(string $accountID) {
  * @param string $accountID
  * @param int    $type
  */
-function setAccountTypeQuery(string $accountID, int $type) {
+function setAccountTypeQuery(string $accountID, int $type)
+{
     $query = "UPDATE `accounts`"
-            . "SET `type`=:type"
-            . "WHERE `id`=:id;";
-    $sql = executeQuery($query, array(
+        . "SET `type`=:type"
+        . "WHERE `id`=:id;";
+    $sql = executeQuery(
+        $query, array(
         array(':id', $accountID, PDO::PARAM_STR),
         array(':type', $type, PDO::PARAM_INT)
-    ));
+    )
+    );
 
     // TODO: check for success (PDO->rowCount()) ?
 }
@@ -49,17 +53,20 @@ function setAccountTypeQuery(string $accountID, int $type) {
  * update account id to new id
  * intended for upgrading temp accounts to full accounts
  *
- * @param string $accountID, existing account id
- * @param string $newAccountID, new account id as replacement
+ * @param string $accountID    , existing account id
+ * @param string $newAccountID , new account id as replacement
  */
-function updateAccountIDQuery(string $accountID, string $newAccountID) {
+function updateAccountIDQuery(string $accountID, string $newAccountID)
+{
     $query = "UPDATE `accounts`"
-            . "SET `id`=:nid"
-            . "WHERE `id`=:id;";
-    $sql = executeQuery($query, array(
+        . "SET `id`=:nid"
+        . "WHERE `id`=:id;";
+    $sql = executeQuery(
+        $query, array(
         array(':id', $accountID, PDO::PARAM_STR),
         array(':nid', $newAccountID, PDO::PARAM_STR)
-    ));
+    )
+    );
 
     // TODO: check for success (PDO->rowCount()) ?
 }
@@ -73,7 +80,8 @@ function updateAccountIDQuery(string $accountID, string $newAccountID) {
  * @param string $email
  */
 function updateAccountInfoQuery(string $accountID,
-    string $firstName = null, string $lastName = null, string $email = null) {
+    string $firstName = null, string $lastName = null, string $email = null
+) {
 
     // get set string and params
     $ret = buildParamStringArr($firstName, $lastName, $email);
@@ -87,7 +95,8 @@ function updateAccountInfoQuery(string $accountID,
     $query = sprintf(
         "UPDATE `accounts`"
         . "SET %s"
-        . "WHERE `id`=:id;", $setStr);
+        . "WHERE `id`=:id;", $setStr
+    );
     $sql = executeQuery($query, $params);
 
     // TODO: check for success (PDO->rowCount()) ?
@@ -105,7 +114,8 @@ function updateAccountInfoQuery(string $accountID,
  *                   returns false on error (or no values are set to update)
  */
 function buildParamStringArr(
-    string $firstName = null, string $lastName = null, string $email = null) {
+    string $firstName = null, string $lastName = null, string $email = null
+) {
     // determine values to update
     $updateFName = is_null($firstName);
     $updateLName = is_null($lastName);
@@ -131,7 +141,7 @@ function buildParamStringArr(
         array_push($params, array(':email', $email, PDO::PARAM_STR));
     }
     // build set string for query
-    $buildSetStr = function(array $keys) {
+    $buildSetStr = function (array $keys) {
         return implode('=', $keys);
     };
     $setArr = array_map($buildSetStr, $setArr);
@@ -147,12 +157,15 @@ function buildParamStringArr(
  *
  * @return mixed
  */
-function accountExistsQuery(string $accountID) {
+function accountExistsQuery(string $accountID)
+{
     $query = "SELECT EXISTS("
         . "SELECT `id` from `accounts`"
         . "WHERE `id`=:id);";
-    $sql = executeQuery($query, array(
-        array(':id', $accountID, PDO::PARAM_STR)));
+    $sql = executeQuery(
+        $query, array(
+        array(':id', $accountID, PDO::PARAM_STR))
+    );
     $exists = getQueryResult($sql);
     return $exists;
 }
@@ -169,18 +182,21 @@ function accountExistsQuery(string $accountID) {
  * @param string|null $email
  */
 function createAccountQuery(string $accountID, int $type = ACCOUNT_TYPE_NONE,
-    string $firstName = null, string $lastName = null, string $email = null) {
+    string $firstName = null, string $lastName = null, string $email = null
+) {
     $query = "INSERT INTO `accounts`"
         . "(`id`,`type`,`f_name`,`l_name`,`email`)"
         . " VALUES (:id, :type, :fName, :lName, :email)";
 
-    $sql = executeQuery($query, array(
+    $sql = executeQuery(
+        $query, array(
         array(':id', $accountID, PDO::PARAM_STR),
         array(':type', $type, PDO::PARAM_INT),
         array(':fName', $firstName, PDO::PARAM_STR),
         array(':lName', $lastName, PDO::PARAM_STR),
         array(':email', $email, PDO::PARAM_STR)
-    ));
+    )
+    );
 
     // TODO: check for success ?
 }
@@ -190,7 +206,8 @@ function createAccountQuery(string $accountID, int $type = ACCOUNT_TYPE_NONE,
  *
  * @return mixed
  */
-function getAccountIDsQuery() {
+function getAccountIDsQuery()
+{
     $query = "SELECT `id` FROM `accounts`";
     $sql = executeQuery($query);
     return getQueryResults($sql);
@@ -201,7 +218,8 @@ function getAccountIDsQuery() {
  *
  * @return mixed
  */
-function getAccountsQuery() {
+function getAccountsQuery()
+{
     $query = "SELECT * FROM `accounts`";
     $sql = executeQuery($query);
     return getQueryResults($sql);
@@ -221,11 +239,6 @@ function getAccountsQuery() {
 
 // getAdminIDsQuery
 // getAdminsQuery
-
-
-
-
-
 
 
 // TODO: Check if size of string matches given table/column

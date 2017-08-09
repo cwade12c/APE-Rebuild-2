@@ -10,8 +10,6 @@
  * @subpackage    Database
  */
 
-//require_once 'include.php';
-
 /**
  * general query method
  * prepares given query string, executes
@@ -25,7 +23,7 @@
  *
  * @return PDOStatement, result of executing query
  */
-function executeQuery(string $query, $params = array())
+function executeQuery(string $query, array $params = array())
 {
     global $db;
 
@@ -36,11 +34,9 @@ function executeQuery(string $query, $params = array())
         if (count($arr) == 2) {
             // just bind
             $sql->bindParam($arr[0], $arr[1]);
-        } else {
-            if (count($arr) == 3) {
-                // bind w/ given data type
-                $sql->bindParam($arr[0], $arr[1], $arr[2]);
-            }
+        } elseif (count($arr) == 3) {
+            // bind w/ given data type
+            $sql->bindParam($arr[0], $arr[1], $arr[2]);
         }
     }
 

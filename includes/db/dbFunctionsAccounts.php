@@ -9,7 +9,11 @@
  * @subpackage	Database
  */
 
-//require_once 'include.php';
+/*
+ * TODO: add more error checking to functions
+ * Functions are meant to act as wrappers for the query functions
+ * Need to catch and handle errors
+ */
 
 /**
  * Check if given type has given permission

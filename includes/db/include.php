@@ -18,7 +18,7 @@ require_once INCLUDES_PATH . 'db/dbConstants.php';
 /* queries */
 require_once INCLUDES_PATH . 'db/dbQueriesGeneral.php';
 require_once INCLUDES_PATH . 'db/dbQueriesAccounts.php';
-// more splits needed
+require_once INCLUDES_PATH . 'db/dbQueriesReports.php';
 
 /* functions */
 require_once INCLUDES_PATH . 'db/dbFunctions.php';

@@ -225,21 +225,143 @@ function getAccountsQuery()
     return getQueryResults($sql);
 }
 
-// getTempStudentIDsQuery
-// getTempStudentsQuery
 
-// getStudentIDsQuery
-// getStudentsQuery
+/**
+ * @param int $type
+ *
+ * Get all IDs of all accounts belonging to a specified type
+ *
+ * @return mixed
+ */
+function getIdsByTypeQuery(int $type)
+{
+    $query = "SELECT `id` FROM `accounts` WHERE `type`=:type";
+    $sql = executeQuery($query, array(
+            array(':type', $type, PDO::PARAM_INT)
+        )
+    );
+    return getQueryResults($sql);
+}
 
-// getGraderIDsQuery
-// getGradersQuery
 
-// getTeacherIDsQuery
-// getTeachersQuery
+/**
+ * @param int $type
+ *
+ * Get all information of all accounts belonging to a specified type
+ *
+ * @return mixed
+ */
+function getFullAccountInformationByTypeQuery(int $type)
+{
+    $query = "SELECT * FROM `accounts` WHERE `type`=:type";
+    $sql = executeQuery($query, array(
+            array(':type', $type, PDO::PARAM_INT)
+        )
+    );
+    return getQueryResults($sql);
+}
 
-// getAdminIDsQuery
-// getAdminsQuery
 
+/**
+ * Get all temporary student account IDs
+ *
+ * @return mixed
+ */
+function getTempStudentIDsQuery()
+{
+    return getIdsByTypeQuery(ACCOUNT_TYPE_TEMP);
+}
+
+/**
+ * Get all temporary student accounts with full information
+ *
+ * @return mixed
+ */
+function getTemporaryStudentsQuery()
+{
+    return getFullAccountInformationByTypeQuery(ACCOUNT_TYPE_TEMP);
+}
+
+/**
+ * Get all student account IDs
+ *
+ * @return mixed
+ */
+function getStudentIDsQuery()
+{
+    return getIdsByTypeQuery(ACCOUNT_TYPE_STUDENT);
+}
+
+/**
+ * Get all student accounts with full information
+ *
+ * @return mixed
+ */
+function getStudentsQuery()
+{
+    return getFullAccountInformationByTypeQuery(ACCOUNT_TYPE_STUDENT);
+}
+
+/**
+ * Get all grader account IDs
+ *
+ * @return mixed
+ */
+function getGraderIDsQuery()
+{
+    return getIdsByTypeQuery(ACCOUNT_TYPE_GRADER);
+}
+
+
+/**
+ * Get all grader accounts with full information
+ *
+ * @return mixed
+ */
+function getGradersQuery()
+{
+    return getFullAccountInformationByTypeQuery(ACCOUNT_TYPE_GRADER);
+}
+
+/**
+ * Get all teacher account IDs
+ *
+ * @return mixed
+ */
+function getTeacherIDsQuery()
+{
+    return getIdsByTypeQuery(ACCOUNT_TYPE_TEACHER);
+}
+
+/**
+ * Get all teacher accounts with full information
+ *
+ * @return mixed
+ */
+function getTeachersQuery()
+{
+    return getFullAccountInformationByTypeQuery(ACCOUNT_TYPE_TEACHER);
+}
+
+/**
+ * Get all admin account IDs
+ *
+ * @return mixed
+ */
+function getAdminIDsQuery()
+{
+    return getIdsByTypeQuery(ACCOUNT_TYPE_ADMIN);
+}
+
+/**
+ * Get all admin accounts with full information
+ *
+ * @return mixed
+ */
+function getAdminsQuery()
+{
+    return getFullAccountInformationByTypeQuery(ACCOUNT_TYPE_ADMIN);
+}
 
 // TODO: Check if size of string matches given table/column
 /// make general query, have account specific one for quickly grabbing info

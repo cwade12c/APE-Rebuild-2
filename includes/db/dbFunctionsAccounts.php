@@ -3,10 +3,10 @@
  * Functions for accounts in database
  * Intended for external use unless stated otherwise
  *
- * @author		Mathew McCain
- * @category	APE
- * @package		APE_includes
- * @subpackage	Database
+ * @author         Mathew McCain
+ * @category       APE
+ * @package        APE_includes
+ * @subpackage     Database
  */
 
 /*
@@ -19,12 +19,13 @@
  * Check if given type has given permission
  * Can be used to avoid multiple queries in short span of time
  *
- * @param int $type, type for account
- * @param int $permission, account type value (check 'dbConstants.php')
+ * @param int $type       , type for account
+ * @param int $permission , account type value (check 'dbConstants.php')
  *
  * @return bool
  */
-function typeHas(int $type, int $permission) {
+function typeHas(int $type, int $permission)
+{
     return ($type & $permission) == $permission;
 }
 
@@ -37,9 +38,11 @@ function typeHas(int $type, int $permission) {
  *
  * @return bool
  */
-function accountTypeHas(string $accountID, int $permission) {
+function accountTypeHas(string $accountID, int $permission)
+{
     // get type
     $type = getAccountTypeQuery($accountID);
+
     return typeHas($type, $permission);
 }
 
@@ -50,8 +53,10 @@ function accountTypeHas(string $accountID, int $permission) {
  *
  * @return bool
  */
-function accountHasPermissions(string $accountID) {
+function accountHasPermissions(string $accountID)
+{
     $type = getAccountTypeQuery($accountID);
+
     return $type != ACCOUNT_TYPE_NONE;
 }
 
@@ -62,7 +67,8 @@ function accountHasPermissions(string $accountID) {
  *
  * @return bool
  */
-function accountIsTemp(string $accountID) {
+function accountIsTemp(string $accountID)
+{
     return accountTypeHas($accountID, ACCOUNT_TYPE_TEMP);
 }
 
@@ -73,7 +79,8 @@ function accountIsTemp(string $accountID) {
  *
  * @return bool
  */
-function accountIsStudent(string $accountID) {
+function accountIsStudent(string $accountID)
+{
     return accountTypeHas($accountID, ACCOUNT_TYPE_STUDENT);
 }
 
@@ -84,7 +91,8 @@ function accountIsStudent(string $accountID) {
  *
  * @return bool
  */
-function accountIsGrader(string $accountID) {
+function accountIsGrader(string $accountID)
+{
     return accountTypeHas($accountID, ACCOUNT_TYPE_GRADER);
 }
 
@@ -95,7 +103,8 @@ function accountIsGrader(string $accountID) {
  *
  * @return bool
  */
-function accountIsTeacher(string $accountID) {
+function accountIsTeacher(string $accountID)
+{
     return accountTypeHas($accountID, ACCOUNT_TYPE_TEACHER);
 }
 
@@ -106,7 +115,8 @@ function accountIsTeacher(string $accountID) {
  *
  * @return bool
  */
-function accountIsAdmin(string $accountID) {
+function accountIsAdmin(string $accountID)
+{
     return accountTypeHas($accountID, ACCOUNT_TYPE_ADMIN);
 }
 
@@ -117,7 +127,8 @@ function accountIsAdmin(string $accountID) {
  * @param string $accountID
  * @param int    $type
  */
-function setAccountType(string $accountID, int $type) {
+function setAccountType(string $accountID, int $type)
+{
     setAccountTypeQuery($accountID, $type);
 
     // TODO: return type for success/failure ?
@@ -129,7 +140,8 @@ function setAccountType(string $accountID, int $type) {
  *
  * @param string $accountID
  */
-function stripAccountType(string $accountID) {
+function stripAccountType(string $accountID)
+{
     setAccountType($accountID, ACCOUNT_TYPE_NONE);
 
     // TODO: check for success
@@ -142,7 +154,8 @@ function stripAccountType(string $accountID) {
  *
  * @return bool
  */
-function accountExists(string $accountID) {
+function accountExists(string $accountID)
+{
     return accountExistsQuery($accountID);
 }
 
@@ -157,7 +170,8 @@ function accountExists(string $accountID) {
  * @param string|null $email
  */
 function createAccount(string $accountID, int $type = ACCOUNT_TYPE_NONE,
-    string $firstName = null, string $lastName = null, string $email = null) {
+    string $firstName = null, string $lastName = null, string $email = null
+) {
     // TODO: check that account ID is valid for type (temp or EWU ID format)
     // TODO: check that information provided (names, email), can be combined with
     //      information already available for complete set
@@ -178,7 +192,8 @@ function createAccount(string $accountID, int $type = ACCOUNT_TYPE_NONE,
  * @param string|null $email
  */
 function createTempStudent(string $firstName = null, string $lastName = null,
-    string $email = null) {
+    string $email = null
+) {
     // TODO: check at least 1 identification field filled
 
     // TODO: generate random/unique temp ID
@@ -202,7 +217,9 @@ function createTempStudent(string $firstName = null, string $lastName = null,
  * @param string $lastName
  * @param string $email
  */
-function createStudent(string $id, string $firstName, string $lastName, string $email) {
+function createStudent(string $id, string $firstName, string $lastName,
+    string $email
+) {
     // TODO: check if student exists, update information if so or throw exception
     // if account exists, ensure that type matches (student)
     // TODO: check all identification information available
@@ -220,7 +237,9 @@ function createStudent(string $id, string $firstName, string $lastName, string $
  * @param string $lastName
  * @param string $email
  */
-function createGrader(string $id, string $firstName, string $lastName, string $email) {
+function createGrader(string $id, string $firstName, string $lastName,
+    string $email
+) {
     // TODO: check if grader exists, update information if so or throw exception
     // if account exists, ensure that type matches (grader)
     // TODO: ensure information is not empty
@@ -240,12 +259,17 @@ function createGrader(string $id, string $firstName, string $lastName, string $e
  * @param string $lastName
  * @param string $email
  */
-function createTeacher(string $id, string $firstName, string $lastName, string $email) {
+function createTeacher(string $id, string $firstName, string $lastName,
+    string $email
+) {
     // TODO: check if teacher exists, update information if so or throw exception
     // if account exists, ensure that type matches (teacher at least)
     // TODO: check all identification information available
 
-    createAccount($id, ACCOUNT_TYPE_TEACHER | ACCOUNT_TYPE_GRADER, $firstName, $lastName, $email);
+    createAccount(
+        $id, ACCOUNT_TYPE_TEACHER | ACCOUNT_TYPE_GRADER, $firstName, $lastName,
+        $email
+    );
 
     // TODO: check for success
 }
@@ -259,7 +283,9 @@ function createTeacher(string $id, string $firstName, string $lastName, string $
  * @param string $lastName
  * @param string $email
  */
-function createAdmin(string $id, string $firstName, string $lastName, string $email) {
+function createAdmin(string $id, string $firstName, string $lastName,
+    string $email
+) {
     // TODO: check if admin exists, update information if so or throw exception
     // if account exists, ensure that type matches (admin)
     // TODO: check all identification information available
@@ -276,7 +302,8 @@ function createAdmin(string $id, string $firstName, string $lastName, string $em
  * @param string $tempID
  * @param string $id
  */
-function promoteTempToStudent(string $tempID, string $id) {
+function promoteTempToStudent(string $tempID, string $id)
+{
     // TODO: check if temp id is actually temp account
     // TODO: check if new id exists, combine accounts
     // TODO: lock db / create transaction for all queries involved
@@ -296,7 +323,8 @@ function promoteTempToStudent(string $tempID, string $id) {
  * @param string $tempID
  * @param string $id
  */
-function combineStudent(string $tempID, string $id) {
+function combineStudent(string $tempID, string $id)
+{
     // TODO: merge temp account to student account
     // will move over all related table entries
     // TODO: check if update operation will update all tables correctly
@@ -311,7 +339,8 @@ function combineStudent(string $tempID, string $id) {
  *
  * @return string
  */
-function generateTempID() {
+function generateTempID()
+{
     // TODO: generate random ID according to defined format
     // TODO: find library to generate strings off regex?
     return "unimplemented";
@@ -324,7 +353,8 @@ function generateTempID() {
  *
  * @return bool
  */
-function validID(string $id) {
+function validID(string $id)
+{
     // TODO: pull regex from config file to check against
     return false;
 }
@@ -336,29 +366,87 @@ function validID(string $id) {
  *
  * @return bool
  */
-function validTempID(string $id) {
+function validTempID(string $id)
+{
     // TODO: pull regex from config file to check against
     return false;
 }
 
 // get all account (by id)
-function getAllAccounts() {
+
+/**
+ * Get all accounts with full information
+ *
+ * @return mixed
+ */
+function getAllAccounts()
+{
     return getAccountsQuery();
 }
 
 // get all accounts by minimum type
 
-// get all accounts by exact type
+/**
+ * @param int $type
+ *
+ * Get all information of all accounts belonging to a specified type
+ *
+ * @return mixed
+ */
+function getAllAccountsByType(int $type)
+{
+    return getFullAccountInformationByTypeQuery($type);
+}
 
-// get all temp students
+/**
+ * Get all temporary student accounts with full information
+ *
+ * @return mixed
+ */
+function getAllTemporaryStudents()
+{
+    return getTemporaryStudentsQuery();
+}
 
-// get all students
+/**
+ * Get all student accounts with full information
+ *
+ * @return mixed
+ */
+function getAllStudents()
+{
+    return getStudentsQuery();
+}
 
-// get all graders
+/**
+ * Get all grader accounts with full information
+ *
+ * @return mixed
+ */
+function getAllGraders()
+{
+    return getGradersQuery();
+}
 
-// get all teachers
+/**
+ * Get all teacher accounts with full information
+ *
+ * @return mixed
+ */
+function getAllTeachers()
+{
+    return getTeachersQuery();
+}
 
-// get all admins
+/**
+ * Get all admin accounts with full information
+ *
+ * @return mixed
+ */
+function getAllAdmins()
+{
+    return getAdminsQuery();
+}
 
 // search accounts by given identification exactly (including null)
 /// all identification used
@@ -369,4 +457,14 @@ function getAllAccounts() {
 // search accounts by given identification partial (any matches)
 /// match only 1 piece of identification
 
-// check at least 1 admin exists
+/**
+ * Check to see if the minimum number of admins exist as defined in the config
+ * file
+ *
+ * @return bool
+ */
+function doesMinimumNumberOfAdminsExist()
+{
+    return getNumberOfAccountsByTypeQuery(ACCOUNT_TYPE_ADMIN)
+        == MINIMUM_NUMBER_OF_ADMINS;
+}

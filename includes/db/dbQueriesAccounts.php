@@ -225,6 +225,22 @@ function getAccountsQuery()
     return getQueryResults($sql);
 }
 
+/**
+ * @param int $type
+ *
+ * Get the number of accounts belonging to a specified type
+ *
+ * @return mixed
+ */
+function getNumberOfAccountsByTypeQuery(int $type)
+{
+    $query = "SELECT COUNT(*) FROM `accounts` WHERE `type`=:type";
+    $sql = executeQuery($query, array(
+            array(':type', $type, PDO::PARAM_INT)
+        )
+    );
+    return getQueryResult($sql);
+}
 
 /**
  * @param int $type

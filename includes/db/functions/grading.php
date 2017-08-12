@@ -32,6 +32,18 @@
 // get all student grades for exam
 /// return array [ [category_id, grade], ... ]
 
+// get all student grades of student by studentId
+function getStudentGrades(int $studentId)
+{
+    if ($studentId == $_SESSION['ewuId']) {
+        return getExamGradesByStudentId($studentId);
+    }
+
+    //logSecurityIncident("$_SESSION['ewuId'] tried to access the grades of $studentId");
+
+    return "";
+}
+
 // pass/fail student, set comment/grade for category
 /// separate one for exam
 

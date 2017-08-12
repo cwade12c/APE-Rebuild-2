@@ -35,3 +35,5 @@ define("EXAM_STATE_IN_PROGRESS",            4);
 define("EXAM_STATE_GRADING",                5);
 define("EXAM_STATE_FINALIZING",             6);
 define("EXAM_STATE_ARCHIVED",               7);
+
+// TODO: may need constants for report type indexes

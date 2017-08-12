@@ -9,6 +9,82 @@
  * @subpackage	Database
  */
 
+// refresh/check exam state
+// set exam state
+// finalize exam
+
+// create in class exam
+// assign teacher(s)
+// get teacher
+// search exams by in class/teacher
+// get non-archived exams for teacher
+
+
+
+// set location for exam
+// get location for exam
+// update location for exam
+/// check if seat count difference will cause an issue (block, return false)
+/// randomize rooms/seats
+
+// updating exam information
+/// date/times, passing grade
+
+// get all exams
+function getAllExams() {
+    return getExams();
+}
+
+// get all archived exams
+function getArchivedExams() {}
+
+// get all non-archived exams
+function getNonArchivedExams() {}
+
+// get all finalizing exams
+function getFinalizingExams() {}
+
+// get all grading exams
+
+// get all upcoming exams
+
+// get exams by state
+function getExams(int $state = 0, bool $inClass = false) {}
+
+// in class flag ?
+
+// search exams
+/// state, date/time (quarter?), in class
+
+// get exam information
+function getExamInformation(int $id) {}
+
+// create exam
+function createExam() {}
+
+// update exam
+
+// update exam location
+/// re-assign seats
+
+// add/remove category for exam
+/// check state, check for assigned graders
+// get categories for exam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // TODO: not integral to db backend, move to another set
 function getUpcomingExams()
 {

@@ -20,7 +20,7 @@
  * Can be used to avoid multiple queries in short span of time
  *
  * @param int $type       , type for account
- * @param int $permission , account type value (check 'dbConstants.php')
+ * @param int $permission , account type value (check 'constants.php')
  *
  * @return bool
  */
@@ -31,7 +31,7 @@ function typeHas(int $type, int $permission)
 
 /**
  * check if account has given permission on type
- * permission values available in 'dbConstants.php'
+ * permission values available in 'constants.php'
  *
  * @param string $accountID
  * @param int    $permission

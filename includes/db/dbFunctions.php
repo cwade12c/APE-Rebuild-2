@@ -73,7 +73,6 @@
 
 // add/remove category for exam
 /// check state, check for assigned graders
-// get default categories
 // get categories for exam
 
 // assign grader to exam/category
@@ -111,11 +110,4 @@
 /// cleanup all grader information not necessary
 /// TODO: determine if necessary, make manual operation by admin/db admin?
 
-// TODO: determine if rows should just have an index value, no name to parse
-// reports
-// get all pre-defined reports
-// get rows/types for report id
-// create report
-// add/remove rows from report
-// update row types
 

@@ -2,63 +2,163 @@
 /**
  * Functions for categories in database
  *
- * @author		Mathew McCain
- * @author      Curran Higgins
- * @category	APE
- * @package		APE_includes
- * @subpackage	Database
+ * @author         Mathew McCain
+ * @author         Curran Higgins
+ * @category       APE
+ * @package        APE_includes
+ * @subpackage     Database
  */
 
-function getUpcomingExams()
+/**
+ * Creates a category
+ *
+ * @param string $name
+ * @param int    $points
+ */
+function createCategory(string $name, int $points)
 {
-    $sql = executeQuery("SELECT * FROM exams");
-    $result = getQueryResults($sql);
-
-    $currentDate = date('Y-m-d G:i:s');
-    $currentDate = date_create($currentDate);
-    $upcomingApes = array();
-
-    foreach ($result as &$value) {
-        $examDate = date_create($value["start"]);
-        $differenceInTime = date_diff($examDate, $currentDate);
-
-        if ($differenceInTime->invert > 0) {
-            array_push($upcomingApes, $value);
-        }
-    }
-
-    if (count($upcomingApes) > 0) {
-        foreach ($upcomingApes as &$value) {
-            displayExam($value);
-        }
-    }
+    // TODO: check if name exists
+    // TODO: check that name is valid (size, regex)
+    // TODO: check for success?
+    createCategoryQuery($name, $points);
+    // TODO: return id, PDO->lastInsertID() ?
 }
 
-function displayExam($exam)
+/**
+ * Deletes a category
+ *
+ * @param int $id
+ */
+function deleteCategory(int $id)
 {
+    // TODO: check if id exists
+    // TODO: check for success?
+    deleteCategoryQuery($id);
+}
 
-    $id = $exam["location_id"];
+/**
+ * Update a categories name/points
+ *
+ * @param int    $id
+ * @param string $name
+ * @param int    $points
+ */
+function updateCategory(int $id, string $name, int $points)
+{
+    // TODO: check if id exists
+    // TODO: check that name is valid (size, regex)
+    // TODO: check for success?
+    updateCategoryQuery($id, $name, $points);
+}
 
-    $sql = executeQuery("SELECT * FROM locations WHERE (`id` = :id);", array(array("id", $id)));
-    $result = getQueryResults($sql);
-    $result = $result[0];
+/**
+ * Updates a categories name
+ *
+ * @param int    $id
+ * @param string $name
+ */
+function updateCategoryName(int $id, string $name)
+{
+    // TODO: check if id exists
+    // TODO: check that name is valid (size, regex)
+    // TODO: check for success?
+    updateCategoryNameQuery($id, $name);
+}
 
-    $examStart = $exam["start"];
-    $examLocation = $result["name"];
-    $examReservedSeats = $result["reserved_seats"];
-    $examLimitedSeats = $result["limited_seats"];
-    $examPassingGrade = $exam["passing_grade"];
+/**
+ * Updates a categories points
+ *
+ * @param int $id
+ * @param int $points
+ */
+function updateCategoryPoints(int $id, int $points)
+{
+    // TODO: check if id exists
+    // TODO: check for success?
+    updateCategoryPointsQuery($id, $points);
+}
 
+/**
+ * Gets the name/points of a category
+ *
+ * @param int $id
+ *
+ * @return mixed
+ */
+function getCategoryInfo(int $id)
+{
+    // TODO: check if id exists?
+    // return (name, points)
+    return getCategoryInfoQuery($id);
+}
 
-    echo <<< EOT
-    
-<div>
-    <h2>Exam: $examStart</h2>
-    <p><span style='font-weight:bold;'>Location:</span> $examLocation</p>
-    <p><span style='font-weight:bold;'>Available Seats:</span> $examLimitedSeats</p>
-    <p><span style='font-weight:bold;'>Reserved Seats:</span> $examReservedSeats</p>
-    <p><span style='font-weight:bold;'>Passing Grade:</span> $examPassingGrade</p>
-</div>
-<hr />
-EOT;
+/**
+ * Get a list of all categories
+ *
+ * @return mixed
+ */
+function getCategories()
+{
+    // TODO: convert return to non - associative array (just int ids)?
+    return getCategoriesQuery();
+}
+
+/**
+ * Get a list of all default category IDs
+ *
+ * @return mixed
+ */
+function getDefaultCategories()
+{
+    // TODO: check if any exist?
+    return getDefaultCategoriesQuery();
+}
+
+/**
+ * Clear list of default categories
+ */
+function clearDefaultCategories()
+{
+    // TODO: check for success?
+    clearDefaultCategoriesQuery();
+}
+
+/**
+ * Sets the list of default categories
+ *
+ * @param array $idList
+ */
+function setDefaultCategories(array $idList)
+{
+    // TODO: check list of IDs are all valid
+    // TODO: check for success
+    // TODO: multiple queries, transaction?
+    clearDefaultCategories();
+    setDefaultCategoriesQuery($idList);
+}
+
+/**
+ * Adds a default category
+ *
+ * @param int $id
+ */
+function addDefaultCategory(int $id)
+{
+    // TODO: check if id exists
+    // TODO: check if id in default category table
+    // TODO: check for success
+    addDefaultCategoryQuery($id);
+}
+
+/**
+ * Removes a default category
+ *
+ * @param int $id
+ */
+function removeDefaultCategory(int $id)
+{
+    // TODO: check if id exists
+    // TODO: check if id in default category table
+    // TODO: check for success
+    removeDefaultCategoryQuery($id);
 }

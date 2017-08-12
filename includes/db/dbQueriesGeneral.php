@@ -14,8 +14,8 @@
  * general query method
  * prepares given query string, executes
  *
- * @param $query        , query string
- * @param $params       , set of parameters for prepared statement
+ * @param $query        query string
+ * @param $params       set of parameters for prepared statement
  *                      must be in format of
  *                      [ ['name', value], ... ]
  *                      each subarray can contain a 3rd index for the datatype
@@ -53,13 +53,12 @@ function executeQuery(string $query, array $params = array())
 }
 
 /**
- * general query method
- * gets single result from query
+ * gets single column of row from query result
  *
- * @param $sql   , pdo statement to use
- * @param $index , column number to grab (default 0)
+ * @param $sql          pdo statement to use
+ * @param $index        column number to grab (default 0)
  *
- * @return mixed
+ * @return mixed        single value of column
  */
 function getQueryResult(PDOStatement $sql, int $index = 0)
 {
@@ -76,12 +75,32 @@ function getQueryResult(PDOStatement $sql, int $index = 0)
 }
 
 /**
- * general query method
+ * get single row from query result
+ *
+ * @param PDOStatement  $sql
+ *
+ * @return mixed        single row as associative array
+ */
+function getQueryResultRow(PDOStatement $sql)
+{
+    try {
+        $results = $sql->fetch(PDO::FETCH_ASSOC);
+
+        return $results;
+    } catch (PDOException $error) {
+        if (DEBUG) {
+            print_r($sql->errorInfo());
+            die($error->getMessage());
+        }
+    }
+}
+
+/**
  * gets all results from a query
  *
- * @param $sql , pdo statement to use
+ * @param $sql      pdo statement to use
  *
- * @return mixed, array with each row as an associative array
+ * @return mixed    array with each row as an associative array
  */
 function getQueryResults(PDOStatement $sql)
 {

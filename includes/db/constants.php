@@ -51,3 +51,7 @@ define("GET_EXAMS_TYPE_BOTH",               0);
 define("GET_EXAMS_TYPE_REGULAR",            1);
 define("GET_EXAMS_TYPE_IN_CLASS",           2);
 
+/* for general queries, datetime to/from php and mysql */
+/* php.net/manual/en/function.date.php */
+define("DATETIME_FORMAT",                   'Y-m-d H:i:s');
+

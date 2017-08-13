@@ -77,7 +77,7 @@ function getQueryResult(PDOStatement $sql, int $index = 0)
 /**
  * get single row from query result
  *
- * @param PDOStatement  $sql
+ * @param PDOStatement $sql
  *
  * @return mixed        single row as associative array
  */
@@ -116,4 +116,32 @@ function getQueryResults(PDOStatement $sql)
     }
 }
 
-// check for string size / value type for given table/column
+// TODO: check for string size / value type for given table/column
+
+/**
+ * Converts a PHP DateTime object to the parameter string for a query
+ *
+ * @param string   $key      key for the parameter
+ * @param DateTime $datetime datetime object to convert
+ *
+ * @return array
+ */
+function buildDateTimeStrParam(string $key, DateTime $datetime)
+{
+    $param = array($key, $datetime->format(DATETIME_FORMAT),
+                   PDO::PARAM_STR);
+    return $param;
+}
+
+/**
+ * Convert string representation of mysql datetime to php datetime
+ *
+ * @param string $value
+ *
+ * @return false|string
+ */
+function buildDateTimeFromQuery(string $value)
+{
+    $datetime = DateTime::date_create_from_format(DATETIME_FORMAT, $value);
+    return $datetime;
+}

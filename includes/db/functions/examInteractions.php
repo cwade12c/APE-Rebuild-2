@@ -21,4 +21,4 @@
 // randomly assign all students for given exam (room, seat)
 // get students registered
 
-// remove location from archived-exams
+// remove location from non-archived-exams

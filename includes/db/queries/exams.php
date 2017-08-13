@@ -155,3 +155,5 @@ function buildFindExamTypeString(int $type)
 
     return $typeStr;
 }
+
+function getExamInformationQuery(int $id) {}

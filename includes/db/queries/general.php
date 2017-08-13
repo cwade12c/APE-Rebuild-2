@@ -46,8 +46,10 @@ function executeQuery(string $query, array $params = array())
         return $sql;
     } catch (PDOException $error) {
         if (DEBUG) {
+            echo "<div class=\"debug\">";
             print_r($sql->errorInfo());
-            die($error->getMessage());
+            $error->getMessage();
+            echo "</div>";
         }
     }
 }

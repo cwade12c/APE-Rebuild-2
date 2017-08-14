@@ -14,7 +14,6 @@ require_once INCLUDES_PATH . 'db/exceptions.php';
 /* constants */
 require_once INCLUDES_PATH . 'db/constants.php';
 
-
 /* queries */
 require_once INCLUDES_PATH . 'db/queries/general.php';
 require_once INCLUDES_PATH . 'db/queries/accounts.php';

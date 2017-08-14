@@ -2,141 +2,198 @@
 /**
  * Functions for exams in database
  *
- * @author		Mathew McCain
- * @author      Curran Higgins
- * @category	APE
- * @package		APE_includes
- * @subpackage	Database
+ * @author         Mathew McCain
+ * @category       APE
+ * @package        APE_includes
+ * @subpackage     Database
  */
 
-// refresh/check exam state
-// set exam state
-// finalize exam
-
-// create in class exam
-// assign teacher(s)
-// get teacher
-// search exams by in class/teacher
-// get non-archived exams for teacher
-
-
-
-// set location for exam
-// get location for exam
-// update location for exam
-/// check if seat count difference will cause an issue (block, return false)
-/// randomize rooms/seats
-
-// updating exam information
-/// date/times, passing grade
-
-// get all exams
-function getAllExams() {
-    return getExams();
+/**
+ * Get list of IDs for all exams (all states)
+ *
+ * @param int $type for the type of exam (both, regular, in class)
+ *                  use get exam type values defined in db 'constants.php'
+ *
+ * @return mixed
+ */
+function getExamsAll(int $type = GET_EXAMS_TYPE_BOTH)
+{
+    return getExams(GET_EXAMS_ALL, $type);
 }
 
-// get all archived exams
-function getArchivedExams() {}
+/**
+ * Get list of IDs for archived exams
+ *
+ * @param int $type for the type of exam (both, regular, in class)
+ *                  use get exam type values defined in db 'constants.php'
+ *
+ * @return mixed
+ */
+function getExamsArchived(int $type = GET_EXAMS_TYPE_BOTH)
+{
+    return getExams(GET_EXAMS_ARCHIVED, $type);
+}
 
-// get all non-archived exams
-function getNonArchivedExams() {}
+/**
+ * Get list of IDs for all non-archived exams
+ *
+ * @param int $type
+ *
+ * @return mixed
+ */
+function getExamsNonArchived(int $type = GET_EXAMS_TYPE_BOTH)
+{
+    return getExams(GET_EXAMS_NON_ARCHIVED, $type);
+}
 
-// get all finalizing exams
-function getFinalizingExams() {}
+/**
+ * Get list of IDs for exams in finalizing state
+ *
+ * @param int $type for the type of exam (both, regular, in class)
+ *                  use get exam type values defined in db 'constants.php'
+ *
+ * @return mixed
+ */
+function getExamsFinalizing(int $type = GET_EXAMS_TYPE_BOTH)
+{
+    return getExams(GET_EXAMS_FINALIZING, $type);
+}
 
-// get all grading exams
+/**
+ * Get list of IDs for exams in grading state
+ *
+ * @param int $type for the type of exam (both, regular, in class)
+ *                  use get exam type values defined in db 'constants.php'
+ *
+ * @return mixed
+ */
+function getExamsGrading(int $type = GET_EXAMS_TYPE_BOTH)
+{
+    return getExams(GET_EXAMS_GRADING, $type);
+}
 
-// get all upcoming exams
+/**
+ * Get list of IDs for upcoming exams (states hidden, open, closed, in progress)
+ *
+ * @param int $type for the type of exam (both, regular, in class)
+ *                  use get exam type values defined in db 'constants.php'
+ *
+ * @return mixed
+ */
+function getExamsUpcoming(int $type = GET_EXAMS_TYPE_BOTH)
+{
+    return getExams(GET_EXAMS_OPEN, $type);
+}
 
-// get exams by state
-function getExams(int $state = 0, bool $inClass = false) {}
+/**
+ * Get list of IDs for exams w/ given information
+ * Recommended to use other get exam functions for future proofing.
+ *
+ * @param int $state state as defined under get exam states
+ *                   defined in db 'constants'.php
+ * @param int $type  for the type of exam (both, regular, in class)
+ *                   use get exam type values defined in db 'constants.php'
+ *
+ * @return mixed
+ */
+function getExams(int $state, int $type)
+{
+    // TODO: validate state and type valid
+    return getExamsQuery($state, $type);
+}
 
-// in class flag ?
+// TODO: get exams w/ teacher ID, archived / non-archived
+/// rename getExams to getExamsExtended
 
 // search exams
 /// state, date/time (quarter?), in class
+/// location/rooms
 
 // get exam information
-function getExamInformation(int $id) {}
+function getExamInformation(int $id)
+{
+    // TODO: validate id exists
+    // TODO: convert information from query results
+    return getExamInformationQuery($id);
+}
+
+// get exam categories
+function getExamCategories(int $id)
+{
+    // TODO: validate id exists
+}
+
+// get teacher id for in class exam
+function getInClassExamTeacher(int $id) {
+    // TODO: validate id exists
+    // TODO: determine if exam is in class
+    // TODO: get teacher id
+}
 
 // create exam
-function createExam() {}
+function createExam()
+{
+    // arguments
+    // start datetime, cutoff registration datetime
+    // int length, int passing_grade
+    // int location id (can be null?)
+
+    // call extended create
+
+}
+
+// create in class exam
+function createInClassExam()
+{
+    // arguments
+    // start datetime, cutoff registration datetime
+    // int length, int passing_grade
+    // int location id (can be null?)
+    // int teacher id
+    // list of category ids
+
+    // call extended create
+}
+
+// create exam extended (internal only)
+function createExamExtended()
+{
+    // arguments-
+
+    // TODO: validate arguments
+    // TODO: check for conflicting information w/ existing non-archived exams
+
+    // TODO: validate success
+    // TODO: return exam id ?
+}
 
 // update exam
+function updateExam(int $id, DateTime $start, DateTime $cutoff, int $length,
+    int $passing_grade, int $location_id, array $categoryIDs
+) {
+    // TODO: validate arguments
+    /// id exists, datetime(s) valid, length valid, passing_grade valid (reachable)
+    /// location (registration count?)
+    // TODO: does state allow editing ?
 
-// update exam location
-/// re-assign seats
+    // get current exam information
 
-// add/remove category for exam
-/// check state, check for assigned graders
-// get categories for exam
+    // TODO: determine add/remove categories
 
+    // TODO: re-assign seats for location change
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// TODO: not integral to db backend, move to another set
-function getUpcomingExams()
-{
-    $sql = executeQuery("SELECT * FROM exams");
-    $result = getQueryResults($sql);
-
-    $currentDate = date('Y-m-d G:i:s');
-    $currentDate = date_create($currentDate);
-    $upcomingApes = array();
-
-    foreach ($result as &$value) {
-        $examDate = date_create($value["start"]);
-        $differenceInTime = date_diff($examDate, $currentDate);
-
-        if ($differenceInTime->invert > 0) {
-            array_push($upcomingApes, $value);
-        }
-    }
-
-    if (count($upcomingApes) > 0) {
-        foreach ($upcomingApes as &$value) {
-            displayExam($value);
-        }
-    }
+    // TODO: validate success
 }
 
-// TODO: not integral to db backend, move to another set
-function displayExam($exam)
+// refresh exam state, transition
+function refreshExam(int $id)
 {
-
-    $id = $exam["location_id"];
-
-    $sql = executeQuery("SELECT * FROM locations WHERE (`id` = :id);", array(array("id", $id)));
-    $result = getQueryResults($sql);
-    $result = $result[0];
-
-    $examStart = $exam["start"];
-    $examLocation = $result["name"];
-    $examReservedSeats = $result["reserved_seats"];
-    $examLimitedSeats = $result["limited_seats"];
-    $examPassingGrade = $exam["passing_grade"];
-
-
-    echo <<< EOT
-    
-<div>
-    <h2>Exam: $examStart</h2>
-    <p><span style='font-weight:bold;'>Location:</span> $examLocation</p>
-    <p><span style='font-weight:bold;'>Available Seats:</span> $examLimitedSeats</p>
-    <p><span style='font-weight:bold;'>Reserved Seats:</span> $examReservedSeats</p>
-    <p><span style='font-weight:bold;'>Passing Grade:</span> $examPassingGrade</p>
-</div>
-<hr />
-EOT;
+    /**
+     * get exam information
+     * check state, check conditions accordingly and transition
+     */
 }
+
+// set state of exam (internal)
+/// handle transistions ?
+function setExamState(int $id, int $state) {}

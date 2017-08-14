@@ -36,4 +36,22 @@ define("EXAM_STATE_GRADING",                5);
 define("EXAM_STATE_FINALIZING",             6);
 define("EXAM_STATE_ARCHIVED",               7);
 
-// TODO: may need constants for report type indexes
+// TODO: constants for report type indexes ?
+
+/* for get exams functions */
+define("GET_EXAMS_ALL",                     0);
+define("GET_EXAMS_OPEN",                    1);
+define("GET_EXAMS_GRADING",                 2);
+define("GET_EXAMS_FINALIZING",              3);
+define("GET_EXAMS_NON_ARCHIVED",            4);
+define("GET_EXAMS_ARCHIVED",                5);
+
+/* for type of exams to grab */
+define("GET_EXAMS_TYPE_BOTH",               0);
+define("GET_EXAMS_TYPE_REGULAR",            1);
+define("GET_EXAMS_TYPE_IN_CLASS",           2);
+
+/* for general queries, datetime to/from php and mysql */
+/* php.net/manual/en/function.date.php */
+define("DATETIME_FORMAT",                   'Y-m-d H:i:s');
+

@@ -84,5 +84,3 @@ function logout()
     session_destroy();
     phpCAS::logout();
 }
-
-?>

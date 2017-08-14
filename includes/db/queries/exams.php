@@ -8,244 +8,152 @@
  * @subpackage     Database
  */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Query to create a category
- *
- * @param string $name
- * @param int    $points
- */
-function createCategoryQuery(string $name, int $points)
+function getExamsQuery(int $state, int $type)
 {
-    $query = "INSERT INTO `categories`"
-        . "(`name`, `points`)"
-        . " VALUES (:name, :points)";
-    $sql = executeQuery(
-        $query, array(
-            array(':name', $name, PDO::PARAM_STR),
-            array(':points', $points, PDO::PARAM_INT)
-        )
+    // build query string
+    list($stateStr, $typeStr, $params) = buildFindExamsStateTypeStrings(
+        $state, $type
     );
-    // TODO: return inserted row id ?
-}
-
-/**
- * Query to delete a single category
- *
- * @param int $id
- */
-function deleteCategoryQuery(int $id)
-{
-    $query = "DELETE FROM `categories`"
-        . "WHERE `id` = :id";
-    $sql = executeQuery(
-        $query, array(
-            array(':id', $id, PDO::PARAM_INT))
-    );
-}
-
-/**
- * Query to update a single category
- *
- * @param int    $id
- * @param string $name
- * @param int    $points
- */
-function updateCategoryQuery(int $id, string $name, int $points)
-{
-    $query = "UPDATE `categories`"
-        . "SET `name`=:name, `points`=:points"
-        . "WHERE `id`=:id;";
-    $sql = executeQuery(
-        $query, array(
-            array(':id', $id, PDO::PARAM_INT),
-            array(':name', $name, PDO::PARAM_STR),
-            array(':points', $points, PDO::PARAM_INT)
-        )
-    );
-}
-
-/**
- * Query to update a single category name
- *
- * @param int    $id
- * @param string $name
- */
-function updateCategoryNameQuery(int $id, string $name)
-{
-    $query = "UPDATE `categories`"
-        . "SET `name`=:name"
-        . "WHERE `id`=:id;";
-    $sql = executeQuery(
-        $query, array(
-            array(':id', $id, PDO::PARAM_INT),
-            array(':name', $name, PDO::PARAM_STR),
-        )
-    );
-}
-
-/**
- * Query to update a single
- *
- * @param int $id
- * @param int $points
- */
-function updateCategoryPointsQuery(int $id, int $points)
-{
-    $query = "UPDATE `categories`"
-        . "SET `points`=:points"
-        . "WHERE `id`=:id;";
-    $sql = executeQuery(
-        $query, array(
-            array(':id', $id, PDO::PARAM_INT),
-            array(':points', $points, PDO::PARAM_INT)
-        )
-    );
-}
-
-/**
- * Query to get the info (name, points) for a category
- *
- * @param int $id
- *
- * @return mixed
- */
-function getCategoryInfoQuery(int $id)
-{
-    $query = "SELECT `name`, `points` FROM `categories`"
-        . " WHERE `id` = :id;";
-    $sql = executeQuery(
-        $query, array(
-            array(':id', $id, PDO::PARAM_INT)
-        )
-    );
-    return getQueryResultRow($sql);
-}
-
-/**
- * Query to get all category IDs
- *
- * @return mixed
- */
-function getCategoriesQuery()
-{
-    $query = "SELECT `id` FROM `categories`;";
-    $sql = executeQuery($query);
-    return getQueryResults($sql);
-}
-
-/**
- * Query to get all default category IDs
- *
- * @return mixed
- */
-function getDefaultCategoriesQuery()
-{
-    $query = "SELECT `id` FROM `default_categories`;";
-    $sql = executeQuery($query);
-    return getQueryResults($sql);
-}
-
-/**
- * Query to wipe the default categories list
- */
-function clearDefaultCategoriesQuery()
-{
-    $query = "DELETE FROM `default_categories`";
-    $sql = executeQuery($query);
-}
-
-/**
- * Query to set the list of default categories
- * Does not wipe the list before, really just adds multiple IDs
- *
- * @param array $idList
- */
-function setDefaultCategoriesQuery(array $idList)
-{
-    // build values str and param list
-    list($setStr, $params) = buildDefaultCategoriesStringParams($idList);
-
+    // execute
     $query = sprintf(
-        "INSERT INTO `default_categories`"
-        . "(`id`)"
-        . " VALUES %s", $setStr
+        "SELECT `id` FROM `exams`"
+        . " WHERE (%s && %s)", $stateStr, $typeStr
     );
     $sql = executeQuery($query, $params);
+    return getQueryResults($sql);
 }
 
 /**
- * Used by function setDefaultCategoriesQuery()
+ * Builds the necessary boolean comparison strings and parameters array
+ * for the function getExamsQuery().
  * Not intended for outside use.
- * Builds the values string for insert and the parameters
  *
- * @param array $ids
+ * @param int $state
+ * @param int $type
  *
  * @return array
  */
-function buildDefaultCategoriesStringParams(array $ids)
+function buildFindExamsStateTypeStrings(int $state, int $type)
+{
+    list($stateStr, $params) = buildFindExamStateString($state);
+    $typeStr = buildFindExamTypeString($type);
+
+    return array($stateStr, $typeStr, $params);
+}
+
+/**
+ * Builds the string and params array
+ * to be used in a select query to find an exam by a state/set of states.
+ * Only used internally by function buildFindExamsStateTypeStrings()
+ * Not intended for outside use
+ *
+ * @param int $state a get exams value defined in db 'constants.php'
+ *
+ * @return array
+ */
+function buildFindExamStateString(int $state)
 {
     $params = array();
-    $values = array();
 
-    foreach (ids as $i => $id) {
-        // determine param name
-        $val = sprintf(':id%d', $i);
-        array_push($values, sprintf('(:%s)', $val));
-        // add parameter
-        array_push($params, array($val, $id, PDO::PARAM_INT));
+    // build state boolean statement
+    $stateCompares = array();
+    if ($state == GET_EXAMS_ALL) {
+        array_push($stateCompares, "true");
+    } elseif ($state == GET_EXAMS_OPEN) {
+        // states: hidden, open, closed, in progress
+        // push comparisons
+        array_push($stateCompares, "`state` == :state_hidden");
+        array_push($stateCompares, "`state` == :state_open");
+        array_push($stateCompares, "`state` == :state_closed");
+        array_push($stateCompares, "`state` == :state_in_progress");
+        // push params for states
+        array_push(
+            $params, array(':state_hidden', EXAM_STATE_HIDDEN, PDO::PARAM_INT)
+        );
+        array_push(
+            $params, array(':state_open', EXAM_STATE_OPEN, PDO::PARAM_INT)
+        );
+        array_push(
+            $params, array(':state_closed', EXAM_STATE_CLOSED, PDO::PARAM_INT)
+        );
+        array_push(
+            $params,
+            array(':state_in_progress', EXAM_STATE_IN_PROGRESS, PDO::PARAM_INT)
+        );
+    } elseif ($state == GET_EXAMS_GRADING) {
+        // grading state
+        // comparison
+        array_push($stateCompares, "`state` == :state_grading");
+        // params
+        array_push(
+            $params,
+            array(':state_grading', EXAM_STATE_GRADING, PDO::PARAM_INT)
+        );
+    } elseif ($state == GET_EXAMS_FINALIZING) {
+        // finalizing state
+        // comparison
+        array_push($stateCompares, "`state` == :state_finalizing");
+        // params
+        array_push(
+            $params,
+            array(':state_finalizing', EXAM_STATE_FINALIZING, PDO::PARAM_INT)
+        );
+    } elseif ($state == GET_EXAMS_NON_ARCHIVED) {
+        // any state but archived
+        // comparison
+        array_push($stateCompares, "`state` != :state_archived");
+        // params
+        array_push(
+            $params,
+            array(':state_archived', EXAM_STATE_ARCHIVED, PDO::PARAM_INT)
+        );
+    } elseif ($state == GET_EXAMS_ARCHIVED) {
+        // archived state
+        // comparison
+        array_push($stateCompares, "`state` != :state_archived");
+        // params
+        array_push(
+            $params,
+            array(':state_archived', EXAM_STATE_ARCHIVED, PDO::PARAM_INT)
+        );
+    }
+    // build string for state boolean statement
+    // wrap each comparison w/ '()'
+    if (count($stateCompares) > 1) {
+        $wrapCompare = function (string $val) {
+            return sprintf("(%s)", $val);
+        };
+        $stateCompares = array_map($wrapCompare, $stateCompares);
+
+    }
+    $stateStr = sprintf("(%s)", implode('||', $stateCompares));
+
+    return array($stateStr, $params);
+}
+
+/**
+ * Builds the string to find an exam type (regular, in class)
+ * in a select query.
+ * Only used internally by function buildFindExamsStateTypeStrings()
+ * Not intended for outside use
+ *
+ * @param int $type a get exam type value defined in db 'constants.php'
+ *
+ * @return string
+ */
+function buildFindExamTypeString(int $type)
+{
+    // build type boolean statement
+    $typeStr = "";
+    if ($type == GET_EXAMS_TYPE_BOTH) {
+        $typeStr = "true";
+    } elseif ($type == GET_EXAMS_TYPE_REGULAR) {
+        $typeStr = "`is_regular`";
+    } elseif ($type == GET_EXAMS_TYPE_IN_CLASS) {
+        $typeStr = "!`is_regular`";
     }
 
-    // build values string
-    $valuesStr = implode(',', $values);
-
-    return array($valuesStr, $params);
+    return $typeStr;
 }
 
-/**
- * Query to add a single default category
- *
- * @param int $id
- */
-function addDefaultCategoryQuery(int $id)
-{
-    $query = "INSERT INTO `default_categories`"
-        . "(`id`)"
-        . " VALUES (:id)";
-    $sql = executeQuery(
-        $query, array(
-            array(':id', $id, PDO::PARAM_INT)
-        )
-    );
-}
-
-/**
- * Query to remove a single default category
- *
- * @param int $id
- */
-function removeDefaultCategoryQuery(int $id)
-{
-    $query = "DELETE FROM `default_categories`"
-        . "WHERE `id` = :id";
-    $sql = executeQuery(
-        $query, array(
-            array(':id', $id, PDO::PARAM_INT))
-    );
-}
+function getExamInformationQuery(int $id) {}

@@ -42,6 +42,11 @@ if (!isPost()) {
             // get last inserted ID
             $lastID = getLastInsertedID();
             $queryResult = "<b>Last ID</b>: {$lastID}<br>";
+
+            $sql = executeQuery("SELECT LAST_INSERT_ID()");
+            $lastID = getQueryResult($sql);
+            $queryResult = $queryResult
+                . "<b>Last ID (query)</b>: {$lastID}<br>";
         }
 
     } catch (Exception $e) {
@@ -70,7 +75,7 @@ if (!isPost()) {
 
     <!-- settings -->
     <h5>Get Results?</h5>
-    <input type="checkbox" name="getResult" value="true" checked />
+    <input type="checkbox" name="getResult" value="true" checked/>
     <br/>
 
     <!-- query result -->

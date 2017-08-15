@@ -243,13 +243,17 @@ function createExamExtended(DateTime $start, DateTime $cutoff, int $minutes,
     // create exam
     // TODO: create transaction for creation ?
 
-    $id = createExamQuery($start, $cutoff, $minutes, $passingGrade);
+    createExamQuery($start, $cutoff, $minutes, $passingGrade);
+    $id = getLastInsertedID();
 
-    // create exam query
-    // get exam id
-    // if in class, set teacher id
+    // create in class entry
+
+
     // create exam categories
+    
+
     // set exam state
+    setExamState($id, EXAM_STATE_HIDDEN);
 
     // TODO: validate success
     // TODO: return exam id ?

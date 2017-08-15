@@ -9,15 +9,110 @@
  */
 
 // assign grader to exam/category
+function assignGrader(int $graderId, int $examId, int $categoryId, $submitted)
+{
+    if(accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
+        return assignGraderQuery($graderId, $examId, $categoryId, $submitted);
+    }
+
+    logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
+    return false;
+}
+
 // remove grader from exam/category
+function removeGrader(int $graderId, int $examId, int $categoryId)
+{
+    if(accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
+        return removeGraderQuery($graderId, $examId, $categoryId);
+    }
+
+    logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
+    return false;
+}
+
 // get graders for exam/category
+function getGradersByExam(int $examId)
+{
+    if(accountIsGrader("". $_SESSION['ewuId']) || accountIsAdmin($_SESSION['ewuId']) || DEBUG) {
+        return getAssignedGradersByExamIdQuery($examId);
+    }
+
+    logSecurityIncident(IS_NOT_AUTHORIZED, $_SESSION['ewuId']);
+}
+
+function getGradersByCategory(int $categoryId)
+{
+    if(accountIsGrader("".  $_SESSION['ewuId'] || accountIsAdmin($_SESSION['ewuId']) || DEBUG))
+    {
+        return getAssignedGradersByCategoryIdQuery($categoryId);
+    }
+
+    logSecurityIncident(IS_NOT_AUTHORIZED, $_SESSION['ewuId']);
+}
 
 // get assigned exams/category for grader
+function getExamsAndCategoriesByGrader(int $graderId)
+{
+    if (accountIsGrader("".  $_SESSION['ewuId'] || accountIsAdmin($_SESSION['ewuId']) || DEBUG))
+    {
+        return getExamsAndCategoriesByGraderIdQuery($graderId);
+    }
+
+    logSecurityIncident(IS_NOT_AUTHORIZED, $_SESSION['ewuId']);
+}
 
 // get if all graders submitted
+function isAllGradesSubmitted(int $examId)
+{
+    if (accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
+        return isAllGradesSubmittedByExamIdQuery($examId);
+    }
+
+    logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
+    return false;
+}
+
 // submit for grader
+
 // get graders submitted/not submitted
+function getSubmittedGraders(int $examId)
+{
+    if (accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
+        return getSubmittedGradersByExamIdQuery($examId);
+    }
+
+    logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
+}
+
+function getUnsubmittedGraders(int $examId)
+{
+    if (accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
+        return getUnsubmittedGradersByExamIdQuery($examId);
+    }
+
+    logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
+}
+
 /// get count for each
+
+function getNumberOfSubmittedGraders(int $examId)
+{
+    if (accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
+        return getNumberOfSubmittedGradersByExamIdQuery($examId);
+    }
+
+    logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
+}
+
+function getNumberOfUnsubmittedGraders(int $examId)
+{as
+    if (accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
+        return getNumberOfUnsubmittedGradersByExamIdQuery($examId);
+    }
+
+    logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
+}
+
 
 // state shift from grading to finalizing
 // check student/category grades for conflicts between graders

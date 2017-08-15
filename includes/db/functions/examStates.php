@@ -19,7 +19,7 @@
  */
 function doesExamStateAllowUpdates(int $state)
 {
-    if (!isExamStateValid($state)) {
+    if ( ! isExamStateValid($state)) {
         throw new InvalidArgumentException('Invalid exam state: ' . $state);
     }
 
@@ -52,7 +52,7 @@ function doesExamStateAllowUpdates(int $state)
  */
 function doesExamStateAllowRegistration(int $state)
 {
-    if (!isExamStateValid($state)) {
+    if ( ! isExamStateValid($state)) {
         throw new InvalidArgumentException('Invalid exam state: ' . $state);
     }
 
@@ -86,7 +86,7 @@ function doesExamStateAllowRegistration(int $state)
  */
 function doesExamStateAllowForcedRegistration(int $state)
 {
-    if (!isExamStateValid($state)) {
+    if ( ! isExamStateValid($state)) {
         throw new InvalidArgumentException('Invalid exam state: ' . $state);
     }
 
@@ -195,7 +195,7 @@ function refreshExam(int $id)
      */
 
     $state = null;
-    if (!isExamStateValid($state)) {
+    if ( ! isExamStateValid($state)) {
         throw new InvalidArgumentException('Invalid exam state: ' . $state);
     }
 

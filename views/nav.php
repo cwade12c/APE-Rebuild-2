@@ -20,7 +20,11 @@ function displayTeacherNavigation()
 
 <nav>
     <a href="home.php">Home</a>
-    <? if(accountIsAdmin($_SESSION['ewuId']) || DEBUG) { displayAdminNavigation(); } ?>
-    <? if(accountIsTeacher($_SESSION['ewuId']) || DEBUG) { displayTeacherNavigation()(); } ?>
+    <? if (accountIsAdmin($_SESSION['ewuId']) || DEBUG) {
+        displayAdminNavigation();
+    } ?>
+    <? if (accountIsTeacher($_SESSION['ewuId']) || DEBUG) {
+        displayTeacherNavigation()();
+    } ?>
     <a href="logout.php">Logout</a>
 </nav>

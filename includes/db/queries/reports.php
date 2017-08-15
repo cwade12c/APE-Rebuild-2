@@ -16,7 +16,8 @@
 function getReportIDsQuery()
 {
     $query = "SELECT `id` FROM `reports`;";
-    $sql = executeQuery($query);
+    $sql   = executeQuery($query);
+
     return getQueryResults($sql);
 }
 
@@ -28,7 +29,8 @@ function getReportIDsQuery()
 function getReportIDsNamesQuery()
 {
     $query = "SELECT `id`, `name` FROM `reports`;";
-    $sql = executeQuery($query);
+    $sql   = executeQuery($query);
+
     return getQueryResults($sql);
 }
 
@@ -42,11 +44,12 @@ function getReportIDsNamesQuery()
 function getReportIDQuery(string $name)
 {
     $query = "SELECT `id` FROM `reports` WHERE `name` = :name;";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':name', $name, PDO::PARAM_STR)
         )
     );
+
     return getQueryResult($sql);
 }
 
@@ -60,10 +63,11 @@ function getReportIDQuery(string $name)
 function getReportRowsQuery(int $id)
 {
     $query = "SELECT `type` FROM `report_rows` WHERE `id` = :id;";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT))
     );
+
     return getQueryResults($sql);
 }
 
@@ -79,7 +83,7 @@ function addNewReportQuery(string $name)
     $query = "INSERT INTO `reports`"
         . "(`name`)"
         . " VALUES (:name)";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':name', $name, PDO::PARAM_STR))
     );
@@ -96,7 +100,7 @@ function wipeReportRowsQuery(int $id)
 {
     $query = "DELETE FROM `report_rows`"
         . "WHERE `id` = :id";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT))
     );
@@ -120,7 +124,7 @@ function addReportRowsQuery(int $id, array $rows)
         "INSERT INTO `report_rows`(`id`, `type`)"
         . " VALUES %s", $setStr
     );
-    $sql = executeQuery($query, $params);
+    $sql   = executeQuery($query, $params);
 
     // TODO: check for success?
 }

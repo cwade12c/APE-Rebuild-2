@@ -2,10 +2,10 @@
 /**
  * based off 'config.php', edited for testing
  *
- * @author  	Mathew McCain
- * @category	APE
- * @package		APE_testing
- * @subpackage	Includes
+ * @author         Mathew McCain
+ * @category       APE
+ * @package        APE_testing
+ * @subpackage     Includes
  */
 
 
@@ -22,12 +22,11 @@ DEFINE("PASS", "bB*-7Q7p\$M4");
 DEFINE("DB", "test_new_ape_database");
 
 try {
-	$dsn = "mysql:host=" . HOST . ";dbname=" . DB;
-	$db = new PDO($dsn, USER, PASS);
-	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-}
-catch (PDOException $error) {
-	die('DB Error: ' . $e->getMessage());
+    $dsn = "mysql:host=" . HOST . ";dbname=" . DB;
+    $db  = new PDO($dsn, USER, PASS);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $error) {
+    die('DB Error: ' . $e->getMessage());
 }
 
 session_start();
@@ -35,6 +34,6 @@ session_start();
 require_once(INCLUDES_PATH . 'includes.php');
 
 if (DEBUG) {
-	error_reporting(E_ALL);
-	ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
 }

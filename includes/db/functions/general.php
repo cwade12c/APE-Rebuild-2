@@ -23,7 +23,7 @@ function validateDates(DateTime $start, DateTime $cutoff)
         throw new InvalidArgumentException('null date');
     }
 
-    $unixStart = $start->getTimestamp();
+    $unixStart  = $start->getTimestamp();
     $unixCutoff = $cutoff->getTimestamp();
     // check that start datetime is before/on cutoff datetime
     if ($unixStart > $unixCutoff) {

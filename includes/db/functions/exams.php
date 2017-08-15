@@ -124,7 +124,7 @@ function getExamInformation(int $id)
     // TODO: check that row returned (or exam id existed)
 
     // convert date time values
-    $info['start'] = buildDateTimeFromQuery($info['start']);
+    $info['start']  = buildDateTimeFromQuery($info['start']);
     $info['cutoff'] = buildDateTimeFromQuery($info['cutoff']);
 
     return $info;
@@ -282,7 +282,7 @@ function setExamState(int $id, int $state)
 {
     // TODO: validate id exists
 
-    if (!isExamStateValid($state)) {
+    if ( ! isExamStateValid($state)) {
         throw new InvalidArgumentException('Illegal exam state: ' . $state);
     }
 

@@ -132,6 +132,7 @@ function buildDateTimeStrParam(string $key, DateTime $datetime)
 {
     $param = array($key, $datetime->format(DATETIME_FORMAT),
                    PDO::PARAM_STR);
+
     return $param;
 }
 
@@ -145,5 +146,6 @@ function buildDateTimeStrParam(string $key, DateTime $datetime)
 function buildDateTimeFromQuery(string $value)
 {
     $datetime = DateTime::date_create_from_format(DATETIME_FORMAT, $value);
+
     return $datetime;
 }

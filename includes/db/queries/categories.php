@@ -19,7 +19,7 @@ function createCategoryQuery(string $name, int $points)
     $query = "INSERT INTO `categories`"
         . "(`name`, `points`)"
         . " VALUES (:name, :points)";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':name', $name, PDO::PARAM_STR),
             array(':points', $points, PDO::PARAM_INT)
@@ -37,7 +37,7 @@ function deleteCategoryQuery(int $id)
 {
     $query = "DELETE FROM `categories`"
         . "WHERE `id` = :id";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT))
     );
@@ -55,7 +55,7 @@ function updateCategoryQuery(int $id, string $name, int $points)
     $query = "UPDATE `categories`"
         . "SET `name`=:name, `points`=:points"
         . "WHERE `id`=:id;";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT),
             array(':name', $name, PDO::PARAM_STR),
@@ -75,7 +75,7 @@ function updateCategoryNameQuery(int $id, string $name)
     $query = "UPDATE `categories`"
         . "SET `name`=:name"
         . "WHERE `id`=:id;";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT),
             array(':name', $name, PDO::PARAM_STR),
@@ -94,7 +94,7 @@ function updateCategoryPointsQuery(int $id, int $points)
     $query = "UPDATE `categories`"
         . "SET `points`=:points"
         . "WHERE `id`=:id;";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT),
             array(':points', $points, PDO::PARAM_INT)
@@ -113,11 +113,12 @@ function getCategoryInfoQuery(int $id)
 {
     $query = "SELECT `name`, `points` FROM `categories`"
         . " WHERE `id` = :id;";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT)
         )
     );
+
     return getQueryResultRow($sql);
 }
 
@@ -129,7 +130,8 @@ function getCategoryInfoQuery(int $id)
 function getCategoriesQuery()
 {
     $query = "SELECT `id` FROM `categories`;";
-    $sql = executeQuery($query);
+    $sql   = executeQuery($query);
+
     return getQueryResults($sql);
 }
 
@@ -141,7 +143,8 @@ function getCategoriesQuery()
 function getDefaultCategoriesQuery()
 {
     $query = "SELECT `id` FROM `default_categories`;";
-    $sql = executeQuery($query);
+    $sql   = executeQuery($query);
+
     return getQueryResults($sql);
 }
 
@@ -151,7 +154,7 @@ function getDefaultCategoriesQuery()
 function clearDefaultCategoriesQuery()
 {
     $query = "DELETE FROM `default_categories`";
-    $sql = executeQuery($query);
+    $sql   = executeQuery($query);
 }
 
 /**
@@ -170,7 +173,7 @@ function setDefaultCategoriesQuery(array $idList)
         . "(`id`)"
         . " VALUES %s", $setStr
     );
-    $sql = executeQuery($query, $params);
+    $sql   = executeQuery($query, $params);
 }
 
 /**
@@ -211,7 +214,7 @@ function addDefaultCategoryQuery(int $id)
     $query = "INSERT INTO `default_categories`"
         . "(`id`)"
         . " VALUES (:id)";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT)
         )
@@ -227,7 +230,7 @@ function removeDefaultCategoryQuery(int $id)
 {
     $query = "DELETE FROM `default_categories`"
         . "WHERE `id` = :id";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT))
     );

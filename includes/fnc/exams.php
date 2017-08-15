@@ -15,15 +15,15 @@
  */
 function getUpcomingExams()
 {
-    $sql = executeQuery("SELECT * FROM exams");
+    $sql    = executeQuery("SELECT * FROM exams");
     $result = getQueryResults($sql);
 
-    $currentDate = date('Y-m-d G:i:s');
-    $currentDate = date_create($currentDate);
+    $currentDate  = date('Y-m-d G:i:s');
+    $currentDate  = date_create($currentDate);
     $upcomingApes = array();
 
     foreach ($result as &$value) {
-        $examDate = date_create($value["start"]);
+        $examDate         = date_create($value["start"]);
         $differenceInTime = date_diff($examDate, $currentDate);
 
         if ($differenceInTime->invert > 0) {
@@ -48,17 +48,17 @@ function displayExam($exam)
 
     $id = $exam["location_id"];
 
-    $sql = executeQuery(
+    $sql    = executeQuery(
         "SELECT * FROM locations WHERE (`id` = :id);", array(array("id", $id))
     );
     $result = getQueryResults($sql);
     $result = $result[0];
 
-    $examStart = $exam["start"];
-    $examLocation = $result["name"];
+    $examStart         = $exam["start"];
+    $examLocation      = $result["name"];
     $examReservedSeats = $result["reserved_seats"];
-    $examLimitedSeats = $result["limited_seats"];
-    $examPassingGrade = $exam["passing_grade"];
+    $examLimitedSeats  = $result["limited_seats"];
+    $examPassingGrade  = $exam["passing_grade"];
 
 
     echo <<< EOT

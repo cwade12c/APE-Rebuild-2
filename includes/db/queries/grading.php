@@ -139,10 +139,13 @@ function getGraderCategoryGradesByExamId(int $examId)
 //get grader category grades by exam category id
 function getGraderCategoryGradesByCategoryIdQuery(int $categoryId)
 {
-    $query = "SELECT (`grader_id`, `points`) FROM `grader_category_grades` WHERE `category_id` = :id";
-    $sql = executeQuery($query, array(
+    $query
+         = "SELECT (`grader_id`, `points`) FROM `grader_category_grades` WHERE `category_id` = :id";
+    $sql = executeQuery(
+        $query, array(
         array(':id', $categoryId)
-    ));
+    )
+    );
 
     return getQueryResults($sql);
 }
@@ -181,11 +184,14 @@ function getStudentCategoryGrades()
 //get student category grades by exam id
 function getStudentCategoryGradesByExamIdQuery(int $examId)
 {
-    $sql = "SELECT (`category_id`, `student_id`, `points`) FROM `student_category_grades` WHERE `exam_id` = :id ORDER BY `student_id`";
-    $query = executeQuery($sql, array(
-        array(':id', $examId)
+    $sql
+           = "SELECT (`category_id`, `student_id`, `points`) FROM `student_category_grades` WHERE `exam_id` = :id ORDER BY `student_id`";
+    $query = executeQuery(
+        $sql, array(
+            array(':id', $examId)
         )
     );
+
     return getQueryResults($query);
 }
 
@@ -222,8 +228,9 @@ function getStudentCategoryGradesByNoConflict()
 
 function getExamsAndCategoriesByGraderIdQuery(int $graderId)
 {
-    $query = "SELECT `exam_id`, `category_id` FROM `assigned_graders` WHERE `grader_id` = :id";
-    $sql   = executeQuery(
+    $query
+         = "SELECT `exam_id`, `category_id` FROM `assigned_graders` WHERE `grader_id` = :id";
+    $sql = executeQuery(
         $query, array(
             array(':id', $graderId, PDO::PARAM_INT)
         )
@@ -234,8 +241,9 @@ function getExamsAndCategoriesByGraderIdQuery(int $graderId)
 
 function isAllGradesSubmittedByExamIdQuery(int $examId)
 {
-    $query = "SELECT count(*) FROM `assigned_graders` WHERE `exam_id` = :id AND `submitted` = :wasSubmitted";
-    $sql = executeQuery(
+    $query
+            = "SELECT count(*) FROM `assigned_graders` WHERE `exam_id` = :id AND `submitted` = :wasSubmitted";
+    $sql    = executeQuery(
         $query, array(
             array(':id', $examId, PDO::PARAM_INT),
             array(':wasSubmitted', 0, PDO::PARAM_INT)
@@ -248,8 +256,9 @@ function isAllGradesSubmittedByExamIdQuery(int $examId)
 
 function getSubmittedGradersByExamIdQuery(int $examId)
 {
-    $query = "SELECT `grader_id` FROM `assigned_graders` WHERE `exam_id` = :id AND `submitted` = :wasSubmitted";
-    $sql   = executeQuery(
+    $query
+         = "SELECT `grader_id` FROM `assigned_graders` WHERE `exam_id` = :id AND `submitted` = :wasSubmitted";
+    $sql = executeQuery(
         $query, array(
             array(':id', $examId, PDO::PARAM_INT),
             array(':wasSubmitted', 1, PDO::PARAM_INT)
@@ -261,8 +270,9 @@ function getSubmittedGradersByExamIdQuery(int $examId)
 
 function getUnsubmittedGradersByExamIdQuery(int $examId)
 {
-    $query = "SELECT `grader_id` FROM `assigned_graders` WHERE `exam_id` = :id AND `submitted` = :wasSubmitted";
-    $sql   = executeQuery(
+    $query
+         = "SELECT `grader_id` FROM `assigned_graders` WHERE `exam_id` = :id AND `submitted` = :wasSubmitted";
+    $sql = executeQuery(
         $query, array(
             array(':id', $examId, PDO::PARAM_INT),
             array(':wasSubmitted', 0, PDO::PARAM_INT)
@@ -274,7 +284,8 @@ function getUnsubmittedGradersByExamIdQuery(int $examId)
 
 function getNumberOfSubmittedGradersByExamIdQuery(int $examId)
 {
-    $query = "SELECT count(grader_id) FROM `assigned_graders` WHERE `exam_id` = :id AND `submitted` = :wasSubmitted";
+    $query
+         = "SELECT count(grader_id) FROM `assigned_graders` WHERE `exam_id` = :id AND `submitted` = :wasSubmitted";
     $sql = executeQuery(
         $query, array(
             array(':id', $examId, PDO::PARAM_INT),
@@ -287,7 +298,8 @@ function getNumberOfSubmittedGradersByExamIdQuery(int $examId)
 
 function getNumberOfUnsubmittedGradersByExamIdQuery(int $examId)
 {
-    $query = "SELECT count(grader_id) FROM `assigned_graders` WHERE `exam_id` = :id AND `submitted` = :wasSubmitted";
+    $query
+         = "SELECT count(grader_id) FROM `assigned_graders` WHERE `exam_id` = :id AND `submitted` = :wasSubmitted";
     $sql = executeQuery(
         $query, array(
             array(':id', $examId, PDO::PARAM_INT),
@@ -300,36 +312,45 @@ function getNumberOfUnsubmittedGradersByExamIdQuery(int $examId)
 
 function getStudentAverageByCategoryIdQuery(int $studentId, int $categoryId)
 {
-    $query = "SELECT avg(points) FROM `student_category_grades` WHERE `student_id` = :studentId AND `category_id` = :categoryId";
-    $sql = executeQuery($query, array(
+    $query
+         = "SELECT avg(points) FROM `student_category_grades` WHERE `student_id` = :studentId AND `category_id` = :categoryId";
+    $sql = executeQuery(
+        $query, array(
         array(':studentId', $studentId),
         array(':categoryId', $categoryId)
-    ));
+    )
+    );
 
     return getQueryResult($sql);
 }
 
 function getStudentCategoryGradeConflictsByExamIdQuery(int $examId)
 {
-    $query = "SELECT `student_id` FROM `student_category_grades` WHERE `exam_id` = :id AND `conflict` = :isConflicted";
-    $sql = executeQuery($query, array(
+    $query
+         = "SELECT `student_id` FROM `student_category_grades` WHERE `exam_id` = :id AND `conflict` = :isConflicted";
+    $sql = executeQuery(
+        $query, array(
         array(':id', $examId),
         array(':isConflicted', 1)
-    ));
+    )
+    );
 
     return getQueryResults($sql);
 }
 
 function passStudentQuery(int $examId, int $studentId)
 {
-    $query = "UPDATE `exam_grades` SET `passed` = :isPassed WHERE `exam_id` = :examId AND `student_id` = :studentId";
-    $sql = executeQuery($query, array(
+    $query
+         = "UPDATE `exam_grades` SET `passed` = :isPassed WHERE `exam_id` = :examId AND `student_id` = :studentId";
+    $sql = executeQuery(
+        $query, array(
         array(':isPassed', 1),
         array(':examId', $examId),
         array(':studentId', $studentId)
-    ));
+    )
+    );
 
-    if($sql) {
+    if ($sql) {
         return true;
     }
 
@@ -338,58 +359,72 @@ function passStudentQuery(int $examId, int $studentId)
 
 function failStudentQuery(int $examId, int $studentId)
 {
-    $query = "UPDATE `exam_grades` SET `passed` = :isPassed WHERE `exam_id` = :examId AND `student_id` = :studentId";
-    $sql = executeQuery($query, array(
+    $query
+         = "UPDATE `exam_grades` SET `passed` = :isPassed WHERE `exam_id` = :examId AND `student_id` = :studentId";
+    $sql = executeQuery(
+        $query, array(
         array(':isPassed', 0),
         array(':examId', $examId),
         array(':studentId', $studentId)
-    ));
+    )
+    );
 
-    if($sql) {
+    if ($sql) {
         return true;
     }
 
     return false;
 }
 
-function gradeCategoryByIdQuery($examId, $categoryId, $studentId, $grade, $comments)
-{
-    $query = "SELECT * FROM `student_category_grades` WHERE `exam_id` = :examId AND `category_id` = :catId AND `student_id` = :studentId";
-    $sql = executeQuery($query, array(
+function gradeCategoryByIdQuery($examId, $categoryId, $studentId, $grade,
+    $comments
+) {
+    $query
+         = "SELECT * FROM `student_category_grades` WHERE `exam_id` = :examId AND `category_id` = :catId AND `student_id` = :studentId";
+    $sql = executeQuery(
+        $query, array(
         array(':examId', $examId),
         array(':catId', $categoryId),
         array(':studentId', $studentId)
-    ));
+    )
+    );
 
-    if($sql) {
-        $query = "UPDATE `student_category_grades` SET `points` = :grade, `comment` = :comments WHERE `exam_id` = :examId AND `category_id` = :catId AND `student_id` = :studentId";
-        $sql = executeQuery($query, array(
+    if ($sql) {
+        $query
+             = "UPDATE `student_category_grades` SET `points` = :grade, `comment` = :comments WHERE `exam_id` = :examId AND `category_id` = :catId AND `student_id` = :studentId";
+        $sql = executeQuery(
+            $query, array(
             array(':grade', $grade),
             array(':comments', $comments),
             array(':examId', $examId),
             array(':catId', $categoryId),
             array(':studentId', $studentId)
-        ));
+        )
+        );
 
-        if($sql) {
+        if ($sql) {
             return true;
         }
+
         return false;
-    }
-    else {
-        $query = "INSERT INTO `student_category_gradea` VALUES (:examId, :catId, :studentId, :points, :isConflicted, :comments)";
-        $sql = executeQuery($query, array(
-           array(':examId', $examId),
-           array(':catId', $categoryId),
-           array(':studentId', $studentId),
-           array(':points', $grade),
-           array(':isConflicted', GRADER_NO_CONFLICT),
-           array(':comments', $comments)
-        ));
+    } else {
+        $query
+             = "INSERT INTO `student_category_gradea` VALUES (:examId, :catId, :studentId, :points, :isConflicted, :comments)";
+        $sql = executeQuery(
+            $query, array(
+            array(':examId', $examId),
+            array(':catId', $categoryId),
+            array(':studentId', $studentId),
+            array(':points', $grade),
+            array(':isConflicted', GRADER_NO_CONFLICT),
+            array(':comments', $comments)
+        )
+        );
 
-        if($sql) {
+        if ($sql) {
             return true;
         }
+
         return false;
     }
 }

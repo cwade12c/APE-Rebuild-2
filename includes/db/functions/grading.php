@@ -2,39 +2,46 @@
 /**
  * Functions for grading within db
  *
- * @author		Mathew McCain
- * @author      Curran Higgins
- * @category	APE
- * @package		APE_includes
- * @subpackage	Database
+ * @author         Mathew McCain
+ * @author         Curran Higgins
+ * @category       APE
+ * @package        APE_includes
+ * @subpackage     Database
  */
 
 // assign grader to exam/category
 function assignGrader(int $graderId, int $examId, int $categoryId, $submitted)
 {
-    if(accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
+    if (accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
         return assignGraderQuery($graderId, $examId, $categoryId, $submitted);
     }
 
     logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
+
     return false;
 }
 
 // remove grader from exam/category
 function removeGrader(int $graderId, int $examId, int $categoryId)
 {
-    if(accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
+    if (accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
         return removeGraderQuery($graderId, $examId, $categoryId);
     }
 
     logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
+
     return false;
 }
 
 // get graders for exam/category
 function getGradersByExam(int $examId)
 {
-    if(accountIsGrader("". $_SESSION['ewuId']) || accountIsAdmin($_SESSION['ewuId']) || DEBUG) {
+    if (accountIsGrader("" . $_SESSION['ewuId'])
+        || accountIsAdmin(
+            $_SESSION['ewuId']
+        )
+        || DEBUG
+    ) {
         return getAssignedGradersByExamIdQuery($examId);
     }
 
@@ -43,8 +50,9 @@ function getGradersByExam(int $examId)
 
 function getGradersByCategory(int $categoryId)
 {
-    if(accountIsGrader("".  $_SESSION['ewuId'] || accountIsAdmin($_SESSION['ewuId']) || DEBUG))
-    {
+    if (accountIsGrader(
+        "" . $_SESSION['ewuId'] || accountIsAdmin($_SESSION['ewuId']) || DEBUG
+    )) {
         return getAssignedGradersByCategoryIdQuery($categoryId);
     }
 
@@ -54,8 +62,9 @@ function getGradersByCategory(int $categoryId)
 // get assigned exams/category for grader
 function getExamsAndCategoriesByGrader(int $graderId)
 {
-    if (accountIsGrader("".  $_SESSION['ewuId'] || accountIsAdmin($_SESSION['ewuId']) || DEBUG))
-    {
+    if (accountIsGrader(
+        "" . $_SESSION['ewuId'] || accountIsAdmin($_SESSION['ewuId']) || DEBUG
+    )) {
         return getExamsAndCategoriesByGraderIdQuery($graderId);
     }
 
@@ -70,6 +79,7 @@ function isAllGradesSubmitted(int $examId)
     }
 
     logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
+
     return false;
 }
 
@@ -190,11 +200,15 @@ function failStudent(int $examId, int $studentId)
     logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
 }
 
-function gradeCategory(int $examId, int $categoryId, int $studentId, int $grade, string $comments)
-{
+function gradeCategory(int $examId, int $categoryId, int $studentId, int $grade,
+    string $comments
+) {
     if (accountIsGrader("" . $_SESSION['ewuId']) || DEBUG) {
         $cleanComments = sanitize($comments);
-        return gradeCategoryByIdQuery($examId, $categoryId, $studentId, $grade, $cleanComments);
+
+        return gradeCategoryByIdQuery(
+            $examId, $categoryId, $studentId, $grade, $cleanComments
+        );
     }
 
     logSecurityIncident(IS_NOT_GRADER, $_SESSION['ewuId']);

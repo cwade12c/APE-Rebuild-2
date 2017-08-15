@@ -19,7 +19,8 @@ function getExamsQuery(int $state, int $type)
         "SELECT `id` FROM `exams`"
         . " WHERE (%s && %s)", $stateStr, $typeStr
     );
-    $sql = executeQuery($query, $params);
+    $sql   = executeQuery($query, $params);
+
     return getQueryResults($sql);
 }
 
@@ -120,7 +121,7 @@ function buildFindExamStateString(int $state)
     // build string for state boolean statement
     // wrap each comparison w/ '()'
     if (count($stateCompares) > 1) {
-        $wrapCompare = function (string $val) {
+        $wrapCompare   = function (string $val) {
             return sprintf("(%s)", $val);
         };
         $stateCompares = array_map($wrapCompare, $stateCompares);
@@ -166,10 +167,11 @@ function buildFindExamTypeString(int $type)
 function getExamInformationQuery(int $id)
 {
     $query
-        = "SELECT `id`, `is_regular`, `start`, `cutoff`, "
+         = "SELECT `id`, `is_regular`, `start`, `cutoff`, "
         . " `length`, `passing_grade`, `location_id`, `state` "
         . " FROM `exams` WHERE (`id` = :id)";
     $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+
     return getQueryResultRow($sql);
 }
 
@@ -183,7 +185,8 @@ function getExamInformationQuery(int $id)
 function getExamStateQuery(int $id)
 {
     $query = "SELECT `state` FROM `exams` WHERE (`id` = :id)";
-    $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+    $sql   = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+
     return getQueryResultRow($sql);
 }
 
@@ -198,7 +201,8 @@ function getExamCategoriesQuery(int $id)
 {
     $query = "SELECT `category_id`, `points` "
         . "FROM `exam_categories` WHERE (`id` = :id)";
-    $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+    $sql   = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+
     return getQueryResults($sql);
 }
 
@@ -213,13 +217,15 @@ function getExamTeacherQuery(int $id)
 {
     $query = "SELECT `teacher_id` FROM `in_class_exams` "
         . " WHERE (`id` = :id)";
-    $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+    $sql   = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+
     return getQueryResult($sql);
 }
 
 
-function createExamQuery(DateTime $start, DateTime $cutoff, int $length, int $passingGrade, bool $isRegular = true)
-{
+function createExamQuery(DateTime $start, DateTime $cutoff, int $length,
+    int $passingGrade, bool $isRegular = true
+) {
     // TODO: this query, sort out arguments to allow some defaults (state)
 }
 
@@ -234,7 +240,7 @@ function setExamStateQuery(int $id, int $state)
     $query = "UPDATE `exams`"
         . "SET `state`=:state"
         . "WHERE `id`=:id;";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT),
             array(':nid', $state, PDO::PARAM_INT)

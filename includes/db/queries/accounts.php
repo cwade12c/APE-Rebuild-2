@@ -20,11 +20,12 @@
 function getAccountTypeQuery(string $accountID)
 {
     $query = "SELECT type FROM `accounts` WHERE (`id` = :id);";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':id', $accountID, PDO::PARAM_STR))
     );
-    $type = $sql->fetchColumn();
+    $type  = $sql->fetchColumn();
+
     return $type;
 }
 
@@ -39,7 +40,7 @@ function setAccountTypeQuery(string $accountID, int $type)
     $query = "UPDATE `accounts`"
         . "SET `type`=:type"
         . "WHERE `id`=:id;";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':id', $accountID, PDO::PARAM_STR),
             array(':type', $type, PDO::PARAM_INT)
@@ -61,7 +62,7 @@ function updateAccountIDQuery(string $accountID, string $newAccountID)
     $query = "UPDATE `accounts`"
         . "SET `id`=:nid"
         . "WHERE `id`=:id;";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':id', $accountID, PDO::PARAM_STR),
             array(':nid', $newAccountID, PDO::PARAM_STR)
@@ -85,7 +86,7 @@ function updateAccountInfoQuery(string $accountID,
 
     // get set string and params
     $ret = buildParamStringArr($firstName, $lastName, $email);
-    if (!$ret) {
+    if ( ! $ret) {
         return;
     }
     list($setStr, $params) = $ret;
@@ -97,7 +98,7 @@ function updateAccountInfoQuery(string $accountID,
         . "SET %s"
         . "WHERE `id`=:id;", $setStr
     );
-    $sql = executeQuery($query, $params);
+    $sql   = executeQuery($query, $params);
 
     // TODO: check for success (PDO->rowCount()) ?
 }
@@ -121,7 +122,7 @@ function buildParamStringArr(
     $updateLName = is_null($lastName);
     $updateEmail = is_null($email);
 
-    if (!$updateFName && !$updateLName && !$updateEmail) {
+    if ( ! $updateFName && ! $updateLName && ! $updateEmail) {
         return false;
     }
 
@@ -144,8 +145,8 @@ function buildParamStringArr(
     $buildSetStr = function (array $keys) {
         return implode('=', $keys);
     };
-    $setArr = array_map($buildSetStr, $setArr);
-    $setStr = implode(',', $setArr);
+    $setArr      = array_map($buildSetStr, $setArr);
+    $setStr      = implode(',', $setArr);
 
     return array($setStr, $params);
 }
@@ -159,14 +160,15 @@ function buildParamStringArr(
  */
 function accountExistsQuery(string $accountID)
 {
-    $query = "SELECT EXISTS("
+    $query  = "SELECT EXISTS("
         . "SELECT `id` from `accounts`"
         . "WHERE `id`=:id);";
-    $sql = executeQuery(
+    $sql    = executeQuery(
         $query, array(
             array(':id', $accountID, PDO::PARAM_STR))
     );
     $exists = getQueryResult($sql);
+
     return $exists;
 }
 
@@ -209,7 +211,8 @@ function createAccountQuery(string $accountID, int $type = ACCOUNT_TYPE_NONE,
 function getAccountIDsQuery()
 {
     $query = "SELECT `id` FROM `accounts`";
-    $sql = executeQuery($query);
+    $sql   = executeQuery($query);
+
     return getQueryResults($sql);
 }
 
@@ -221,7 +224,8 @@ function getAccountIDsQuery()
 function getAccountsQuery()
 {
     $query = "SELECT * FROM `accounts`";
-    $sql = executeQuery($query);
+    $sql   = executeQuery($query);
+
     return getQueryResults($sql);
 }
 
@@ -235,11 +239,12 @@ function getAccountsQuery()
 function getNumberOfAccountsByTypeQuery(int $type)
 {
     $query = "SELECT COUNT(*) FROM `accounts` WHERE `type`=:type";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':type', $type, PDO::PARAM_INT)
         )
     );
+
     return getQueryResult($sql);
 }
 
@@ -253,11 +258,12 @@ function getNumberOfAccountsByTypeQuery(int $type)
 function getIdsByTypeQuery(int $type)
 {
     $query = "SELECT `id` FROM `accounts` WHERE `type`=:type";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':type', $type, PDO::PARAM_INT)
         )
     );
+
     return getQueryResults($sql);
 }
 
@@ -272,11 +278,12 @@ function getIdsByTypeQuery(int $type)
 function getFullAccountInformationByTypeQuery(int $type)
 {
     $query = "SELECT * FROM `accounts` WHERE `type`=:type";
-    $sql = executeQuery(
+    $sql   = executeQuery(
         $query, array(
             array(':type', $type, PDO::PARAM_INT)
         )
     );
+
     return getQueryResults($sql);
 }
 

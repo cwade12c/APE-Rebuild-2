@@ -3,10 +3,10 @@
  * Functions for interacting with exams in database
  * e.g. assigning seats, getting registered students, registering students
  *
- * @author		Mathew McCain
- * @category	APE
- * @package		APE_includes
- * @subpackage	Database
+ * @author         Mathew McCain
+ * @category       APE
+ * @package        APE_includes
+ * @subpackage     Database
  */
 
 // register student

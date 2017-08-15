@@ -104,11 +104,12 @@ function setReportRows(int $id, array $rows = array())
 function isValidRows(array $rows)
 {
     foreach ($rows as $val) {
-        if (!is_int($val)) {
+        if ( ! is_int($val)) {
             return false;
         } elseif ($val < 0) {
             return false;
         }
     }
+
     return true;
 }

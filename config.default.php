@@ -12,7 +12,7 @@ DEFINE(
     "CAS_CERT_PATH", "/make/this/absolute/to/some/pem/file.pem"
 ); //should be an absolute path to a .pem file
 DEFINE(
-    "LOG_PATH",      "/make/this/absolute/to/some.log"
+    "LOG_PATH", "/make/this/absolute/to/some.log"
 ); //should be an absolute path to a .log file
 
 //Database configurations
@@ -31,8 +31,14 @@ DEFINE("MINIMUM_NUMBER_OF_ADMINS", 1);
 
 //Custom site configurations
 DEFINE("SITE_TITLE", "EWU Advanced Placement Exam");
-DEFINE("SITE_KEY_WORDS", "Eastern,Washington,University,Computer,Science,CS,Advanced,Programming,Exam,APE");
-DEFINE("SITE_DESCRIPTION", "Register and manage your EWU Computer Science Advanced Programming Exam.");
+DEFINE(
+    "SITE_KEY_WORDS",
+    "Eastern,Washington,University,Computer,Science,CS,Advanced,Programming,Exam,APE"
+);
+DEFINE(
+    "SITE_DESCRIPTION",
+    "Register and manage your EWU Computer Science Advanced Programming Exam."
+);
 DEFINE("SITE_AUTHOR", "Eastern Washington University");
 DEFINE("HOME_PAGE", DOMAIN . "home.php");
 DEFINE("AUTH_PAGE", DOMAIN . "login.php");

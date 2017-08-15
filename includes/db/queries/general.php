@@ -10,6 +10,9 @@
  * @subpackage    Database
  */
 
+// TODO: change try/catch to just allow exceptions to be thrown
+/// once error checking is implemented in the db functions
+
 /**
  * general query method
  * prepares given query string, executes
@@ -113,6 +116,28 @@ function getQueryResults(PDOStatement $sql)
     } catch (PDOException $error) {
         if (DEBUG) {
             print_r($sql->errorInfo());
+            die($error->getMessage());
+        }
+    }
+}
+
+/**
+ * Grab the ID of the last inserted row.
+ * Just a wrapper for PDO::lastInsertId()
+ *
+ * @param string $name
+ *
+ * @return string
+ */
+function getLastInsertedID(string $name = null)
+{
+    try {
+        global $db;
+
+        return $db->lastInsertId($name);
+    } catch (PDOException $error) {
+        if (DEBUG) {
+            print_r($db->errorInfo());
             die($error->getMessage());
         }
     }

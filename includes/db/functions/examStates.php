@@ -8,6 +8,7 @@
  * @subpackage     Database
  */
 
+// TODO: using an enum for the states would allow these functions to be simplified
 
 /**
  * Check if given exam state allows the exam information to be updated
@@ -19,7 +20,7 @@
  */
 function doesExamStateAllowUpdates(int $state)
 {
-    if ( ! isExamStateValid($state)) {
+    if (!isExamStateValid($state)) {
         throw new InvalidArgumentException('Invalid exam state: ' . $state);
     }
 
@@ -52,7 +53,7 @@ function doesExamStateAllowUpdates(int $state)
  */
 function doesExamStateAllowRegistration(int $state)
 {
-    if ( ! isExamStateValid($state)) {
+    if (!isExamStateValid($state)) {
         throw new InvalidArgumentException('Invalid exam state: ' . $state);
     }
 
@@ -86,7 +87,7 @@ function doesExamStateAllowRegistration(int $state)
  */
 function doesExamStateAllowForcedRegistration(int $state)
 {
-    if ( ! isExamStateValid($state)) {
+    if (!isExamStateValid($state)) {
         throw new InvalidArgumentException('Invalid exam state: ' . $state);
     }
 
@@ -195,7 +196,7 @@ function refreshExam(int $id)
      */
 
     $state = null;
-    if ( ! isExamStateValid($state)) {
+    if (!isExamStateValid($state)) {
         throw new InvalidArgumentException('Invalid exam state: ' . $state);
     }
 

@@ -3,6 +3,7 @@
  * Functions for grading within db
  *
  * @author		Mathew McCain
+ * @author      Curran Higgins
  * @category	APE
  * @package		APE_includes
  * @subpackage	Database
@@ -105,7 +106,7 @@ function getNumberOfSubmittedGraders(int $examId)
 }
 
 function getNumberOfUnsubmittedGraders(int $examId)
-{as
+{
     if (accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
         return getNumberOfUnsubmittedGradersByExamIdQuery($examId);
     }
@@ -115,17 +116,46 @@ function getNumberOfUnsubmittedGraders(int $examId)
 
 
 // state shift from grading to finalizing
+function setExamToFinalizing(int $examId)
+{
+    setExamState($examId, EXAM_STATE_FINALIZING);
+}
+
+
 // check student/category grades for conflicts between graders
+function getStudentCategoryGradeConflicts(int $examId)
+{
+    if (accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
+        return getStudentCategoryGradeConflictsByExamIdQuery($examId);
+    }
+
+    logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
+}
 
 // get all student category grades for exam from all graders
 /// only for 1 category
 /// return [ [grader_id, grade] , ... ]
 
+function getCategoryGrades(int $categoryId)
+{
+    return getGraderCategoryGradesByCategoryIdQuery($categoryId);
+}
+
 // get student grade for category
 /// the average/set final
 
+function getStudentAverageByCategory(int $studentId, int $categoryId)
+{
+    return getStudentAverageByCategoryIdQuery($studentId, $categoryId);
+}
+
 // get all student grades for exam
 /// return array [ [category_id, grade], ... ]
+
+function getStudentGradesByExam(int $examId)
+{
+    return getStudentCategoryGradesByExamIdQuery($examId);
+}
 
 // get all student grades of student by studentId
 function getStudentGrades(int $studentId)
@@ -141,6 +171,35 @@ function getStudentGrades(int $studentId)
 
 // pass/fail student, set comment/grade for category
 /// separate one for exam
+
+function passStudent(int $examId, int $studentId)
+{
+    if (accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
+        return passStudentQuery($examId, $studentId);
+    }
+
+    logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
+}
+
+function failStudent(int $examId, int $studentId)
+{
+    if (accountIsAdmin("" . $_SESSION['ewuId']) || DEBUG) {
+        return failStudentQuery($examId, $studentId);
+    }
+
+    logSecurityIncident(IS_NOT_ADMIN, $_SESSION['ewuId']);
+}
+
+function gradeCategory(int $examId, int $categoryId, int $studentId, int $grade, string $comments)
+{
+    if (accountIsGrader("" . $_SESSION['ewuId']) || DEBUG) {
+        $cleanComments = sanitize($comments);
+        return gradeCategoryByIdQuery($examId, $categoryId, $studentId, $grade, $cleanComments);
+    }
+
+    logSecurityIncident(IS_NOT_GRADER, $_SESSION['ewuId']);
+}
+
 
 // finalize exam
 /// check in correct state

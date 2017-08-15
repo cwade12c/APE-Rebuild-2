@@ -11,6 +11,9 @@ DEFINE(
 DEFINE(
     "CAS_CERT_PATH", "/make/this/absolute/to/some/pem/file.pem"
 ); //should be an absolute path to a .pem file
+DEFINE(
+    "LOG_PATH",      "/make/this/absolute/to/some.log"
+); //should be an absolute path to a .log file
 
 //Database configurations
 DEFINE("HOST", "localhost");

@@ -137,9 +137,14 @@ function getGraderCategoryGradesByExamId(int $examId)
 }
 
 //get grader category grades by exam category id
-function getGraderCategoryGradesByCategoryId(int $categoryId)
+function getGraderCategoryGradesByCategoryIdQuery(int $categoryId)
 {
+    $query = "SELECT (`grader_id`, `points`) FROM `grader_category_grades` WHERE `category_id` = :id";
+    $sql = executeQuery($query, array(
+        array(':id', $categoryId)
+    ));
 
+    return getQueryResults($sql);
 }
 
 //get grader category grades by exam id and category id
@@ -174,9 +179,14 @@ function getStudentCategoryGrades()
 }
 
 //get student category grades by exam id
-function getStudentCategoryGradesByExamId(int $examId)
+function getStudentCategoryGradesByExamIdQuery(int $examId)
 {
-
+    $sql = "SELECT (`category_id`, `student_id`, `points`) FROM `student_category_grades` WHERE `exam_id` = :id ORDER BY `student_id`";
+    $query = executeQuery($sql, array(
+        array(':id', $examId)
+        )
+    );
+    return getQueryResults($query);
 }
 
 //get student category grades by category id
@@ -286,6 +296,102 @@ function getNumberOfUnsubmittedGradersByExamIdQuery(int $examId)
     );
 
     return getQueryResult($sql);
+}
+
+function getStudentAverageByCategoryIdQuery(int $studentId, int $categoryId)
+{
+    $query = "SELECT avg(points) FROM `student_category_grades` WHERE `student_id` = :studentId AND `category_id` = :categoryId";
+    $sql = executeQuery($query, array(
+        array(':studentId', $studentId),
+        array(':categoryId', $categoryId)
+    ));
+
+    return getQueryResult($sql);
+}
+
+function getStudentCategoryGradeConflictsByExamIdQuery(int $examId)
+{
+    $query = "SELECT `student_id` FROM `student_category_grades` WHERE `exam_id` = :id AND `conflict` = :isConflicted";
+    $sql = executeQuery($query, array(
+        array(':id', $examId),
+        array(':isConflicted', 1)
+    ));
+
+    return getQueryResults($sql);
+}
+
+function passStudentQuery(int $examId, int $studentId)
+{
+    $query = "UPDATE `exam_grades` SET `passed` = :isPassed WHERE `exam_id` = :examId AND `student_id` = :studentId";
+    $sql = executeQuery($query, array(
+        array(':isPassed', 1),
+        array(':examId', $examId),
+        array(':studentId', $studentId)
+    ));
+
+    if($sql) {
+        return true;
+    }
+
+    return false;
+}
+
+function failStudentQuery(int $examId, int $studentId)
+{
+    $query = "UPDATE `exam_grades` SET `passed` = :isPassed WHERE `exam_id` = :examId AND `student_id` = :studentId";
+    $sql = executeQuery($query, array(
+        array(':isPassed', 0),
+        array(':examId', $examId),
+        array(':studentId', $studentId)
+    ));
+
+    if($sql) {
+        return true;
+    }
+
+    return false;
+}
+
+function gradeCategoryByIdQuery($examId, $categoryId, $studentId, $grade, $comments)
+{
+    $query = "SELECT * FROM `student_category_grades` WHERE `exam_id` = :examId AND `category_id` = :catId AND `student_id` = :studentId";
+    $sql = executeQuery($query, array(
+        array(':examId', $examId),
+        array(':catId', $categoryId),
+        array(':studentId', $studentId)
+    ));
+
+    if($sql) {
+        $query = "UPDATE `student_category_grades` SET `points` = :grade, `comment` = :comments WHERE `exam_id` = :examId AND `category_id` = :catId AND `student_id` = :studentId";
+        $sql = executeQuery($query, array(
+            array(':grade', $grade),
+            array(':comments', $comments),
+            array(':examId', $examId),
+            array(':catId', $categoryId),
+            array(':studentId', $studentId)
+        ));
+
+        if($sql) {
+            return true;
+        }
+        return false;
+    }
+    else {
+        $query = "INSERT INTO `student_category_gradea` VALUES (:examId, :catId, :studentId, :points, :isConflicted, :comments)";
+        $sql = executeQuery($query, array(
+           array(':examId', $examId),
+           array(':catId', $categoryId),
+           array(':studentId', $studentId),
+           array(':points', $grade),
+           array(':isConflicted', GRADER_NO_CONFLICT),
+           array(':comments', $comments)
+        ));
+
+        if($sql) {
+            return true;
+        }
+        return false;
+    }
 }
 
 ?>

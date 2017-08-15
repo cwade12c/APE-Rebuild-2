@@ -138,7 +138,7 @@ function buildDateTimeStrParam(string $key, DateTime $datetime)
  *
  * @param string $value
  *
- * @return false|string
+ * @return mixed
  */
 function buildDateTimeFromQuery(string $value)
 {

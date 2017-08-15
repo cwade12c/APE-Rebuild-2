@@ -156,4 +156,88 @@ function buildFindExamTypeString(int $type)
     return $typeStr;
 }
 
-function getExamInformationQuery(int $id) {}
+/**
+ * Get exam row w/ given ID
+ *
+ * @param int $id
+ *
+ * @return mixed
+ */
+function getExamInformationQuery(int $id)
+{
+    $query
+        = "SELECT `id`, `is_regular`, `start`, `cutoff`, "
+        . " `length`, `passing_grade`, `location_id`, `state` "
+        . " FROM `exams` WHERE (`id` = :id)";
+    $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+    return getQueryResultRow($sql);
+}
+
+/**
+ * Get state for given exam ID
+ *
+ * @param int $id
+ *
+ * @return mixed
+ */
+function getExamStateQuery(int $id)
+{
+    $query = "SELECT `state` FROM `exams` WHERE (`id` = :id)";
+    $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+    return getQueryResultRow($sql);
+}
+
+/**
+ * Get categories for an exam
+ *
+ * @param int $id
+ *
+ * @return mixed
+ */
+function getExamCategoriesQuery(int $id)
+{
+    $query = "SELECT `category_id`, `points` "
+        . "FROM `exam_categories` WHERE (`id` = :id)";
+    $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+    return getQueryResults($sql);
+}
+
+/**
+ * Get teacher id for an in class exam
+ *
+ * @param int $id
+ *
+ * @return mixed
+ */
+function getExamTeacherQuery(int $id)
+{
+    $query = "SELECT `teacher_id` FROM `in_class_exams` "
+        . " WHERE (`id` = :id)";
+    $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+    return getQueryResult($sql);
+}
+
+
+function createExamQuery(DateTime $start, DateTime $cutoff, int $length, int $passingGrade, bool $isRegular = true)
+{
+    // TODO: this query, sort out arguments to allow some defaults (state)
+}
+
+/**
+ * Query to set the state of an exam
+ *
+ * @param int $id
+ * @param int $state
+ */
+function setExamStateQuery(int $id, int $state)
+{
+    $query = "UPDATE `exams`"
+        . "SET `state`=:state"
+        . "WHERE `id`=:id;";
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $id, PDO::PARAM_INT),
+            array(':nid', $state, PDO::PARAM_INT)
+        )
+    );
+}

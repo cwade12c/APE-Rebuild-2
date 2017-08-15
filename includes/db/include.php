@@ -25,7 +25,9 @@ require_once INCLUDES_PATH . 'db/queries/categories.php';
 require_once INCLUDES_PATH . 'db/queries/reports.php';
 
 /* functions */
+require_once INCLUDES_PATH . 'db/functions/general.php';
 require_once INCLUDES_PATH . 'db/functions/accounts.php';
+require_once INCLUDES_PATH . 'db/functions/examStates.php';
 require_once INCLUDES_PATH . 'db/functions/exams.php';
 require_once INCLUDES_PATH . 'db/functions/examInteractions.php';
 require_once INCLUDES_PATH . 'db/functions/grading.php';

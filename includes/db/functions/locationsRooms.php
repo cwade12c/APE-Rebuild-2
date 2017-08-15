@@ -8,7 +8,6 @@
  * @subpackage	Database
  */
 
-
 // create location
 /// check for duplicate names
 

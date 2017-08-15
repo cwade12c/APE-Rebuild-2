@@ -18,7 +18,7 @@
  */
 function getExamsAll(int $type = GET_EXAMS_TYPE_BOTH)
 {
-    return getExams(GET_EXAMS_ALL, $type);
+    return getExamsExtended(GET_EXAMS_ALL, $type);
 }
 
 /**
@@ -31,7 +31,7 @@ function getExamsAll(int $type = GET_EXAMS_TYPE_BOTH)
  */
 function getExamsArchived(int $type = GET_EXAMS_TYPE_BOTH)
 {
-    return getExams(GET_EXAMS_ARCHIVED, $type);
+    return getExamsExtended(GET_EXAMS_ARCHIVED, $type);
 }
 
 /**
@@ -43,7 +43,7 @@ function getExamsArchived(int $type = GET_EXAMS_TYPE_BOTH)
  */
 function getExamsNonArchived(int $type = GET_EXAMS_TYPE_BOTH)
 {
-    return getExams(GET_EXAMS_NON_ARCHIVED, $type);
+    return getExamsExtended(GET_EXAMS_NON_ARCHIVED, $type);
 }
 
 /**
@@ -56,7 +56,7 @@ function getExamsNonArchived(int $type = GET_EXAMS_TYPE_BOTH)
  */
 function getExamsFinalizing(int $type = GET_EXAMS_TYPE_BOTH)
 {
-    return getExams(GET_EXAMS_FINALIZING, $type);
+    return getExamsExtended(GET_EXAMS_FINALIZING, $type);
 }
 
 /**
@@ -69,7 +69,7 @@ function getExamsFinalizing(int $type = GET_EXAMS_TYPE_BOTH)
  */
 function getExamsGrading(int $type = GET_EXAMS_TYPE_BOTH)
 {
-    return getExams(GET_EXAMS_GRADING, $type);
+    return getExamsExtended(GET_EXAMS_GRADING, $type);
 }
 
 /**
@@ -82,7 +82,7 @@ function getExamsGrading(int $type = GET_EXAMS_TYPE_BOTH)
  */
 function getExamsUpcoming(int $type = GET_EXAMS_TYPE_BOTH)
 {
-    return getExams(GET_EXAMS_OPEN, $type);
+    return getExamsExtended(GET_EXAMS_OPEN, $type);
 }
 
 /**
@@ -96,83 +96,173 @@ function getExamsUpcoming(int $type = GET_EXAMS_TYPE_BOTH)
  *
  * @return mixed
  */
-function getExams(int $state, int $type)
+function getExamsExtended(int $state, int $type)
 {
     // TODO: validate state and type valid
     return getExamsQuery($state, $type);
 }
 
 // TODO: get exams w/ teacher ID, archived / non-archived
-/// rename getExams to getExamsExtended
 
-// search exams
+// TODO: search exams
 /// state, date/time (quarter?), in class
 /// location/rooms
 
-// get exam information
+/**
+ * Get all information from exam table entry
+ *
+ * @param int $id
+ *
+ * @return mixed
+ */
 function getExamInformation(int $id)
 {
     // TODO: validate id exists
     // TODO: convert information from query results
-    return getExamInformationQuery($id);
+    // get exam row
+    $info = getExamInformationQuery($id);
+    // TODO: check that row returned (or exam id existed)
+
+    // convert date time values
+    $info['start'] = buildDateTimeFromQuery($info['start']);
+    $info['cutoff'] = buildDateTimeFromQuery($info['cutoff']);
+
+    return $info;
 }
 
-// get exam categories
+/**
+ * Get state for given exam ID
+ *
+ * @param int $id
+ *
+ * @return mixed
+ */
+function getExamState(int $id)
+{
+    // TODO: validate id exists
+    return getExamStateQuery($id);
+}
+
+/**
+ * Gets all categories for an exam, will contain
+ * category_id and the points value set.
+ *
+ * @param int $id
+ *
+ * @return mixed
+ */
 function getExamCategories(int $id)
 {
     // TODO: validate id exists
+    // TODO: pull category id information? (name, default points)
+    return getExamCategoriesQuery($id);
 }
 
-// get teacher id for in class exam
-function getInClassExamTeacher(int $id) {
+/**
+ * Get teacher id for the exam
+ *
+ * @param int $id
+ *
+ * @return mixed
+ */
+function getInClassExamTeacher(int $id)
+{
     // TODO: validate id exists
     // TODO: determine if exam is in class
-    // TODO: get teacher id
+    return getExamTeacherQuery($id);
 }
 
-// create exam
-function createExam()
-{
-    // arguments
-    // start datetime, cutoff registration datetime
-    // int length, int passing_grade
-    // int location id (can be null?)
-
+/**
+ * Create a regular exam
+ *
+ * @param DateTime $start
+ * @param DateTime $cutoff
+ * @param int      $minutes
+ * @param int      $passing_grade
+ * @param array    $categories
+ * @param int      $locationID
+ */
+function createExam(DateTime $start, DateTime $cutoff, int $minutes,
+    int $passing_grade, array $categories, int $locationID
+) {
     // call extended create
-
+    createExamExtended(
+        $start, $cutoff, $minutes, $passing_grade, $categories, $locationID
+    );
 }
 
-// create in class exam
-function createInClassExam()
-{
-    // arguments
-    // start datetime, cutoff registration datetime
-    // int length, int passing_grade
-    // int location id (can be null?)
-    // int teacher id
-    // list of category ids
-
+/**
+ * Create an in-class exam
+ *
+ * @param DateTime $start
+ * @param DateTime $cutoff
+ * @param int      $minutes
+ * @param int      $passingGrade
+ * @param array    $categories
+ * @param int      $locationID
+ * @param string   $teacherID
+ */
+function createInClassExam(DateTime $start, DateTime $cutoff, int $minutes,
+    int $passingGrade, array $categories, int $locationID, string $teacherID
+) {
     // call extended create
+    createExamExtended(
+        $start, $cutoff, $minutes, $passingGrade, $categories, $locationID,
+        true, $teacherID
+    );
 }
 
-// create exam extended (internal only)
-function createExamExtended()
-{
-    // arguments-
+/**
+ * Extended function to create an exam
+ * Only intended for internal use, use createExam() or createInClassExam()
+ *
+ * @param DateTime $start
+ * @param DateTime $cutoff
+ * @param int      $minutes
+ * @param int      $passingGrade
+ * @param array    $categories
+ * @param int      $locationID
+ * @param bool     $inClass   set to true if an in class exam
+ * @param string   $teacherID if in class id, the teacher id associated
+ */
+function createExamExtended(DateTime $start, DateTime $cutoff, int $minutes,
+    int $passingGrade, array $categories, int $locationID,
+    bool $inClass = false, string $teacherID = ""
+) {
+    // validate arguments
+    validateDates($start, $cutoff);
+    validateExamLength($minutes);
+    validateLocationID($locationID);
+    if ($inClass) {
+        validateTeacherID($teacherID);
+    }
+    validateExamCategories($passingGrade, $categories);
 
-    // TODO: validate arguments
     // TODO: check for conflicting information w/ existing non-archived exams
+
+    // create exam
+    // TODO: create transaction for creation ?
+
+    $id = createExamQuery($start, $cutoff, $minutes, $passingGrade);
+
+    // create exam query
+    // get exam id
+    // if in class, set teacher id
+    // create exam categories
+    // set exam state
 
     // TODO: validate success
     // TODO: return exam id ?
 }
 
-// update exam
+// TODO: add/remove exam categories ?
+
+// TODO: update exam
 function updateExam(int $id, DateTime $start, DateTime $cutoff, int $length,
-    int $passing_grade, int $location_id, array $categoryIDs
+    int $passingGrade, int $location_id, array $categoryIDs
 ) {
     // TODO: validate arguments
-    /// id exists, datetime(s) valid, length valid, passing_grade valid (reachable)
+    /// id exists, datetime(s) valid, length valid, passingGrade valid (reachable)
     /// location (registration count?)
     // TODO: does state allow editing ?
 
@@ -183,17 +273,23 @@ function updateExam(int $id, DateTime $start, DateTime $cutoff, int $length,
     // TODO: re-assign seats for location change
 
     // TODO: validate success
-}
-
-// refresh exam state, transition
-function refreshExam(int $id)
-{
-    /**
-     * get exam information
-     * check state, check conditions accordingly and transition
-     */
+    // TODO: refresh exam ?
 }
 
 // set state of exam (internal)
-/// handle transistions ?
-function setExamState(int $id, int $state) {}
+/// handle transition ?
+function setExamState(int $id, int $state)
+{
+    // TODO: validate id exists
+
+    if (!isExamStateValid($state)) {
+        throw new InvalidArgumentException('Illegal exam state: ' . $state);
+    }
+
+    // TODO: check if current state can be transitioned to given state
+    setExamStateQuery($id, $state);
+
+    // TODO: check for success
+}
+
+// set exam location

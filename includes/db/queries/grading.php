@@ -409,7 +409,7 @@ function gradeCategoryByIdQuery($examId, $categoryId, $studentId, $grade,
         return false;
     } else {
         $query
-             = "INSERT INTO `student_category_gradea` VALUES (:examId, :catId, :studentId, :points, :isConflicted, :comments)";
+             = "INSERT INTO `student_category_grades` VALUES (:examId, :catId, :studentId, :points, :isConflicted, :comments)";
         $sql = executeQuery(
             $query, array(
             array(':examId', $examId),

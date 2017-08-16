@@ -220,7 +220,12 @@ function createInClassExam(DateTime $start, DateTime $cutoff, int $minutes,
  * @param DateTime $cutoff
  * @param int      $minutes
  * @param int      $passingGrade
- * @param array    $categories
+ * @param array    $categories array of exam category information
+ *                             Each index must follow format
+ *                             array(
+ *                             'id' => category id
+ *                             'points' => points possible
+ *                             )
  * @param int      $locationID
  * @param bool     $inClass   set to true if an in class exam
  * @param string   $teacherID if in class id, the teacher id associated
@@ -239,18 +244,17 @@ function createExamExtended(DateTime $start, DateTime $cutoff, int $minutes,
     validateExamCategories($passingGrade, $categories);
 
     // TODO: check for conflicting information w/ existing non-archived exams
+    // TODO: create transaction for query set
 
     // create exam
-    // TODO: create transaction for creation ?
-
-    createExamQuery($start, $cutoff, $minutes, $passingGrade);
+    createExamQuery($start, $cutoff, $minutes, $passingGrade, $locationID, !$inClass);
     $id = getLastInsertedID();
 
     // create in class entry
-
+    createExamInClassQuery($id, $teacherID);
 
     // create exam categories
-    
+    createExamCategoriesQuery($id, $categories);
 
     // set exam state
     setExamState($id, EXAM_STATE_HIDDEN);

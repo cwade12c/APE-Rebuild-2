@@ -15,14 +15,17 @@
  */
 function getUpcomingExams()
 {
-    $sql    = executeQuery("SELECT * FROM exams");
-    $result = getQueryResults($sql);
+    $sql = "SELECT * FROM `exams` WHERE `state` = :state";
+    $query = executeQuery($sql, array(
+        array(":state", EXAM_STATE_OPEN)
+    ));
+    $results = getQueryResults($query);
 
     $currentDate  = date('Y-m-d G:i:s');
     $currentDate  = date_create($currentDate);
     $upcomingApes = array();
 
-    foreach ($result as &$value) {
+    foreach ($results as &$value) {
         $examDate         = date_create($value["start"]);
         $differenceInTime = date_diff($examDate, $currentDate);
 
@@ -39,7 +42,7 @@ function getUpcomingExams()
 }
 
 /**
- * @author  Curran Higgins
+ *
  *
  * @param $exam
  */

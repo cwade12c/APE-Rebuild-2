@@ -9,6 +9,3 @@ if (userIsLoggedIn()) {
 echo "<nav><a style='float:right;' href='login.php'>Login</a></nav><br><hr />";
 
 //getUpcomingExams();
-
-
-?>

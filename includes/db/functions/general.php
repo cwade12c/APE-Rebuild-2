@@ -12,6 +12,32 @@
 // (outside just db functions)
 
 /**
+ * Validates all arguments related to exam attributes
+ * Argument exception will be thrown if any issues found
+ *
+ * @param DateTime $start
+ * @param DateTime $cutoff
+ * @param int      $minutes
+ * @param int      $passingGrade
+ * @param array    $categories
+ * @param int      $locationID
+ * @param bool     $inClass
+ * @param string   $teacherID
+ */
+function validateExamAttributes(DateTime $start, DateTime $cutoff, int $minutes,
+    int $passingGrade, array $categories, int $locationID,
+    bool $inClass = false, string $teacherID = ""
+) {
+    validateDates($start, $cutoff);
+    validateExamLength($minutes);
+    validateLocationID($locationID);
+    if ($inClass) {
+        validateTeacherID($teacherID);
+    }
+    validateExamCategories($passingGrade, $categories);
+}
+
+/**
  * Checks if start and cutoff datetimes for an exam are valid
  * if any issues are found, an invalid argument exception is thrown.
  * Helper method for exam functions.
@@ -99,6 +125,17 @@ function validateCategoryID(int $id)
 {
     // TODO: validate category id, exists
     /// throw exception if not valid
+}
+
+/**
+ * Validate the given exam ID is valid
+ * Throws argument exception if there is an issue
+ *
+ * @param int $id
+ */
+function validateExamID(int $id)
+{
+    // TODO: validate exam id, exists
 }
 
 /**

@@ -350,3 +350,22 @@ function setExamStateQuery(int $id, int $state)
         )
     );
 }
+
+/**
+ * Query to set location ID of an exam
+ *
+ * @param int $id
+ * @param int $locationID
+ */
+function setExamLocationQuery(int $id, int $locationID)
+{
+    $query = "UPDATE `exams`"
+        . "SET `location_id`=:locID"
+        . "WHERE `id`=:id;";
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $id, PDO::PARAM_INT),
+            array(':locID', $locationID, PDO::PARAM_INT)
+        )
+    );
+}

@@ -44,6 +44,7 @@ function executeQuery(string $query, array $params = array())
     }
 
     try {
+        // TODO: check true/false return of execute
         $sql->execute();
 
         return $sql;

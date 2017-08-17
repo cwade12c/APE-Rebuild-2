@@ -112,6 +112,39 @@ function doesExamStateAllowForcedRegistration(int $state)
 }
 
 /**
+ * Check if the given exam state allows editing of exam attributes
+ *
+ * @param int $state
+ *
+ * @return bool
+ */
+function doesExamStateAllowEdits(int $state)
+{
+    if (!isExamStateValid($state)) {
+        throw new InvalidArgumentException('Invalid exam state: ' . $state);
+    }
+
+    switch ($state) {
+        // allows
+        case EXAM_STATE_HIDDEN:
+        case EXAM_STATE_OPEN:
+        case EXAM_STATE_CLOSED:
+        case EXAM_STATE_IN_PROGRESS:
+            return true;
+        // does not allow
+        case EXAM_STATE_GRADING:
+        case EXAM_STATE_FINALIZING:
+        case EXAM_STATE_ARCHIVED:
+            return false;
+        // invalid state
+        default:
+            throw new InvalidArgumentException(
+                'Unhandled exam state: ' . $state
+            );
+    }
+}
+
+/**
  * Check if given exam state is valid (recognized in 'db/constants.php')
  *
  * @param int $state

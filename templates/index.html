@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Webpage</title>
+</head>
+<body>
+<h2>My Twig Page</h2>
+
+
+
+<p>{{ firstName }} {{ lastName }}</p>
+
+<ul>
+    {% for student in students %}
+        <li>{{ student.firstName }}</li>
+    {% endfor %}
+</ul>
+
+
+</body>
+</html>

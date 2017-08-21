@@ -1,0 +1,39 @@
+{
+    "require": {
+        "twig/twig": "2.0.*"
+    },
+    "autoload": {
+        "files": [
+            "vendor/phpcas/CAS.php",
+            "includes/db/constants.php",
+            "includes/db/dbConstants.php",
+            "includes/db/dbExceptions.php",
+            "includes/db/dbQueriesGrading.php",
+            "includes/db/dbQueriesReports.php",
+            "includes/db/exceptions.php",
+            "includes/db/functions/accounts.php",
+            "includes/db/functions/categories.php",
+            "includes/db/functions/examInteractions.php",
+            "includes/db/functions/exams.php",
+            "includes/db/functions/examStates.php",
+            "includes/db/functions/general.php",
+            "includes/db/functions/grading.php",
+            "includes/db/functions/locationsRooms.php",
+            "includes/db/functions/reports.php",
+            "includes/db/queries/accounts.php",
+            "includes/db/queries/categories.php",
+            "includes/db/queries/examInteractions.php",
+            "includes/db/queries/exams.php",
+            "includes/db/queries/general.php",
+            "includes/db/queries/grading.php",
+            "includes/db/queries/locationsRooms.php",
+            "includes/db/queries/reports.php",
+            "includes/fnc/exams.php",
+            "includes/securityConstants.php",
+            "includes/sso.inc.php",
+            "includes/templates.inc.php",
+            "includes/test.php",
+            "includes/utils.inc.php"
+        ]
+    }
+}

@@ -6,14 +6,26 @@ DEFINE("DEBUG", true); //set to true to display error information
 
 //Paths configurations
 DEFINE(
-    "INCLUDES_PATH", "/make/this/an/absolute/path"
-); //should be an absolute path
+    "INCLUDES_PATH", "/make/this/an/absolute/path/"
+); //should be an absolute path with trailing forward slash
 DEFINE(
     "CAS_CERT_PATH", "/make/this/absolute/to/some/pem/file.pem"
 ); //should be an absolute path to a .pem file
 DEFINE(
     "LOG_PATH", "/make/this/absolute/to/some.log"
 ); //should be an absolute path to a .log file
+DEFINE(
+    "VENDOR_PATH", "/path/to/vendor/includes/"
+); //should be an absolute path with a trailing forward slash
+DEFINE(
+    "TEMPLATES_PATH", "/path/to/twig/html/templates/"
+); //should be an absolute path with a trailing forward slash
+DEFINE(
+    "CACHE_PATH", "/path/to/twig/cache/"
+); //should be an absolute path with a trailing forward slash
+DEFINE(
+    "AUTOLOADER_PATH", VENDOR_PATH . "autoload.php"
+); //should be the path to composer's generated autoload file
 
 //Database configurations
 DEFINE("HOST", "localhost");
@@ -54,11 +66,9 @@ try {
 
 session_start();
 
-require_once(INCLUDES_PATH . 'includes.php');
+require_once(AUTOLOADER_PATH);
 
 if (DEBUG == true) {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
 }
-
-?>

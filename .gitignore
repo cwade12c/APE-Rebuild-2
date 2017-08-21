@@ -1,4 +1,5 @@
 *.sql
+*.lock
 .idea/
 credentials.php
 creds.php

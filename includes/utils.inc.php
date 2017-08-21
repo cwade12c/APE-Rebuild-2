@@ -11,7 +11,7 @@ function sanitize($input)
     return htmlentities($input);
 }
 
-function logSecurityIncident(str $event, $extendedInfo)
+function logSecurityIncident(string $event, string $extendedInfo)
 {
     if (is_writable(LOG_PATH)) {
         if ( ! $handle = fopen(LOG_PATH, 'a')) {

@@ -233,4 +233,5 @@ function refreshExam(int $id)
         throw new InvalidArgumentException('Invalid exam state: ' . $state);
     }
 
+    // TODO: populate function
 }

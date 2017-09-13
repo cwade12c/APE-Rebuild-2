@@ -55,9 +55,9 @@ function validateDates(DateTime $start, DateTime $cutoff)
     $unixStart = $start->getTimestamp();
     $unixCutoff = $cutoff->getTimestamp();
     // check that start datetime is before/on cutoff datetime
-    if ($unixStart > $unixCutoff) {
+    if ($unixStart < $unixCutoff) {
         throw new InvalidArgumentException(
-            'Start datetime after registration cutoff datetime'
+            'Start datetime before registration cutoff datetime'
         );
     }
 
@@ -96,22 +96,32 @@ function validateExamLength(int $length)
  */
 function validateLocationID(int $id)
 {
-    if ($id < 0) {
+    if ($id <= 0) {
         throw new InvalidArgumentException('Invalid location id: ' . $id);
     }
     // TODO: check id exists
 }
 
 /**
+ * Checks if account ID is valid
+ * Throws argument exception if not valid
+ *
+ * @param string $id
+ */
+function validateAccountID(string $id)
+{
+    // TODO: validate is account id, exists
+}
+
+/**
  * Checks if teacher ID is valid
  * Throws argument exceptions if there is an issue
  *
- * @param bool   $inClass
  * @param string $teacherID
  */
 function validateTeacherID(string $teacherID)
 {
-    // TODO: validate teacher id, validate exists
+    // TODO: validate is account id, validate teacher id exists
     /// throw exception if not valid
 }
 
@@ -208,35 +218,35 @@ function validateKeysExist(array $arr, array $keys)
 /**
  * Validate the given value is a type of string
  *
- * @param mixed  $value
+ * @param $value
  * @param string $msg String for portion of exception message
  */
-function validateIsString(mixed $value, string $msg)
+function validateIsString($value, string $msg)
 {
-    validateType($value, 'string', $msg);
+    validateIsType($value, 'string', $msg);
 }
 
 /**
  * Validate given value is a type of integer
  *
- * @param mixed  $value
+ * @param $value
  * @param string $msg String for portion of exception message
  */
-function validateIsInt(mixed $value, string $msg)
+function validateIsInt($value, string $msg)
 {
-    validateType($value, 'integer', $msg);
+    validateIsType($value, 'integer', $msg);
 }
 
 /**
  * Validate that a value is of a given type
  * Throws exception if type does not match
  *
- * @param mixed  $value
+ * @param $value
  * @param string $type Value type as a string
  *                     See http://php.net/manual/en/function.gettype.php
  * @param string $msg  String for the 'what' portion of the exception message
  */
-function validateIsType(mixed $value, string $type, string $msg)
+function validateIsType($value, string $type, string $msg)
 {
     $actualType = gettype($value);
     if (strcasecmp($actualType, $type) != 0) {

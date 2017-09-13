@@ -22,3 +22,9 @@
 // get students registered
 
 // remove location from non-archived-exams
+
+// reset the seat assignments completely for an exam
+function resetExamSeatAssignments(int $id)
+{
+    // TODO: populate function
+}

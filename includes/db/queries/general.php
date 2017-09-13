@@ -149,6 +149,7 @@ function getLastInsertedID(string $name = null)
 }
 
 // TODO: check for string size / value type for given table/column
+/// used for string size validation
 
 /**
  * Converts a PHP DateTime object to the parameter string for a query
@@ -156,7 +157,8 @@ function getLastInsertedID(string $name = null)
  * @param string   $key      key for the parameter
  * @param DateTime $datetime datetime object to convert
  *
- * @return array
+ * @return array    array in format of ('key', value, param_type),
+ *                  used as param for prepared statement
  */
 function buildDateTimeStrParam(string $key, DateTime $datetime)
 {
@@ -175,7 +177,7 @@ function buildDateTimeStrParam(string $key, DateTime $datetime)
  */
 function buildDateTimeFromQuery(string $value)
 {
-    $datetime = DateTime::date_create_from_format(DATETIME_FORMAT, $value);
+    $datetime = DateTime::createFromFormat(DATETIME_FORMAT, $value);
 
     return $datetime;
 }

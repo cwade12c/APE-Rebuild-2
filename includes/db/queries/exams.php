@@ -172,7 +172,12 @@ function getExamInformationQuery(int $id)
         . " FROM `exams` WHERE (`id` = :id)";
     $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
 
-    return getQueryResultRow($sql);
+    $result = getQueryResultRow($sql);
+    // convert date time values
+    $result['start'] = buildDateTimeFromQuery($result['start']);
+    $result['cutoff'] = buildDateTimeFromQuery($result['cutoff']);
+
+    return $result;
 }
 
 /**
@@ -282,12 +287,16 @@ function createExamInClassQuery(int $id, int $teacherID)
  */
 function createExamCategoriesQuery(int $examID, array $categories)
 {
+    if (count($categories) <= 0) {
+        return;
+    }
+
     list($valuesStr, $params) = buildExamCategoriesStringParams(
         $examID, $categories
     );
 
     $query = sprintf(
-        "INSERT INTO `examCategories`(`id`,`category_id`,`points`)"
+        "INSERT INTO `exam_categories`(`id`,`category_id`,`points`)"
         . "VALUES %s;", $valuesStr
     );
     $sql = executeQuery($query, $params);
@@ -333,6 +342,153 @@ function buildExamCategoriesStringParams(int $examID, array $categories)
 }
 
 /**
+ * Query to remove exam categories
+ *
+ * @param int   $id         exam id
+ * @param array $categories list of category IDs to remove
+ */
+function removeExamCategoriesQuery(int $id, array $categories)
+{
+    // check that categories available
+    if (count($categories) <= 0) {
+        return;
+    }
+
+    list($whereStr, $params) = buildRemoveExamCategoriesStringParam(
+        $id, $categories
+    );
+
+    $query = sprintf(
+        "DELETE FROM `exam_categories` "
+        . "WHERE %s", $whereStr
+    );
+
+    $sql = executeQuery($query, $params);
+}
+
+/**
+ * Helper function for removeExamCategoriesQuery()
+ * Builds the parameters and the string to match the exam categories
+ * in the where section.
+ * Not intended for outside use.
+ *
+ * @param int   $id         exam id
+ * @param array $categories array of category IDs
+ *
+ * @return array            array of format
+ *                          array(
+ *                          where matching string
+ *                          parameter array
+ *                          )
+ */
+function buildRemoveExamCategoriesStringParam(int $id, array $categories)
+{
+    $params = array();
+    array_push($params, array(':id', $id, PDO::PARAM_INT));
+
+    $categoryIDArr = array();
+
+    // build params from category IDs
+    foreach ($categories as $i => $categoryID) {
+        $keyName = sprintf(':categoryID%d', $i);
+        array_push($params, array($keyName, $categoryID, PDO::PARAM_INT));
+
+        array_push($categoryIDArr, $keyName);
+    }
+
+    // build string
+    $categoryArrStr = implode(',', $categoryIDArr);
+    $whereStr = sprintf('(`id` = :id) && (`category_id` in (%s))', $categoryArrStr);
+
+    // TODO: change from matching against each id, to a 'id in (...)' format?
+
+    return array($whereStr, $params);
+}
+
+/**
+ * Query to update exam categories
+ *
+ * @param int   $id         exam id
+ * @param array $categories array of categories
+ *                          elements in format
+ *                          array(
+ *                          category_id,
+ *                          points
+ *                          )
+ */
+function updateExamCategoriesQuery(int $id, array $categories)
+{
+    // check that categories available
+    if (count($categories) <= 0) {
+        return;
+    }
+
+    list($setStr, $params) = buildUpdateExamCategoriesStringParams(
+        $id, $categories
+    );
+
+    $query = sprintf(
+        "UPDATE `exam_categories` "
+        . "SET `points` = CASE %s ELSE `points` END "
+        . "WHERE `id` = :id", $setStr
+    );
+
+    $sql = executeQuery($query, $params);
+}
+
+/**
+ * Helper function for updateExamCategoriesQuery()
+ * Not intended for outside use
+ * Builds the 'WHEN ... THEN ... ' part of the set query string
+ * and the parameters
+ *
+ * @param int   $id             exam id
+ * @param array $categories     array of categories
+ *                              elements in format
+ *                              array(
+ *                              'id' => category_id,
+ *                              'points' => points
+ *                              )
+ *
+ * @return array                array in format
+ *                              array(
+ *                              'when then' set portion string,
+ *                              parameters
+ *                              )
+ *
+ */
+function buildUpdateExamCategoriesStringParams(int $id, array $categories)
+{
+    $params = array();
+    array_push($params, array(':id', $id, PDO::PARAM_INT));
+
+    // go through categories, build params
+    // and 'when then' set string
+    $whenThenStrings = array();
+    foreach ($categories as $i => $category) {
+        // build key names
+        $keyNameID = sprintf(':id%d', $i);
+        $keyNamePoints = sprintf(':points%d', $i);
+        // build params
+        array_push($params, array($keyNameID, $category['id'], PDO::PARAM_INT));
+        array_push(
+            $params, array($keyNamePoints, $category['points'], PDO::PARAM_INT)
+        );
+        // build str
+        array_push(
+            $whenThenStrings, sprintf(
+                'WHEN `category_id` = %s THEN %s',
+                $keyNameID, $keyNamePoints
+            )
+        );
+    }
+
+    $setStr = implode(' ', $whenThenStrings);
+
+    return array($setStr, $params);
+}
+
+/**
  * Query to set the state of an exam
  *
  * @param int $id
@@ -366,6 +522,35 @@ function setExamLocationQuery(int $id, int $locationID)
         $query, array(
             array(':id', $id, PDO::PARAM_INT),
             array(':locID', $locationID, PDO::PARAM_INT)
+        )
+    );
+}
+
+/**
+ * Query to update exam attributes
+ *
+ * @param int      $id
+ * @param DateTime $start
+ * @param DateTime $cutoff
+ * @param int      $length
+ * @param int      $passingGrade
+ * @param int      $locationID
+ */
+function updateExamQuery(int $id, DateTime $start, DateTime $cutoff,
+    int $length, int $passingGrade, int $locationID
+) {
+    $query = "UPDATE `exams` "
+        . "SET `start` = :start, `cutoff` = :cutoff, `length` = :len "
+        . " , `passing_grade` = :passingGrade, `location_id` = :locationID "
+        . "WHERE `id` = :id";
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $id, PDO::PARAM_INT),
+            buildDateTimeStrParam(':start', $start),
+            buildDateTimeStrParam(':cutoff', $cutoff),
+            array(':len', $length, PDO::PARAM_INT),
+            array(':passingGrade', $passingGrade, PDO::PARAM_INT),
+            array(':locationID', $locationID, PDO::PARAM_INT)
         )
     );
 }

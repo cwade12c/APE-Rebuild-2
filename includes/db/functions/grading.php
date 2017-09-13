@@ -119,8 +119,8 @@ function getStudentGrades(string $studentId)
 
 function passStudent(int $examId, string $studentId)
 {
-    return pass
-    logSecurityIncident(IS_NOT_GRADER, $_SESSION['ewuId']);StudentQuery($examId, $studentId);
+    return pass;
+    //logSecurityIncident(IS_NOT_GRADER, $_SESSION['ewuId']);StudentQuery($examId, $studentId);
 }
 
 function failStudent(int $examId, string $studentId)

@@ -42,8 +42,8 @@ function validateExamAttributes(DateTime $start, DateTime $cutoff, int $minutes,
  * if any issues are found, an invalid argument exception is thrown.
  * Helper method for exam functions.
  *
- * @param DateTime $start
- * @param DateTime $cutoff
+ * @param DateTime $start   start datetime
+ * @param DateTime $cutoff  cutoff datetime
  */
 function validateDates(DateTime $start, DateTime $cutoff)
 {
@@ -76,7 +76,7 @@ function validateDates(DateTime $start, DateTime $cutoff)
  * Checks if exam length (in minutes) is valid
  * Throws argument exceptions if there is an issue
  *
- * @param int $length
+ * @param int $length   exam length
  */
 function validateExamLength(int $length)
 {
@@ -89,17 +89,98 @@ function validateExamLength(int $length)
 /**
  * Checks if a location ID is valid
  * Throws argument exceptions if there is an issue
+ * Does not check if location w/ ID exists
  *
- * @param int $id
- *
- * @return bool
+ * @param int $id   location ID
  */
 function validateLocationID(int $id)
 {
     if ($id <= 0) {
         throw new InvalidArgumentException('Invalid location id: ' . $id);
     }
-    // TODO: check id exists
+}
+
+/**
+ * Checks if location w/ ID exists
+ * Throws argument exception if there is an issue
+ *
+ * @param int $id   location ID
+ */
+function validateLocationIDExists(int $id)
+{
+    if (!locationExists($id)) {
+        throw new InvalidArgumentException("Location({$id}) does not exist");
+    }
+}
+
+/**
+ * Checks if location name is valid
+ * Throws argument exception if there is an issue
+ * Does not check if location w/ name exists
+ *
+ * @param string $name  location name
+ */
+function validateLocationName(string $name)
+{
+    // TODO: character set validation, whitespace
+    // TODO: string length validation
+}
+
+/**
+ * Checks if a room ID is valid
+ * Throws argument exceptions if there is an issue
+ * Does not check if room w/ ID exists
+ *
+ * @param int $id   room ID
+ */
+function validateRoomID(int $id)
+{
+    if ($id <= 0) {
+        throw new InvalidArgumentException('Invalid room id: ' . $id);
+    }
+}
+
+/**
+ * Checks if room w/ ID exists
+ * Throws argument exception if there is an issue
+ *
+ * @param int $id   room ID
+ */
+function validateRoomIDExists(int $id)
+{
+    if (!locationExists($id)) {
+        throw new InvalidArgumentException("Room({$id}) does not exist");
+    }
+}
+
+/**
+ * Checks if room name is valid
+ * Throws argument exception if there is an issue
+ * Does not check if room w/ name exists
+ *
+ * @param string $name  room name
+ */
+function validateRoomName(string $name)
+{
+    // TODO: character set validation, whitespace
+    // TODO: string length validation
+}
+
+/**
+ * Validate information for updating the location room or seating info
+ *
+ * @param int   $seatsReserved  number of reserved seats
+ * @param int   $limitedSeats   limit of seats separate from room seats total
+ * @param array $rooms          array of rooms
+ *                              element format:
+ *                              array(
+ *                              'id' => room id,
+ *                              'seats' => overridden number of seats
+ *                              )
+ */
+function validateLocationRooms(int $seatsReserved, int $limitedSeats, array $rooms)
+{
+
 }
 
 /**
@@ -255,7 +336,6 @@ function validateIsType($value, string $type, string $msg)
         );
     }
 }
-
 
 /**
  * Gets details about a table attribute

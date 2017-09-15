@@ -10,6 +10,32 @@
  */
 
 /**
+ * Check if category w/ name exists
+ *
+ * @param string $name
+ *
+ * @return bool
+ */
+function categoryNameExists(string $name)
+{
+    // TODO: populate
+    return false;
+}
+
+/**
+ * Check if category w/ ID exists
+ *
+ * @param int $id
+ *
+ * @return bool
+ */
+function categoryExists(int $id)
+{
+    // TODO: populate
+    return false;
+}
+
+/**
  * Creates a category
  *
  * @param string $name

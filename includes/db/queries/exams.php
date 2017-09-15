@@ -8,6 +8,14 @@
  * @subpackage     Database
  */
 
+/**
+ * Query to get list of exam IDs based on criteria
+ *
+ * @param int $state    state of exam to find
+ * @param int $type
+ *
+ * @return mixed        list of exam IDs
+ */
 function getExamsQuery(int $state, int $type)
 {
     // build query string

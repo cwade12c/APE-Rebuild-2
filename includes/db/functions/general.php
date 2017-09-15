@@ -266,9 +266,9 @@ function validateIsType($value, string $type, string $msg)
  * @return mixed                associative array of result
  *                              'DATA_TYPE' => mysql datatype as string
  *                              'CHARACTER_MAXIMUM_LENGTH' => max string length
- *                                  if applicable
+ *                                  if applicable, else null
  *                              'NUMERIC_PRECISION' => number precision
- *                                  if applicable
+ *                                  if applicable, else null
  *                              if table/attribute does not exist,
  *                                  false is returned
  */

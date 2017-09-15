@@ -158,12 +158,15 @@ function getLastInsertedID(string $name = null)
  * @return mixed                associative array of result
  *                              'DATA_TYPE' => mysql datatype as string
  *                              'CHARACTER_MAXIMUM_LENGTH' => max string length
- *                                  if applicable
+ *                                  if applicable, else null
  *                              'NUMERIC_PRECISION' => number precision
- *                                  if applicable
+ *                                  if applicable, else null
+ *                              if no row found, false is returned
  */
 function getTableAttributeDetailsQuery(string $tableName, string $attributeName)
 {
+    // additional details about query:
+    // https://dev.mysql.com/doc/refman/5.7/en/columns-table.html
     $query
         = "SELECT DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION "
         . "FROM INFORMATION_SCHEMA.COLUMNS "

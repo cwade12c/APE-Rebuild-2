@@ -92,8 +92,8 @@ echo "<br>";
 echo "<br>";
 
 echo "Updating info<br>";
-$newStart = new DateTime('2017-9-14 15:00:00');
-$newCutoff = new DateTime('2017-9-14 11:00:00');
+$newStart = new DateTime('2017-9-21 15:00:00');
+$newCutoff = new DateTime('2017-9-21 11:00:00');
 $newLength = 150;
 $newPassing = 85;
 $newCategories = array(array('id' => 1, 'points' => 20),
@@ -123,11 +123,40 @@ print_r($categories);
 echo "<br>";
 
 
-/*
- *
- * FIX ISSUE WITH USING INTS AS KEYS FOR AN ARRAY
- * WAS BAD IDEA
- *
- */
+echo "<br>attribute details test<br>";
+
+
+$detailsID = getTableAttributeDetails('accounts', 'id');
+$detailsType = getTableAttributeDetails('accounts', 'type');
+$detailsNameF = getTableAttributeDetails('accounts', 'f_name');
+$detailsNameL = getTableAttributeDetails('accounts', 'l_name');
+$detailsEmail = getTableAttributeDetails('accounts', 'email');
+
+$tstr = print_r($detailsID, true);
+echo "id: {$tstr}<br>";
+
+$tstr = print_r($detailsType, true);
+echo "type: {$tstr}<br>";
+
+$tstr = print_r($detailsNameF, true);
+echo "f name: {$tstr}<br>";
+
+$tstr = print_r($detailsNameL, true);
+echo "l name: {$tstr}<br>";
+
+$tstr = print_r($detailsEmail, true);
+echo "email: {$tstr}<br>";
+
+$detailsDNE = getTableAttributeDetails('accounts', 'invalidAttribute');
+$tstr = print_r($detailsDNE, true);
+echo "invalid attribute name: {$tstr}<br>";
+if (is_null($detailsDNE)) {
+    echo "null<br>";
+}else{
+    echo "nnull<br>";
+}
+$tt = gettype($detailsDNE);
+echo "dne type: {$tt}<br>";
+
 
 echo "<br><br>EOLFL";

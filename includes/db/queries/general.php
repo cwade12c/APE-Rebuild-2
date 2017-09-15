@@ -148,8 +148,45 @@ function getLastInsertedID(string $name = null)
     }
 }
 
-// TODO: check for string size / value type for given table/column
-/// used for string size validation
+/**
+ * Query to get details about a table attribute
+ * Intended to be used by the wrapping function getTableAttributeDetails()
+ *
+ * @param string $tableName     name of table
+ * @param string $attributeName name of attribute
+ *
+ * @return mixed                associative array of result
+ *                              'DATA_TYPE' => mysql datatype as string
+ *                              'CHARACTER_MAXIMUM_LENGTH' => max string length
+ *                                  if applicable
+ *                              'NUMERIC_PRECISION' => number precision
+ *                                  if applicable
+ */
+function getTableAttributeDetailsQuery(string $tableName, string $attributeName)
+{
+    $query
+        = "SELECT DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION "
+        . "FROM INFORMATION_SCHEMA.COLUMNS "
+        . "WHERE table_schema = :schemaName "
+        . " && table_name = :tableName "
+        . " && COLUMN_NAME = :attributeName ";
+    $sql = executeQuery(
+        $query, array(
+            array(':schemaName', DB, PDO::PARAM_STR),
+            array(':tableName', $tableName, PDO::PARAM_STR),
+            array(':attributeName', $attributeName, PDO::PARAM_STR)
+        )
+    );
+
+    return getQueryResultRow($sql);
+}
+
+/*
+ * SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION
+  FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE table_name = 'accounts' && table_schema = 'test_new_ape_database';
+ */
+
 
 /**
  * Converts a PHP DateTime object to the parameter string for a query

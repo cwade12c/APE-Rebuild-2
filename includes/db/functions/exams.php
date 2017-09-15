@@ -115,6 +115,7 @@ function getExamsExtended(int $state, int $type)
 // TODO: search exams
 /// state, date/time (quarter?), in class
 /// location/rooms
+/// may need to create custom class to define search parameters into one object
 
 /**
  * Get all information from exam table entry

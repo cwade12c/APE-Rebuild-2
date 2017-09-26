@@ -148,7 +148,7 @@ function validateRoomID(int $id)
  */
 function validateRoomIDExists(int $id)
 {
-    if (!locationExists($id)) {
+    if (!roomExists($id)) {
         throw new InvalidArgumentException("Room({$id}) does not exist");
     }
 }
@@ -167,6 +167,19 @@ function validateRoomName(string $name)
 }
 
 /**
+ * Validates the number of seats is valid for a location/room entry
+ * Throws argument exception if there is an issue
+ *
+ * @param int $seats
+ */
+function validateSeatCount(int $seats)
+{
+    if ($seats <= 0) {
+        throw new InvalidArgumentException("Invalid seat count({$seats})");
+    }
+}
+
+/**
  * Validate information for updating the location room or seating info
  *
  * @param int   $seatsReserved  number of reserved seats
@@ -180,7 +193,31 @@ function validateRoomName(string $name)
  */
 function validateLocationRooms(int $seatsReserved, int $limitedSeats, array $rooms)
 {
+    // TODO: populate
+}
 
+/**
+ * Validate it is safe to delete the given room
+ *
+ * @param int $id   Room ID
+ */
+function validateRoomIDSafeDelete(int $id)
+{
+    validateRoomIDExists($id);
+    // TODO: populate
+}
+
+/**
+ * Validate it is safe to edit the room to given seat count
+ *
+ * @param int $id
+ */
+function validateRoomIDSafeEdit(int $id, int $seats)
+{
+    validateRoomIDExists($id);
+    validateSeatCount($seats);
+
+    // TODO: populate
 }
 
 /**

@@ -17,7 +17,7 @@
  */
 function locationNameExists(string $name)
 {
-    // validate location name
+    validateLocationName($name);
     // TODO: populate
     return false;
 }
@@ -31,7 +31,7 @@ function locationNameExists(string $name)
  */
 function locationExists(int $id)
 {
-    // validate id
+    validateLocationID($id);
     // TODO: populate
     return true;
 }
@@ -166,9 +166,8 @@ function deleteLocation(int $id)
  */
 function roomNameExists(string $name)
 {
-    // validate name
-    // TODO: populate
-    return false;
+    validateRoomName($name);
+    return roomNameExistsQuery($name);
 }
 
 /**
@@ -180,9 +179,8 @@ function roomNameExists(string $name)
  */
 function roomExists(int $id)
 {
-    // validate id
-    // TODO: populate
-    return false;
+    validateRoomID($id);
+    return roomIDExistsQuery($id);
 }
 
 /**
@@ -192,8 +190,8 @@ function roomExists(int $id)
  */
 function getRooms()
 {
-    // TODO: populate
-    return array();
+    return getRoomsQuery();
+    // TODO: validate something is returned (no false, just empty array)
 }
 
 /**
@@ -205,8 +203,12 @@ function getRooms()
 function createRoom(string $name, int $seats)
 {
     validateRoomName($name);
+    // TODO: validate room w/ name does not exist?
 
-    // TODO: create room
+    createRoomQuery($name, $seats);
+
+    // TODO: validate created?
+    // TODO: return room ID?
 }
 
 /**
@@ -224,7 +226,9 @@ function updateRoom(int $id, string $name, int $seats)
     // check if seat numbers change
     /// check if changing seat numbers will cause issues
 
-    // TODO: update room
+    updateRoomQuery($id, $name, $seats);
+
+    // TODO: validate worked?
 }
 
 /**
@@ -234,9 +238,9 @@ function updateRoom(int $id, string $name, int $seats)
  */
 function deleteRoom(int $id)
 {
-    validateRoomID($id);
-    // validate room not used in any locations
-    // TODO: delete room
+    validateRoomIDSafeDelete($id);
+
+    deleteRoomQuery($id);
 }
 
 /**
@@ -251,7 +255,11 @@ function deleteRoom(int $id)
  */
 function getLocationInformation(int $id)
 {
-    // TODO: populate
+    // TODO: validating ID may not be necessary
+    /// could incorporate into query
+    validateLocationIDExists($id);
+
+    return getLocationInformationQuery($id);
 }
 
 /**
@@ -268,7 +276,22 @@ function getLocationInformation(int $id)
  */
 function getLocationRooms(int $id)
 {
-    // TODO: populate
+    validateLocationIDExists($id);
+
+    // get rooms list
+    $rooms = getLocationRoomsQuery($id);
+
+    // convert keys
+    $editedRooms = array();
+    foreach($rooms as $room) {
+        $roomEdited = array();
+        $roomEdited['id'] = $room['room_id'];
+        $roomEdited['seats'] = $room['seats'];
+
+        array_push($editedRooms, $roomEdited);
+    }
+
+    return $editedRooms;
 }
 
 /**
@@ -282,5 +305,7 @@ function getLocationRooms(int $id)
  */
 function getRoomInformation(int $id)
 {
-    // TODO: populate
+    validateRoomIDExists($id);
+
+    return getRoomInformationQuery($id);
 }

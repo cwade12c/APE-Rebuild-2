@@ -11,6 +11,10 @@
 // TODO: move more general validation functions to another set
 // (outside just db functions)
 
+// TODO: some sequences of verifications get a little confusing
+/// lots of similar verifications, but lots of differences
+/// could figure out a simpler way of handling strings of validations
+
 /**
  * Validates all arguments related to exam attributes
  * Argument exception will be thrown if any issues found
@@ -42,8 +46,8 @@ function validateExamAttributes(DateTime $start, DateTime $cutoff, int $minutes,
  * if any issues are found, an invalid argument exception is thrown.
  * Helper method for exam functions.
  *
- * @param DateTime $start   start datetime
- * @param DateTime $cutoff  cutoff datetime
+ * @param DateTime $start  start datetime
+ * @param DateTime $cutoff cutoff datetime
  */
 function validateDates(DateTime $start, DateTime $cutoff)
 {
@@ -76,7 +80,7 @@ function validateDates(DateTime $start, DateTime $cutoff)
  * Checks if exam length (in minutes) is valid
  * Throws argument exceptions if there is an issue
  *
- * @param int $length   exam length
+ * @param int $length exam length
  */
 function validateExamLength(int $length)
 {
@@ -91,7 +95,7 @@ function validateExamLength(int $length)
  * Throws argument exceptions if there is an issue
  * Does not check if location w/ ID exists
  *
- * @param int $id   location ID
+ * @param int $id location ID
  */
 function validateLocationID(int $id)
 {
@@ -104,7 +108,7 @@ function validateLocationID(int $id)
  * Checks if location w/ ID exists
  * Throws argument exception if there is an issue
  *
- * @param int $id   location ID
+ * @param int $id location ID
  */
 function validateLocationIDExists(int $id)
 {
@@ -118,7 +122,7 @@ function validateLocationIDExists(int $id)
  * Throws argument exception if there is an issue
  * Does not check if location w/ name exists
  *
- * @param string $name  location name
+ * @param string $name location name
  */
 function validateLocationName(string $name)
 {
@@ -127,11 +131,40 @@ function validateLocationName(string $name)
 }
 
 /**
+ * Check that no location uses the given name
+ * Throws argument exception if there is an issue.
+ *
+ * @param string $name Location name
+ */
+function validateLocationNameDoesNotExist(string $name)
+{
+    if (locationNameExists($name)) {
+        throw new InvalidArgumentException("Location(\"{$name}\") exists");
+    }
+}
+
+/**
+ * Check if the new name is a change from the current name
+ * Then checks if another location uses the same name
+ * If duplicate is found, then an argument exception is thrown
+ *
+ * @param int    $id   Location ID
+ * @param string $name New/current location name
+ */
+function validateLocationNameChange(int $id, string $name)
+{
+    $info = getLocationInformation($id);
+    if (strcmp($name, $info['name']) != 0) {
+        validateLocationNameDoesNotExist($name);
+    }
+}
+
+/**
  * Checks if a room ID is valid
  * Throws argument exceptions if there is an issue
  * Does not check if room w/ ID exists
  *
- * @param int $id   room ID
+ * @param int $id room ID
  */
 function validateRoomID(int $id)
 {
@@ -144,7 +177,7 @@ function validateRoomID(int $id)
  * Checks if room w/ ID exists
  * Throws argument exception if there is an issue
  *
- * @param int $id   room ID
+ * @param int $id room ID
  */
 function validateRoomIDExists(int $id)
 {
@@ -158,12 +191,42 @@ function validateRoomIDExists(int $id)
  * Throws argument exception if there is an issue
  * Does not check if room w/ name exists
  *
- * @param string $name  room name
+ * @param string $name room name
  */
 function validateRoomName(string $name)
 {
     // TODO: character set validation, whitespace
     // TODO: string length validation
+}
+
+/**
+ * Check that no room uses the given name
+ * Throws argument exception if there is an issue.
+ *
+ * @param string $name Room name
+ */
+function validateRoomNameDoesNotExist(string $name)
+{
+    if (roomNameExists($name)) {
+        throw new InvalidArgumentException("Room(\"{$name}\") exists");
+    }
+}
+
+/**
+ * Validates a name change for a room
+ * Checks if name changes from current name,
+ * then checks if new name is valid and does not exist.
+ * Throws argument exception if there is an issue
+ *
+ * @param int    $id
+ * @param string $name
+ */
+function validateRoomNameChange(int $id, string $name)
+{
+    $info = getRoomInformation($id);
+    if (strcmp($name, $info['name']) != 0) {
+        validateRoomNameDoesNotExist($name);
+    }
 }
 
 /**
@@ -191,15 +254,16 @@ function validateSeatCount(int $seats)
  *                              'seats' => overridden number of seats
  *                              )
  */
-function validateLocationRooms(int $seatsReserved, int $limitedSeats, array $rooms)
-{
+function validateLocationRooms(int $seatsReserved, int $limitedSeats,
+    array $rooms
+) {
     // TODO: populate
 }
 
 /**
  * Validate it is safe to delete the given room
  *
- * @param int $id   Room ID
+ * @param int $id Room ID
  */
 function validateRoomIDSafeDelete(int $id)
 {
@@ -336,7 +400,7 @@ function validateKeysExist(array $arr, array $keys)
 /**
  * Validate the given value is a type of string
  *
- * @param $value
+ * @param        $value
  * @param string $msg String for portion of exception message
  */
 function validateIsString($value, string $msg)
@@ -347,7 +411,7 @@ function validateIsString($value, string $msg)
 /**
  * Validate given value is a type of integer
  *
- * @param $value
+ * @param        $value
  * @param string $msg String for portion of exception message
  */
 function validateIsInt($value, string $msg)
@@ -359,7 +423,7 @@ function validateIsInt($value, string $msg)
  * Validate that a value is of a given type
  * Throws exception if type does not match
  *
- * @param $value
+ * @param        $value
  * @param string $type Value type as a string
  *                     See http://php.net/manual/en/function.gettype.php
  * @param string $msg  String for the 'what' portion of the exception message

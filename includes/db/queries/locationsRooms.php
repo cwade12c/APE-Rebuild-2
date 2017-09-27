@@ -8,14 +8,81 @@
  * @subpackage     Database
  */
 
-function locationNameExistsQuery(string $name) {}
-function locationIDExistsQuery(int $id) {}
+function locationNameExistsQuery(string $name)
+{
+}
 
+function locationIDExistsQuery(int $id)
+{
+}
+
+/**
+ * Query to create a location w/ given information
+ *
+ * @param string $name          Location name
+ * @param int    $seatsReserved Number of reserved seats
+ * @param int    $limitedSeats  Limited seats number
+ */
+function createLocationQuery(string $name, int $seatsReserved, int $limitedSeats
+) {
+    // TODO: populate
+    // TODO: return new location ID?
+}
+
+/**
+ * Query to create rooms for a location
+ *
+ * @param int   $id
+ * @param array $rooms
+ */
+function createLocationRooms(int $id, array $rooms)
+{
+    // TODO: populate
+
+    // TODO: refer back to createLocationFull() for full implementation
+}
+
+/**
+ * Query to update location information (row entry)
+ *
+ * @param int    $id            Location ID
+ * @param string $name          Location name
+ * @param int    $seatsReserved Number of reserved seats
+ * @param int    $limitedSeats  Limited seats number
+ */
+function updateLocationInfoQuery(int $id, string $name, int $seatsReserved,
+    int $limitedSeats
+) {
+    // TODO: populate
+}
+
+/**
+ * Query to update rooms for a location
+ *
+ * @param int   $id     Location ID
+ * @param array $rooms  Array of rooms, element format
+ *                      'id' => room id,
+ *                      'seats' => overridden number of seats
+ */
+function updateLocationRoomsQuery(int $id, array $rooms)
+{
+    // TODO: populate
+}
+
+/**
+ * Query to delete a location
+ *
+ * @param int $id Location ID
+ */
+function deleteLocationQuery(int $id)
+{
+    // TODO: populate
+}
 
 /**
  * Check if room w/ name exists
  *
- * @param string $name  Room name
+ * @param string $name Room name
  *
  * @return bool
  */
@@ -69,9 +136,9 @@ function createRoomQuery(string $name, int $seats)
 /**
  * Query to update room information
  *
- * @param int    $id        Room ID
- * @param string $name      Room name
- * @param int    $seats     Room seat count
+ * @param int    $id    Room ID
+ * @param string $name  Room name
+ * @param int    $seats Room seat count
  */
 function updateRoomQuery(int $id, string $name, int $seats)
 {
@@ -81,7 +148,7 @@ function updateRoomQuery(int $id, string $name, int $seats)
 /**
  * Delete a room
  *
- * @param int $id   Room ID
+ * @param int $id Room ID
  */
 function deleteRoomQuery(int $id)
 {
@@ -91,7 +158,8 @@ function deleteRoomQuery(int $id)
 /**
  * Get information on a location ID
  *
- * @param int $id   Location ID
+ * @param int $id Location ID
+ *
  * @return array    associate array of location information in format:
  *                      'name' => location name
  *                      'reserved_seats' => reserved seat count
@@ -105,7 +173,8 @@ function getLocationInformationQuery(int $id)
 /**
  * Used to get the list of rooms for a location
  *
- * @param int $id   Location ID
+ * @param int $id Location ID
+ *
  * @return array    associative array of rooms in format
  *                      'room_id' => room id
  *                      'seats' => room seats set
@@ -118,7 +187,8 @@ function getLocationRoomsQuery(int $id)
 /**
  * Used to get information on a room
  *
- * @param int $id   Room ID
+ * @param int $id Room ID
+ *
  * @return array    Associative array of room information in format
  *                      "name" => room name
  *                      "seats" => room seats

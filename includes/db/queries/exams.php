@@ -11,7 +11,7 @@
 /**
  * Query to get list of exam IDs based on criteria
  *
- * @param int $state    state of exam to find
+ * @param int $state state of exam to find
  * @param int $type
  *
  * @return mixed        list of exam IDs
@@ -406,7 +406,9 @@ function buildRemoveExamCategoriesStringParam(int $id, array $categories)
 
     // build string
     $categoryArrStr = implode(',', $categoryIDArr);
-    $whereStr = sprintf('(`id` = :id) && (`category_id` in (%s))', $categoryArrStr);
+    $whereStr = sprintf(
+        '(`id` = :id) && (`category_id` in (%s))', $categoryArrStr
+    );
 
     // TODO: change from matching against each id, to a 'id in (...)' format?
 

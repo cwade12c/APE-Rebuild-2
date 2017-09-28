@@ -18,8 +18,7 @@
 function locationNameExists(string $name)
 {
     validateLocationName($name);
-    // TODO: populate
-    return false;
+    return locationNameExistsQuery($name);
 }
 
 /**
@@ -32,8 +31,7 @@ function locationNameExists(string $name)
 function locationExists(int $id)
 {
     validateLocationID($id);
-    // TODO: populate
-    return true;
+    return locationIDExistsQuery($id);
 }
 
 /**
@@ -43,8 +41,7 @@ function locationExists(int $id)
  */
 function getLocations()
 {
-    // TODO: populate
-    return array();
+    return getLocationsQuery();
 }
 
 /**
@@ -61,7 +58,7 @@ function getLocations()
  *                                  'seats' => overridden number of room seats
  *                                  )
  */
-function createLocationFull(string $name, int $seatsReserved, int $limitedSeats,
+function createLocation(string $name, int $seatsReserved, int $limitedSeats,
     array $rooms
 ) {
     // validate rooms, seats
@@ -71,7 +68,8 @@ function createLocationFull(string $name, int $seatsReserved, int $limitedSeats,
     // TODO: multiple queries, transaction?
 
     createLocationQuery($name, $seatsReserved, $limitedSeats);
-    createLocationRooms($rooms);
+    $id = getLastInsertedID();
+    createLocationRoomsQuery($id, $rooms);
 
     // TODO: validate success?
 }

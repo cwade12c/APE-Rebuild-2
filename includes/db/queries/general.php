@@ -49,6 +49,8 @@ function executeQuery(string $query, array $params = array())
 
         return $sql;
     } catch (PDOException $error) {
+        // TODO: need to forward an exception
+        /// otherwise, will report of nothing wrong and return null
         if (DEBUG) {
             echo "<div class=\"debug\">";
             print_r($sql->errorInfo());

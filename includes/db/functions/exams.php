@@ -377,8 +377,6 @@ function updateExamCategories(int $id, array $newCategories)
     // update categories
     updateExamCategoriesQuery($id, $categoriesToUpdate);
 
-    return;
-
     // add categories
     createExamCategoriesQuery($id, $categoriesToAdd);
 

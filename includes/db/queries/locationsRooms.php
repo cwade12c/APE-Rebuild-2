@@ -8,12 +8,41 @@
  * @subpackage     Database
  */
 
-function locationNameExistsQuery(string $name)
+/**
+ * Get list of location IDs
+ *
+ * @return array    Array of location IDs (ints)
+ */
+function getLocationsQuery()
 {
+    // TODO: populate
+    return array();
 }
 
+/**
+ * Query to check if location name exists
+ *
+ * @param string $name Location name
+ *
+ * @return bool
+ */
+function locationNameExistsQuery(string $name)
+{
+    // TODO: populate
+    return false;
+}
+
+/**
+ * Query to check if location ID exists
+ *
+ * @param int $id Location ID
+ *
+ * @return bool
+ */
 function locationIDExistsQuery(int $id)
 {
+    // TODO: populate
+    return false;
 }
 
 /**
@@ -32,10 +61,12 @@ function createLocationQuery(string $name, int $seatsReserved, int $limitedSeats
 /**
  * Query to create rooms for a location
  *
- * @param int   $id
- * @param array $rooms
+ * @param int   $id         Location ID
+ * @param array $rooms      Array of rooms to create, element format
+ *                          'id' => room id
+ *                          'seats' => room seats
  */
-function createLocationRooms(int $id, array $rooms)
+function createLocationRoomsQuery(int $id, array $rooms)
 {
     // TODO: populate
 

@@ -32,6 +32,9 @@ echo "testing locations / rooms<br><br>";
 /// throws exception down in getQueryResult*()
 /// null returned from executeQuery
 
+// TODO: get case where an actual false would be a false positive for error
+/// i.e. way of forcing a false return
+
 $query = "SELECT ('2018' IN (SELECT `name` FROM `rooms`)) AS FOUNDIT";
 
 $sql = executeQuery($query);

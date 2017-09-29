@@ -410,8 +410,6 @@ function buildRemoveExamCategoriesStringParam(int $id, array $categories)
         '(`id` = :id) && (`category_id` in (%s))', $categoryArrStr
     );
 
-    // TODO: change from matching against each id, to a 'id in (...)' format?
-
     return array($whereStr, $params);
 }
 

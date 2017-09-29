@@ -11,12 +11,14 @@
 /**
  * Get list of location IDs
  *
- * @return array    Array of location IDs (ints)
+ * @return array    Array of location IDs (int)
  */
 function getLocationsQuery()
 {
-    // TODO: populate
-    return array();
+    $query = "SELECT `id` FROM `locations`";
+    $sql = executeQuery($query);
+
+    return getQueryResults($sql);
 }
 
 /**
@@ -28,8 +30,15 @@ function getLocationsQuery()
  */
 function locationNameExistsQuery(string $name)
 {
-    // TODO: populate
-    return false;
+    $query = "SELECT (:name IN (SELECT `name` FROM `locations`))";
+
+    $sql = executeQuery(
+        $query, array(
+            array(':name', $name, PDO::PARAM_STR)
+        )
+    );
+
+    return getQueryResult($sql);
 }
 
 /**
@@ -41,8 +50,15 @@ function locationNameExistsQuery(string $name)
  */
 function locationIDExistsQuery(int $id)
 {
-    // TODO: populate
-    return false;
+    $query = "SELECT (:id IN (SELECT `id` FROM `locations`))";
+
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $id, PDO::PARAM_INT)
+        )
+    );
+
+    return getQueryResult($sql);
 }
 
 /**
@@ -54,8 +70,16 @@ function locationIDExistsQuery(int $id)
  */
 function createLocationQuery(string $name, int $seatsReserved, int $limitedSeats
 ) {
-    // TODO: populate
-    // TODO: return new location ID?
+    $query = "INSERT INTO `locations`"
+        . "(`name`, `reserved_seats`, `limited_seats`)"
+        . "VALUES (:name, :reservedSeats, :limitedSeats);";
+    $sql = executeQuery(
+        $query, array(
+            array(':name', $name, PDO::PARAM_STR),
+            array(':reservedSeats', $seatsReserved, PDO::PARAM_INT),
+            array(':limitedSeats', $limitedSeats, PDO::PARAM_INT)
+        )
+    );
 }
 
 /**
@@ -68,9 +92,61 @@ function createLocationQuery(string $name, int $seatsReserved, int $limitedSeats
  */
 function createLocationRoomsQuery(int $id, array $rooms)
 {
-    // TODO: populate
+    if (count($rooms) <= 0) {
+        return;
+    }
 
-    // TODO: refer back to createLocationFull() for full implementation
+    // build values string and params
+    list($setStr, $params) = buildLocationRoomsValuesString($id, $rooms);
+
+    // build, execute query string
+    $query = sprintf(
+        "INSERT INTO `locations_rooms`"
+        . "(`location_id`, `room_id`, `seats`)"
+        . " VALUES %s", $setStr
+    );
+    $sql = executeQuery($query, $params);
+}
+
+/**
+ * Helper function for createLocationRoomsQuery()
+ * Not intended for outside use
+ * Query to create location rooms
+ *
+ * @param int   $id     Location ID
+ * @param array $rooms  Array of rooms, element format
+ *                      'id' => room id
+ *                      'seats' => room seats set
+ *
+ * @return array        2 elements returned
+ *                      values string, used for insert statement
+ *                      parameters, for prepared query
+ */
+function buildLocationRoomsValuesString(int $id, array $rooms)
+{
+    $params = array();
+    $values = array();
+
+    array_push($params, array(':id', $id, PDO::PARAM_INT));
+
+    foreach ($rooms as $i => $room) {
+        // determine param names
+        $roomIDKey = sprintf(':room%d', $i);
+        $roomSeatsKey = sprintf(':seats%d', $i);
+        array_push(
+            $values, sprintf('(:id, %s, $s)', $roomIDKey, $roomSeatsKey)
+        );
+        // add parameters
+        array_push($params, array($roomIDKey, $room['id'], PDO::PARAM_INT));
+        array_push(
+            $params, array($roomSeatsKey, $room['seats'], PDO::PARAM_INT)
+        );
+    }
+
+    // build values string
+    $valuesStr = implode(',', $values);
+
+    return array($valuesStr, $params);
 }
 
 /**
@@ -84,7 +160,19 @@ function createLocationRoomsQuery(int $id, array $rooms)
 function updateLocationInfoQuery(int $id, string $name, int $seatsReserved,
     int $limitedSeats
 ) {
-    // TODO: populate
+    $query = "UPDATE `locations` "
+        . "SET `name` = :name, `reserved_seats` = :reservedSeats, "
+        . " `limited_seats`=:limitedSeats "
+        . "WHERE `id` = :id";
+
+    $sql = executeQuery(
+        $query, array(
+        array(':id', $id, PDO::PARAM_INT),
+        array(':name', $name, PDO::PARAM_STR),
+        array(':reservedSeats', $seatsReserved, PDO::PARAM_INT),
+        array(':limitedSeats', $limitedSeats, PDO::PARAM_INT)
+    )
+    );
 }
 
 /**
@@ -97,7 +185,117 @@ function updateLocationInfoQuery(int $id, string $name, int $seatsReserved,
  */
 function updateLocationRoomsQuery(int $id, array $rooms)
 {
-    // TODO: populate
+    if (count($rooms) <= 0) {
+        return;
+    }
+
+    list($setStr, $params) = buildUpdateLocationRoomsStringParams(
+        $id, $rooms
+    );
+
+    $query = sprintf(
+        "UPDATE `location_rooms` "
+        . "SET `seats` = CASE %s ELSE `seats` END "
+        . "WHERE `location_id` = :id", $setStr
+    );
+
+    $sql = executeQuery($query, $params);
+}
+
+/**
+ * Helper function for updateLocationRoomsQuery()
+ * Not intended for outside use
+ * Builds string for update query and parameters
+ *
+ * @param int   $id
+ * @param array $rooms
+ */
+function buildUpdateLocationRoomsStringParams(int $id, array $rooms)
+{
+    $params = array();
+    array_push($params, array(':id', $id, PDO::PARAM_INT));
+
+    // go through rooms, build params
+    // and 'when then' set string
+    $whenThenStrings = array();
+    foreach ($rooms as $i => $room) {
+        // build key names
+        $keyNameID = sprintf(':id%d', $i);
+        $keyNameSeats = sprintf(':seats%d', $i);
+        // build params
+        array_push($params, array($keyNameID, $room['id'], PDO::PARAM_INT));
+        array_push(
+            $params, array($keyNameSeats, $room['seats'], PDO::PARAM_INT)
+        );
+        // build case string
+        array_push(
+            $whenThenStrings, sprintf(
+                'WHEN `room_id` = %s THEN %s',
+                $keyNameID, $keyNameSeats
+            )
+        );
+    }
+
+    // build set when cases string
+    $setStr = implode(' ', $whenThenStrings);
+
+    return array($setStr, $params);
+}
+
+/**
+ * Query to delete rooms from a location
+ *
+ * @param int   $id    Location ID
+ * @param array $rooms Array of room IDs
+ */
+function removeLocationRoomsQuery(int $id, array $rooms)
+{
+    // check that rooms available
+    if (count($rooms) <= 0) {
+        return;
+    }
+
+    list($whereStr, $params) = buildRemoveLocationRoomsStringParam(
+        $id, $rooms
+    );
+
+    $query = sprintf(
+        "DELETE FROM `location_rooms` "
+        . "WHERE %s", $whereStr
+    );
+
+    $sql = executeQuery($query, $params);
+}
+
+/**
+ * Helper function for removeLocationRoomsQuery()
+ * Not intended for outside use
+ * Builds removal string and params for query
+ *
+ * @param int   $id    Location ID
+ * @param array $rooms Array of room IDs
+ */
+function buildRemoveLocationRoomsStringParam(int $id, array $rooms)
+{
+    $params = array();
+    array_push($params, array(':id', $id, PDO::PARAM_INT));
+
+    $roomIDArr = array();
+
+    // build params from room IDs
+    foreach ($rooms as $i => $roomID) {
+        $roomIDKey = sprintf(':roomID%d', $i);
+        array_push($params, array($roomIDKey, $roomID, PDO::PARAM_INT));
+        array_push($roomIDArr, $roomIDKey);
+    }
+
+    // build string
+    $roomArrStr = implode(',', $roomIDKey);
+    $whereStr = sprintf(
+        '(`id` = :id) && (`room_id` in (%s))', $roomArrStr
+    );
+
+    return array($whereStr, $params);
 }
 
 /**

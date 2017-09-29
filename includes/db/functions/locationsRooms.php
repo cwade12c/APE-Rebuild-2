@@ -74,18 +74,6 @@ function createLocation(string $name, int $seatsReserved, int $limitedSeats,
     // TODO: validate success?
 }
 
-/*
- *
- *
- * TODO: issue with creating initial set of rooms
- * Similar to create/update exam categories
- * Need to validate, then determine
- *  what to add, update, remove
- *  all separate queries
- *  use some helper wrapping functions, multiple queries
- *
- */
-
 /**
  * Update all information about a location
  *
@@ -112,7 +100,7 @@ function updateLocationFull(int $id, string $name, int $seatsReserved,
 
     // TODO: multiple queries, transaction?
     updateLocationInfoQuery($id, $name, $seatsReserved, $limitedSeats);
-    updateLocationRoomsQuery($id, $rooms);
+    updateLocationRoomsExt($id, $rooms);
 
     // TODO: validate success?
 }
@@ -165,7 +153,28 @@ function updateLocationRooms(int $id, array $rooms)
         $info['seats_reserved'], $info['limited_seats'], $rooms
     );
 
-    updateLocationRoomsQuery($id, $rooms);
+    updateLocationRoomsExt($id, $rooms);
+}
+
+/**
+ * Internal function used to perform action of updating location rooms
+ * Not intended for outside use
+ *
+ * @param int   $id     Location ID
+ * @param array $rooms  Array of rooms to add/update (removes others)
+ *                      Element format
+ *                      'id' => room ID
+ *                      'seats' => room seats
+ */
+function updateLocationRoomsExt(int $id, array $rooms)
+{
+    // determine change necessary
+
+    // apply changes (queries)
+
+    // refer to updateExamCategories()
+
+    // TODO: populate
 }
 
 /**

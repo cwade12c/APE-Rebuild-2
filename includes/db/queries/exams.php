@@ -168,9 +168,17 @@ function buildFindExamTypeString(int $type)
 /**
  * Get exam row w/ given ID
  *
- * @param int $id
+ * @param int $id   Exam ID
  *
- * @return mixed
+ * @return mixed    Associative array w/ information
+ *                      'id' => exam ID (int)
+ *                      'is_regular' => is regular exam (bool)
+ *                      'start' => start date/time (datetime)
+ *                      'cutoff' => registration cutoff (datetime)
+ *                      'length' => exam length in minutes (int)
+ *                      'passing_grade' => passing grade (int)
+ *                      'location_id' => location ID (int)
+ *                      'state' => exam state (int)
  */
 function getExamInformationQuery(int $id)
 {

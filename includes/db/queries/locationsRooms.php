@@ -167,11 +167,11 @@ function updateLocationInfoQuery(int $id, string $name, int $seatsReserved,
 
     $sql = executeQuery(
         $query, array(
-        array(':id', $id, PDO::PARAM_INT),
-        array(':name', $name, PDO::PARAM_STR),
-        array(':reservedSeats', $seatsReserved, PDO::PARAM_INT),
-        array(':limitedSeats', $limitedSeats, PDO::PARAM_INT)
-    )
+            array(':id', $id, PDO::PARAM_INT),
+            array(':name', $name, PDO::PARAM_STR),
+            array(':reservedSeats', $seatsReserved, PDO::PARAM_INT),
+            array(':limitedSeats', $limitedSeats, PDO::PARAM_INT)
+        )
     );
 }
 
@@ -305,7 +305,8 @@ function buildRemoveLocationRoomsStringParam(int $id, array $rooms)
  */
 function deleteLocationQuery(int $id)
 {
-    // TODO: populate
+    $query = "DELETE FROM `locations` WHERE `id` = :id";
+    $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
 }
 
 /**
@@ -317,8 +318,15 @@ function deleteLocationQuery(int $id)
  */
 function roomNameExistsQuery(string $name)
 {
-    // TODO: populate
-    return false;
+    $query = "SELECT (:name IN (SELECT `name` FROM `rooms`))";
+
+    $sql = executeQuery(
+        $query, array(
+            array(':name', $name, PDO::PARAM_STR)
+        )
+    );
+
+    return getQueryResult($sql);
 }
 
 /**
@@ -330,14 +338,15 @@ function roomNameExistsQuery(string $name)
  */
 function roomIDExistsQuery(int $id)
 {
-    // TODO: populate
-    /*
-     * TODO: experiment with avoiding 'false' query result returns
-     * Approach may be odd since queries will return 'false' on issue
-     * Maybe can use 'AS' keyword in select query to get definite
-     * Test with
-     */
-    return false;
+    $query = "SELECT (:id IN (SELECT `id` FROM `rooms`))";
+
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $id, PDO::PARAM_INT)
+        )
+    );
+
+    return getQueryResult($sql);
 }
 
 /**
@@ -347,7 +356,10 @@ function roomIDExistsQuery(int $id)
  */
 function getRoomsQuery()
 {
-    // TODO: populate
+    $query = "SELECT `id` FROM `rooms`";
+    $sql = executeQuery($query);
+
+    return getQueryResults($sql);
 }
 
 /**
@@ -358,8 +370,14 @@ function getRoomsQuery()
  */
 function createRoomQuery(string $name, int $seats)
 {
-    // TODO: populate
-    // TODO: return room ID?
+    $query = "INSERT INTO `rooms`(`name`, `seats`) "
+        . "VALUES (:name, :seats);";
+    $sql = executeQuery(
+        $query, array(
+            array(':name', $name, PDO::PARAM_STR),
+            array(':seats', $seats, PDO::PARAM_INT)
+        )
+    );
 }
 
 /**
@@ -371,7 +389,17 @@ function createRoomQuery(string $name, int $seats)
  */
 function updateRoomQuery(int $id, string $name, int $seats)
 {
-    // TODO: populate
+    $query = "UPDATE `rooms` "
+        . "SET `name` = :name, `seats` = :seats "
+        . "WHERE `id` = :id";
+
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $id, PDO::PARAM_INT),
+            array(':name', $name, PDO::PARAM_STR),
+            array(':seats', $seats, PDO::PARAM_INT)
+        )
+    );
 }
 
 /**
@@ -381,7 +409,8 @@ function updateRoomQuery(int $id, string $name, int $seats)
  */
 function deleteRoomQuery(int $id)
 {
-    // TODO: populate
+    $query = "DELETE FROM `rooms` WHERE `id` = :id";
+    $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
 }
 
 /**
@@ -396,7 +425,10 @@ function deleteRoomQuery(int $id)
  */
 function getLocationInformationQuery(int $id)
 {
-    // TODO: populate
+    $query = "SELECT `name`, `reserved_seats`, `limited_seats` "
+        . " FROM `locations` WHERE `id` = :id";
+    $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+    return getQueryResultRow($sql);
 }
 
 /**
@@ -410,7 +442,10 @@ function getLocationInformationQuery(int $id)
  */
 function getLocationRoomsQuery(int $id)
 {
-    // TODO: populate
+    $query = "SELECT `room_id`, `seats` "
+        . " FROM `location_rooms` WHERE `location_id` = :id";
+    $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+    return getQueryResults($id);
 }
 
 /**
@@ -424,5 +459,8 @@ function getLocationRoomsQuery(int $id)
  */
 function getRoomInformationQuery(int $id)
 {
-    // TODO: populate
+    $query = "SELECT `name`, `seats` "
+        . " FROM `rooms` WHERE `id` = :id";
+    $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+    return getQueryResultRow($sql);
 }

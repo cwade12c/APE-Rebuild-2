@@ -190,6 +190,8 @@ function deleteLocation(int $id)
     // TODO: check if location is valid to be deleted
     /// not used in any non-archived exams
 
+    // if relations set correctly
+    // don't have to worry about affecting other tables
     deleteLocationQuery($id);
 }
 
@@ -275,6 +277,8 @@ function updateRoom(int $id, string $name, int $seats)
 function deleteRoom(int $id)
 {
     validateRoomIDSafeDelete($id);
+
+    // TODO: check if room deletion affects locations/exams
 
     deleteRoomQuery($id);
 }

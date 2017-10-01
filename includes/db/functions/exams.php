@@ -138,9 +138,9 @@ function getExamInformation(int $id)
 /**
  * Get state for given exam ID
  *
- * @param int $id
+ * @param int $id   exam ID
  *
- * @return mixed
+ * @return int      exam state
  */
 function getExamState(int $id)
 {
@@ -152,9 +152,11 @@ function getExamState(int $id)
  * Gets all categories for an exam, will contain
  * category_id and the points value set.
  *
- * @param int $id
+ * @param int $id   exam ID
  *
- * @return mixed
+ * @return array    array of exam categories, element format
+ *                      'id' => category ID
+ *                      'points' => category points
  */
 function getExamCategories(int $id)
 {
@@ -485,10 +487,12 @@ function mapExamCategoryIDsOut(array $category)
  *
  * @param array $categoryID   array of exam category IDs
  * @param array $categoryList array to grab points from, with format of
- *                            id => points
+ *                            'id' => category id
+ *                            'points' => points
  *
  * @return array        array with elements in format of
- *                      array(id, points)
+ *                      'id' => category ID
+ *                      'points' => category points
  */
 function mapExamCategoriesBack(array $categoryIDs, array $categories)
 {

@@ -208,7 +208,7 @@ function getExamStateQuery(int $id)
     $query = "SELECT `state` FROM `exams` WHERE (`id` = :id)";
     $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
 
-    return getQueryResultRow($sql);
+    return getQueryResult($sql);
 }
 
 /**

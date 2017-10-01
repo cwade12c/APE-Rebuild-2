@@ -160,21 +160,136 @@ function updateLocationRooms(int $id, array $rooms)
  * Internal function used to perform action of updating location rooms
  * Not intended for outside use
  *
- * @param int   $id     Location ID
- * @param array $rooms  Array of rooms to add/update (removes others)
- *                      Element format
- *                      'id' => room ID
- *                      'seats' => room seats
+ * @param int   $id       Location ID
+ * @param array $newRooms Array of rooms to add/update (removes others)
+ *                        Element format
+ *                        'id' => room ID
+ *                        'seats' => room seats
  */
-function updateLocationRoomsExt(int $id, array $rooms)
+function updateLocationRoomsExt(int $id, array $newRooms)
 {
-    // determine change necessary
+    // TODO: validate any conflicts w/ current seating ?
 
-    // apply changes (queries)
+    $currentRooms = getLocationRooms($id);
 
-    // refer to updateExamCategories()
+    // determine changes necessary
+    list(
+        $roomsToRemove, $roomsToAdd, $roomsToUpdate
+        )
+        = determineLocationRoomChanges($currentRooms, $newRooms);
 
-    // TODO: populate
+    // remove rooms
+    removeLocationRoomsQuery($id, $roomsToRemove);
+
+    // update rooms
+    updateLocationRoomsQuery($id, $roomsToUpdate);
+
+    // add room
+    createLocationRoomsQuery($id, $roomsToAdd);
+
+    // TODO: check for success?
+}
+
+/**
+ * Determine changes necessary to update the rooms for a location
+ *
+ * @param array $currentRooms       Array of current location rooms, element format
+ *                                  'id' => room ID
+ *                                  'seats' => room seats
+ * @param array $newRooms           Array
+ *
+ * @return array
+ */
+function determineLocationRoomChanges(array $currentRooms, array $newRooms)
+{
+    // build list of current room IDs
+    $currentRoomIDs = array_map(
+        'mapLocationRoomIDsOut', $currentRooms
+    );
+
+    // build list of new room IDs
+    $newRoomIDs = array_map(
+        'mapLocationRoomIDsOut', $newRooms
+    );
+
+    // determine changes necessary
+    $roomsToRemove = array();
+    $roomsToAdd = array();
+    $roomsToUpdate = array();
+
+    // check new room IDs
+    foreach ($newRoomIDs as $roomID) {
+        // check for update
+        if (in_array($roomID, $currentRoomIDs)) {
+            array_push($roomsToUpdate, $roomID);
+        } else {
+            array_push($roomsToAdd, $roomID);
+        }
+    }
+
+    // check old room IDs for removals
+    foreach ($currentRoomIDs as $roomID) {
+        if (!in_array($roomID, $newRoomIDs)) {
+            array_push($roomsToRemove, $roomID);
+        }
+    }
+
+    // build return arrays
+    $roomsToAdd = mapLocationRoomsBack($roomsToAdd, $newRooms);
+    $roomsToUpdate = mapLocationRoomsBack($roomsToUpdate, $newRooms);
+
+    return array($roomsToRemove, $roomsToAdd, $roomsToUpdate);
+}
+
+/**
+ * Helper function for determineLocationRoomChanges();
+ * Used by array_map() to pull all room IDs
+ *
+ * @param array $room       single room in format
+ *                          array(
+ *                          'id' => room id
+ *                          'seats' => room seats
+ *                          )
+ *
+ * @return int              room id
+ */
+function mapLocationRoomIDsOut(array $room)
+{
+    return $room['id'];
+}
+
+/**
+ * Helper function for determineLocationRoomChanges()
+ * Used to map an array of room ID back to an array of format
+ * array(ID, seats)
+ *
+ * @param array $roomIDs      array of location room IDs
+ * @param array $rooms        array to grab seats from, with format of
+ *                              'id' => room ID
+ *                              'seats' => room seats
+ *
+ * @return array        array with elements in format of
+ *                          'id' => room ID
+ *                          'seats' => room seats
+ */
+function mapLocationRoomsBack(array $roomIDs, array $rooms)
+{
+    // cannot use array_map, due to issues with an array as an argument
+    // will pass each element of that array along, not whole array
+    $normalizedRooms = array();
+    foreach ($roomIDs as $id) {
+        // find category information
+        foreach ($rooms as $room) {
+            if ($room['id'] == $id) {
+                array_push($normalizedRooms, $room);
+                break;
+            }
+        }
+        // safe to assume all room IDs will map back correctly
+        // TODO: check for anyway?
+    }
+
+    return $normalizedRooms;
 }
 
 /**

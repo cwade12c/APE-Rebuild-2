@@ -30,6 +30,18 @@ function typeHas(int $type, int $permission)
 }
 
 /**
+ * Get the type for the account ID
+ *
+ * @param string $accountID Account ID
+ *
+ * @return int              Account type
+ */
+function getAccountType(string $accountID)
+{
+    return getAccountTypeQuery($accountID);
+}
+
+/**
  * check if account has given permission on type
  * permission values available in 'constants.php'
  *

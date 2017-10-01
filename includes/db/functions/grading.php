@@ -159,3 +159,33 @@ function finalizeExam(int $examId)
 // cleanup exam grades
 /// cleanup all grader information not necessary
 /// TODO: determine if necessary, make manual operation by admin/db admin?
+
+/**
+ * Get the number of exams failed
+ *
+ * @param string $studentID Student ID
+ *
+ * @return int              Number of exams failed
+ */
+function getFailedExamCount(string $studentID)
+{
+    // TODO: populate
+    return 0;
+}
+
+/**
+ * Check if student has passed an exam
+ *
+ * @param string $studentID Student ID
+ *
+ * @return bool             If student has passed an exam
+ */
+function hasPassedExam(string $studentID)
+{
+    // TODO: populate
+    return false;
+}
+
+
+
+

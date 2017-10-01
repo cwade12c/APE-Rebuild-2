@@ -296,6 +296,17 @@ function validateAccountID(string $id)
 }
 
 /**
+ * Check if student ID is valid
+ * Throws argument exceptions if there is an issue
+ *
+ * @param string $studentID Student ID
+ */
+function validateStudentID(string $studentID)
+{
+    // TODO: validate
+}
+
+/**
  * Checks if teacher ID is valid
  * Throws argument exceptions if there is an issue
  *
@@ -317,6 +328,86 @@ function validateCategoryID(int $id)
 {
     // TODO: validate category id, exists
     /// throw exception if not valid
+}
+
+/**
+ * Validate registration for an exam
+ * Throws argument exception if there is an issue
+ *
+ * @param int    $examID    Exam ID
+ * @param string $studentID Student ID
+ */
+function validateRegistration(int $examID, string $studentID)
+{
+    // validate information
+    validateExamID($examID);
+    validateStudentID($studentID);
+
+    // check registration state
+    $currentState = getRegistrationState($studentID);
+    if ($currentState != STUDENT_STATE_READY) {
+        // throw exception
+        throw new InvalidArgumentException(
+            sprintf(
+                "Invalid student(%s) registration state(%d), cannot register",
+                $studentID,
+                $currentState
+            )
+        );
+    }
+
+    // check exam state
+    // check if state allows registration
+    $examState = getExamState($examID);
+    if (!doesExamStateAllowRegistration($examState)) {
+        // throw exception
+        throw new InvalidArgumentException(
+            sprintf(
+                "Invalid exam state(%s), does not allow registration",
+                $examState
+            )
+        );
+    }
+}
+
+/**
+ * Validate de-registration from an exam
+ * Throws argument exception if there is an issue
+ *
+ * @param int    $examID    Exam ID
+ * @param string $studentID Student ID
+ */
+function validateDeregistration(int $examID, string $studentID)
+{
+    // validate information
+    validateExamID($examID);
+    validateStudentID($studentID);
+
+    // check registration state
+    $currentState = getRegistrationState($studentID);
+    if ($currentState != STUDENT_STATE_REGISTERED) {
+        // throw exception
+        throw new InvalidArgumentException(
+            sprintf(
+                "Invalid student(%s) registration state(%d), not registered",
+                $studentID,
+                $currentState
+            )
+        );
+    }
+
+    // check exam state
+    // if does not allow registration, then does not allow de-registration
+    $examState = getExamState($examID);
+    if (!doesExamStateAllowRegistration($examState)) {
+        // throw exception
+        throw new InvalidArgumentException(
+            sprintf(
+                "Invalid exam state(%s), does not allow de-registration",
+                $examState
+            )
+        );
+    }
 }
 
 /**

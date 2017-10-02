@@ -144,7 +144,7 @@ function getExamInformation(int $id)
  */
 function getExamState(int $id)
 {
-    // TODO: validate id exists
+    validateExamID($id);
     return getExamStateQuery($id);
 }
 

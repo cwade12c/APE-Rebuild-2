@@ -333,7 +333,7 @@ function validateCategoryID(int $id)
 /**
  * Validate the value is valid registration state
  *
- * @param int $state    Registration state
+ * @param int $state Registration state
  */
 function validateRegistrationState(int $state)
 {
@@ -438,7 +438,7 @@ function validateDeregistration(int $examID, string $studentID)
  * Validate the exam state allows registration
  * Throws argument exception if the exam state does not allow registration
  *
- * @param int $examID   Exam ID
+ * @param int $examID Exam ID
  */
 function validateExamAllowsRegistration(int $examID)
 {
@@ -450,6 +450,24 @@ function validateExamAllowsRegistration(int $examID)
                 "Invalid exam(%d) state(%s), does not allow registration",
                 $examID,
                 $examState
+            )
+        );
+    }
+}
+
+/**
+ * Validate the student is registered for the given exam
+ *
+ * @param string $studentID Student ID
+ * @param int    $examID    Exam ID
+ */
+function validateStudentIsRegisteredFor(string $studentID, int $examID)
+{
+    if (!in_array($examID, getExamsRegisteredFor($studentID))) {
+        throw new InvalidArgumentException(
+            sprintf(
+                "Student(%s) is not registered for exam(%d)", $studentID,
+                $examID
             )
         );
     }

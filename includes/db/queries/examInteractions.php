@@ -9,6 +9,34 @@
  */
 
 /**
+ * Get registration info for a student and exam
+ *
+ * @param string $studentID Student ID
+ * @param int    $examID    Exam ID
+ *
+ * @return array            Registration information, format
+ *                          'room
+ */
+function getExamRegistrationInfoQuery(string $studentID, int $examID)
+{
+    // TODO: populate
+    return array();
+}
+
+/**
+ * Query to get the list exam IDs the student is registered for
+ *
+ * @param string $studentID Student ID
+ *
+ * @return array            List of exam IDs
+ */
+function getExamsRegisteredForQuery(string $studentID)
+{
+    // TODO: populate
+    return array();
+}
+
+/**
  * Query to get a student's registration state
  *
  * @param string $studentID Student ID
@@ -30,6 +58,23 @@ function getRegistrationStateQuery(string $studentID)
 function setRegistrationStateQuery(string $studentID, int $state)
 {
     // TODO: populate
+}
+
+/**
+ * Query to get the assigned seating for an exam registration
+ *
+ * @param string $studentID Student ID
+ * @param int    $examID    Exam ID
+ *
+ * @return array            Associative array w/ seating information
+ *                          'room_id' => room ID
+ *                          'seat' => seat number
+ *                          if room_id=null or seat=0, no seat assigned
+ */
+function getAssignedSeatQuery(string $studentID, int $examID)
+{
+    // TODO: populate
+    return array();
 }
 
 /**

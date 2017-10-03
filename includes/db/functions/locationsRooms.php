@@ -263,8 +263,8 @@ function mapLocationRoomIDsOut(array $room)
  * Used to map an array of room ID back to an array of format
  * array(ID, seats)
  *
- * @param array $roomIDs      array of location room IDs
- * @param array $rooms        array to grab seats from, with format of
+ * @param array $roomIDs        array of location room IDs
+ * @param array $rooms          array to grab seats from, with format of
  *                              'id' => room ID
  *                              'seats' => room seats
  *
@@ -447,6 +447,34 @@ function getLocationRooms(int $id)
     }
 
     return $editedRooms;
+}
+
+/**
+ * Get the max number of seats from all location rooms
+ * Does take into account the limited seats max
+ *
+ * @param int $id Exam ID
+ *
+ * @return int    Max number of seats
+ */
+function getLocationRoomsMaxSeats(int $id)
+{
+    validateLocationID($id);
+
+    // count max for rooms
+    $rooms = getLocationRooms($id);
+    $roomsMax = 0;
+    foreach ($rooms as $room) {
+        $roomsMax += $room['seats'];
+    }
+
+    // check for limited seating
+    $info = getLocationInformation($id);
+    if ($info['limited_seats'] > 0) {
+        return min($roomsMax, $info['limited_seats']);
+    }
+
+    return $roomsMax;
 }
 
 /**

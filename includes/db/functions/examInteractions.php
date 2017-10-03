@@ -10,6 +10,21 @@
  */
 
 /**
+ * Gets a list of exam IDs the student is registered for.
+ *
+ * @param string $studentID Student ID
+ *
+ * @return array            List of exam IDs
+ */
+function getExamsRegisteredFor(string $studentID)
+{
+    // validate info
+    validateStudentID($studentID);
+
+    return getExamsRegisteredForQuery($studentID);
+}
+
+/**
  * Register student for an exam
  *
  * @param int    $examID    Exam ID
@@ -21,6 +36,8 @@ function registerStudentForExam(int $examID, string $studentID)
     validateStudentID($studentID);
     validateRegistrationStateIs($studentID, STUDENT_STATE_REGISTERED);
     validateExamAllowsRegistration($examID);
+
+    // find open seat
 
     // register, assign seat
     registerStudentForExamQuery($examID, $studentID);
@@ -39,6 +56,7 @@ function deregisterStudentFromExam(int $examID, string $studentID)
     validateStudentID($studentID);
     validateRegistrationStateIs($studentID, STUDENT_STATE_REGISTERED);
     validateExamAllowsRegistration($examID);
+    validateStudentIsRegisteredFor($studentID, $examID);
 
     deregisterStudentFromExamQuery($examID, $studentID);
 }
@@ -65,6 +83,7 @@ function getRegistrationState(string $studentID)
  */
 function setRegistrationState(string $studentID, int $state)
 {
+    // validate info
     validateStudentID($studentID);
     validateRegistrationState($state);
 
@@ -72,7 +91,28 @@ function setRegistrationState(string $studentID, int $state)
 }
 
 /**
+ * Get seating information for a student, exam registration
+ *
+ * @param string $studentID Student ID
+ * @param int    $examID    Exam ID
+ *
+ * @return array            associate array, format
+ *                          'room_id' => room id
+ *                          'seat' => seat number
+ *                          if room_id=null or seat=0, no seat assigned
+ */
+function getAssignedSeat(string $studentID, int $examID)
+{
+    // validate info
+    validateExamID($examID);
+    validateStudentIsRegisteredFor($studentID, $examID);
+
+    return getAssignedSeatQuery($studentID, $examID);
+}
+
+/**
  * Get the number of open seats for an exam
+ * Takes into account reserved seats and limited seats
  *
  * @param int $examID Exam ID
  *
@@ -80,8 +120,22 @@ function setRegistrationState(string $studentID, int $state)
  */
 function getOpenSeatCount(int $examID)
 {
+    // get max room seats
+    // get reserved seat count
+    // get amount of open/assigned seats
+    // return (max - reserved - assigned)
     // TODO: populate
     return 0;
+}
+
+
+function getAssignedSeatCount(int $examID)
+{
+    // validate info
+    validateExamID($examID);
+
+    $assignedSeats = array();
+    return count($assignedSeats);
 }
 
 /**
@@ -93,21 +147,8 @@ function getOpenSeatCount(int $examID)
  */
 function getTotalExamSeatCount(int $examID)
 {
-    // TODO: populate
-    return 0;
-}
-
-/**
- * Get the total seat count for a location
- *
- * @param int $locationID Location ID
- *
- * @return int            total seat count
- */
-function getTotalLocationSeatCount(int $locationID)
-{
-    // TODO: populate
-    return 0;
+    $examInfo = getExamInformation($examID);
+    return getLocationRoomsMaxSeats($examInfo['location_id']);
 }
 
 // assign student to room/seat
@@ -175,6 +216,24 @@ function resetSeatAssignments(int $examID)
 }
 
 /**
+ * Get all seating for an exam/room
+ *
+ * @param int $examID   Exam ID
+ * @param int $roomID   Room ID
+ *
+ * @return array        Array of seating in format
+ *                      'student_id' => student id
+ *                      'seat' => seat number
+ */
+function getExamRoomSeating(int $examID, int $roomID)
+{
+    // validate
+    // query
+    // TODO: populate
+    return array();
+}
+
+/**
  * Attempt to find an open seat for an exam
  * Not intended for outside use
  * Only finds an open seat, does not assign
@@ -194,7 +253,7 @@ function findRandomOpenSeat(int $examID)
     $examLocationID = $examInfo['location_id'];
     $examRooms = getLocationRooms($examLocationID);
 
-    $openRooms = array();
+    $openRoomsSeating = array();
 
     // search for rooms w/ space
     foreach ($examRooms as $room) {
@@ -204,12 +263,15 @@ function findRandomOpenSeat(int $examID)
         if (count($seating) >= $room['seats']) {
             continue;
         }
-        array_push($openRooms, $room);
+        array_push(
+            $openRoomsSeating, array('room' => $room, 'seating' => $seating)
+        );
     }
 
     // select random room, random seat
-    $room = array_rand($openRooms);
-    $openSeats = getOpenSeatNumbers($room, $room['seats']);
+    $roomAndSeating = array_rand($openRoomsSeating);
+    $room = $roomAndSeating['room'];
+    $openSeats = getOpenSeatNumbers($roomAndSeating['seating'], $room['seats']);
     $seat = array_rand($openSeats);
 
     return array('id' => $room['id'], 'seat' => $seat);
@@ -237,7 +299,7 @@ function getOpenSeatNumbers(array $seating, int $max)
 
     // determine open seats
     $openSeatNumbers = array();
-    for($i = 1; $i <= $max; $i++) {
+    for ($i = 1; $i <= $max; $i++) {
         if (!in_array($i, $seatNumbers)) {
             array_push($openSeatNumbers, $i);
         }

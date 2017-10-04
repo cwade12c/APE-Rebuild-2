@@ -282,6 +282,8 @@ function validateRoomIDSafeEdit(int $id, int $seats)
     validateSeatCount($seats);
 
     // TODO: populate
+    // really only want to check if lowering the seat amount
+    // then checking the currently assigned seats
 }
 
 /**
@@ -457,6 +459,7 @@ function validateExamAllowsRegistration(int $examID)
 
 /**
  * Validate the student is registered for the given exam
+ * Throws InvalidArgumentException if there is an issue
  *
  * @param string $studentID Student ID
  * @param int    $examID    Exam ID
@@ -474,6 +477,88 @@ function validateStudentIsRegisteredFor(string $studentID, int $examID)
 }
 
 /**
+ * Validates the room and seat number are valid for an exam
+ * Throws InvalidArgumentException if there is an issue
+ *
+ * @param int $examID
+ * @param int $roomID
+ * @param int $seat
+ */
+function validateExamRoomSeat(int $examID, int $roomID, int $seat)
+{
+    // get location, rooms
+    $info = getExamInformation($examID);
+    $rooms = getLocationRooms($info['location_id']);
+    foreach ($rooms as $room) {
+        if ($room['id'] == $roomID) {
+            if ($seat < $room['seats']) {
+                // is valid
+                return;
+            } else {
+                // invalid seat number
+                throw new InvalidArgumentException(
+                    sprintf(
+                        "Invalid seat(%d), invalid for room(%d)", $seat, $roomID
+                    )
+                );
+            }
+        }
+    }
+
+    // invalid room ID
+    throw new InvalidArgumentException(
+        sprintf("Invalid room id(%d), not part of exam(%d)", $roomID, $examID)
+    );
+}
+
+/**
+ * Validate the exam has space on the registration
+ * Throws InvalidArgumentException if there is an issue
+ *
+ * @param int $examID
+ */
+function validateExamRoomAvailable(int $examID)
+{
+    // TODO: populate
+}
+
+/**
+ * Validates the exam has a location ID set
+ * Throws InvalidArgumentException if there is an issue
+ *
+ * @param int $examID Exam ID
+ */
+function validateExamLocationAvailable(int $examID)
+{
+    $info = getExamInformation($examID);
+    if (is_null($info['location_id'])) {
+        throw new InvalidArgumentException(
+            sprintf("Exam(%d) has no location available", $examID)
+        );
+    }
+}
+
+/**
+ * Validates the student has a seat assigned for an exam
+ * Throws InvalidArgumentException if there is an issue
+ *
+ * @param int    $examID    Exam ID
+ * @param string $studentID Student ID
+ */
+function validateExamSeatAssigned(int $examID, string $studentID)
+{
+    $seating = getAssignedSeat($studentID, $examID);
+    if (is_null($seating['room_id']) || ($seating['seat'] <= 0)) {
+        throw new InvalidArgumentException(
+            sprintf(
+                "Student(%s) does not have a seat assigned for exam(%d)",
+                $studentID, $examID
+            )
+        );
+    }
+}
+
+/**
  * Validate the given exam ID is valid
  * Throws argument exception if there is an issue
  *
@@ -481,7 +566,26 @@ function validateStudentIsRegisteredFor(string $studentID, int $examID)
  */
 function validateExamID(int $id)
 {
-    // TODO: validate exam id, exists
+    if ($id <= 0) {
+        throw new InvalidArgumentException(
+            sprintf("Exam ID(%d) is not a valid value", $id)
+        );
+    }
+}
+
+/**
+ * Validate the exam ID exists
+ * Throws argument exception if there is an issue
+ *
+ * @param int $id Exam ID
+ */
+function validateExamIDExists(int $id)
+{
+    if (!examExists($id)) {
+        throw new InvalidArgumentException(
+            sprintf("Exam(%d) does not exist", $id)
+        );
+    }
 }
 
 /**

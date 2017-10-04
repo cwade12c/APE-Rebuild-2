@@ -9,6 +9,19 @@
  */
 
 /**
+ * Check if a given exam ID exists
+ *
+ * @param int $id   Exam ID
+ *
+ * @return bool     If exam exists
+ */
+function examExists(int $id)
+{
+    validateExamID($id);
+    return examExistsQuery($id);
+}
+
+/**
  * Get list of IDs for all exams (all states)
  *
  * @param int $type for the type of exam (both, regular, in class)

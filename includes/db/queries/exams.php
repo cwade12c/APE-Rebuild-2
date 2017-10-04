@@ -9,6 +9,24 @@
  */
 
 /**
+ * Query to check if an exam ID exists
+ *
+ * @param int $id Exam ID
+ *
+ * @return bool   If ID is found
+ */
+function examExistsQuery(int $id)
+{
+    $query = "SELECT (:id in (SELECT `id` FROM `exams`)) AS `found_exam`";
+    $sql = executeQuery(
+        $query, array(array(':id', $id
+                            , PDO::PARAM_INT))
+    );
+
+    return getQueryResult($sql);
+}
+
+/**
  * Query to get list of exam IDs based on criteria
  *
  * @param int $state state of exam to find
@@ -168,7 +186,7 @@ function buildFindExamTypeString(int $type)
 /**
  * Get exam row w/ given ID
  *
- * @param int $id   Exam ID
+ * @param int $id Exam ID
  *
  * @return mixed    Associative array w/ information
  *                      'id' => exam ID (int)

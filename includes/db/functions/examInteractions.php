@@ -34,14 +34,48 @@ function registerStudentForExam(int $examID, string $studentID)
 {
     // validate info
     validateStudentID($studentID);
-    validateRegistrationStateIs($studentID, STUDENT_STATE_REGISTERED);
+    validateRegistrationStateIs($studentID, STUDENT_STATE_READY);
     validateExamAllowsRegistration($examID);
+    validateExamLocationAvailable($examID);
+    validateExamRoomAvailable($examID);
+
+    // register, assign seat
+    registerStudentForExamQuery($examID, $studentID);
+}
+
+/**
+ * Register student for an exam and assign a seat
+ *
+ * @param int    $examID        Exam ID
+ * @param string $studentID     Student ID
+ */
+function registerStudentForExamWithSeat(int $examID, string $studentID)
+{
+    // validate info
+    validateStudentID($studentID);
+    validateRegistrationStateIs($studentID, STUDENT_STATE_READY);
+    validateExamAllowsRegistration($examID);
+    validateExamLocationAvailable($examID);
 
     // find open seat
 
     // register, assign seat
     registerStudentForExamQuery($examID, $studentID);
     assignExamSeat($examID, $studentID);
+
+    /*
+     * TODO: edit for transaction support
+     * Start Transaction / make savepoint
+     * ...
+     * Check if seat is double booked, if so - rollback and repeat
+     *  Need to verify if a double commit is possible
+     *  May need to make a new table w/ primary keys for
+     *      Exam ID, Room ID, Seat #
+     *      Student ID
+     * ...
+     * Commit, check - rollback?
+     *
+     */
 }
 
 /**
@@ -120,6 +154,8 @@ function getAssignedSeat(string $studentID, int $examID)
  */
 function getOpenSeatCount(int $examID)
 {
+    // validateExamLocationAvailable($examID);
+
     // get max room seats
     // get reserved seat count
     // get amount of open/assigned seats
@@ -128,11 +164,18 @@ function getOpenSeatCount(int $examID)
     return 0;
 }
 
-
+/**
+ * Get the number of assigned seats
+ *
+ * @param int $examID   Exam ID
+ *
+ * @return int          Assigned seat count
+ */
 function getAssignedSeatCount(int $examID)
 {
     // validate info
     validateExamID($examID);
+    validateExamLocationAvailable($examID);
 
     $assignedSeats = array();
     return count($assignedSeats);
@@ -147,6 +190,10 @@ function getAssignedSeatCount(int $examID)
  */
 function getTotalExamSeatCount(int $examID)
 {
+    // validate
+    validateExamID($examID);
+    validateExamLocationAvailable($examID);
+
     $examInfo = getExamInformation($examID);
     return getLocationRoomsMaxSeats($examInfo['location_id']);
 }
@@ -166,6 +213,8 @@ function getTotalExamSeatCount(int $examID)
  */
 function seatAssigned(int $examID, string $studentID)
 {
+    // validateExamLocationAvailable($examID);
+
     // check if student is registered for an exam
     // check if student is assigned a room/seat
     // TODO: populate
@@ -173,13 +222,15 @@ function seatAssigned(int $examID, string $studentID)
 }
 
 /**
- * Assign a student to a seat in an exam
+ * Assign a student to a random open seat in an exam
  *
  * @param int    $examID    Exam ID
  * @param string $studentID Student ID
  */
-function assignExamSeat(int $examID, string $studentID)
+function assignOpenExamSeat(int $examID, string $studentID)
 {
+    // validateExamLocationAvailable($examID);
+
     // check open seat count
     // randomly select a room
     //
@@ -191,6 +242,23 @@ function assignExamSeat(int $examID, string $studentID)
 }
 
 /**
+ * Assign a student to a specific seat in an exam
+ *
+ * @param int    $examID    Exam ID
+ * @param string $studentID Student ID
+ * @param int    $roomID    Room ID
+ * @param int    $seat      Seat number
+ */
+function assignExamSeat(int $examID, string $studentID, int $roomID, int $seat)
+{
+    // validate info
+    validateExamID($examID);
+    validateStudentIsRegisteredFor($studentID, $examID);
+    validateExamLocationAvailable($examID);
+    validateExamRoomSeat($examID, $roomID, $seat);
+}
+
+/**
  * Undo seat assignment for student/exam
  *
  * @param int    $examID    Exam ID
@@ -198,6 +266,11 @@ function assignExamSeat(int $examID, string $studentID)
  */
 function deassignSeat(int $examID, string $studentID)
 {
+    // validate info
+    validateExamID($examID);
+    validateStudentIsRegisteredFor($studentID, $examID);
+
+
     // TODO: populate
 }
 

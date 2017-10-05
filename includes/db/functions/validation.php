@@ -524,6 +524,18 @@ function validateExamRoomAvailable(int $examID)
 }
 
 /**
+ * Validates the exam's location has the given room
+ * Throws InvalidArgumentException if there is an issue
+ *
+ * @param int $examID   Exam ID
+ * @param int $roomID   Room ID
+ */
+function validateExamHasRoom(int $examID, int $roomID)
+{
+    // TODO: populate
+}
+
+/**
  * Validates the exam has a location ID set
  * Throws InvalidArgumentException if there is an issue
  *
@@ -638,6 +650,28 @@ function validateExamCategories(int $passingGrade, array $categories)
         );
     }
 
+}
+
+/**
+ * Validate that no transaction is active
+ * Throws LogicException if there is an issue
+ */
+function validateNoTransaction()
+{
+    if (inTransaction()) {
+        throw new LogicException("A transaction is active");
+    }
+}
+
+/**
+ * Validate that a transaction is active
+ * Throws LogicException if there is an issue
+ */
+function validateInTransaction()
+{
+    if (!inTransaction()) {
+        throw new LogicException("A transaction is not active");
+    }
 }
 
 /**

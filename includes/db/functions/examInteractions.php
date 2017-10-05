@@ -256,6 +256,17 @@ function assignExamSeat(int $examID, string $studentID, int $roomID, int $seat)
     validateStudentIsRegisteredFor($studentID, $examID);
     validateExamLocationAvailable($examID);
     validateExamRoomSeat($examID, $roomID, $seat);
+
+    // validate that seat is open/available
+
+    // start transaction
+    // query set seat
+    // commit
+    //
+
+    //
+
+    // TODO: populate
 }
 
 /**
@@ -301,9 +312,10 @@ function resetSeatAssignments(int $examID)
 function getExamRoomSeating(int $examID, int $roomID)
 {
     // validate
-    // query
-    // TODO: populate
-    return array();
+    validateExamID($examID);
+    validateExamHasRoom($examID, $roomID);
+
+    return getExamRoomRegistrationsQuery($examID, $roomID);
 }
 
 /**
@@ -386,12 +398,49 @@ function getOpenSeatNumbers(array $seating, int $max)
 /**
  * Find any exam seating that is invalid
  * Which means room_id=null or seat=0
- * This function would just serve as a redundancy/error catcher
- * TODO: determine if should attempt seating assignments
+ * This function would just serve as a redundancy/error checking
  *
- * @param int $examID
+ * @param int $examID   Exam ID
+ *
+ * @return array        For invalid seating found
+ *                      Element format
+ *                      'student_id' => student id
+ *                      'exam_id' => exam id
  */
 function checkForInvalidSeating(int $examID)
+{
+    // TODO: populate
+}
+
+/**
+ * Check for duplicate seating of given seat
+ *
+ * @param int $examID   Exam ID
+ * @param int $roomID   Room ID
+ * @param int $seat     Seat
+ *
+ * @return array        Array of student IDs assigned to seat (duplicates)
+ */
+function checkForDuplicateSeat(int $examID, int $roomID, int $seat)
+{
+    // TODO: populate
+}
+
+/**
+ * Check for any duplicate exam seating
+ * Serves as redundancy/error checking
+ *
+ * @param int $examID   Exam ID
+ *
+ * @return array        For duplicate seats found
+ *                      Elements will be an array of duplicates
+ *                      Each subarrays format
+ *                      'exam_id' => exam id
+ *                      'room_id' => room id
+ *                      'seat' => seat
+ *                      'students' => array of student IDs
+ */
+function checkForDuplicateSeating(int $examID)
 {
     // TODO: populate
 }

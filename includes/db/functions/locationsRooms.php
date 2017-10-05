@@ -343,7 +343,13 @@ function roomExists(int $id)
  */
 function getRooms()
 {
-    return getRoomsQuery();
+    $roomIDs = getRoomsQuery();
+    $ids = array();
+    foreach($roomIDs as $roomIDArr) {
+        array_push($ids, $roomIDArr['id']);
+    }
+    return $ids;
+
     // TODO: validate something is returned (no false, just empty array)
 }
 

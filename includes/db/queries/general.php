@@ -14,6 +14,60 @@
 /// once error checking is implemented in the db functions
 
 /**
+ * Starts transaction on DB PDO object
+ * Only for internal use
+ *
+ * @return bool         If succeeds
+ *
+ * @throws PDOException See PDO:beginTransaction()
+ */
+function startTransactionQuery()
+{
+    global $db;
+    return $db->beginTransaction();
+}
+
+/**
+ * Rollback a DB PDO transaction
+ * Only for internal use
+ *
+ * @return bool         If succeeds
+ *
+ * @throws PDOException See PDO:beginTransaction()
+ */
+function rollBackQuery()
+{
+    global $db;
+    return $db->rollBack();
+}
+
+/**
+ * Commits transaction on DB PDO object
+ * Only for internal use
+ *
+ * @return bool         If succeeds
+ *
+ * @throws PDOException See PDO:commit()
+ */
+function commitQuery()
+{
+    global $db;
+    return $db->commit();
+}
+
+/**
+ * Check if DB PDO object in a transaction
+ * Only for internal use
+ *
+ * @return bool If in Transaction
+ */
+function inTransactionQuery()
+{
+    global $db;
+    return $db->inTransaction();
+}
+
+/**
  * general query method
  * prepares given query string, executes
  *

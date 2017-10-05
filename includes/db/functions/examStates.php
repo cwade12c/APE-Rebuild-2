@@ -210,6 +210,7 @@ function refreshExam(int $id)
      * -- TODO: check if registration should be open (config values?)
      * - open
      * -- check if cutoff date/time reached
+     * -- check if location ID set
      * - closed
      * -- check if start date/time reached
      * - in progress

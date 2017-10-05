@@ -9,6 +9,68 @@
  */
 
 /**
+ * Start a transaction
+ *
+ * @return bool             If succeeds
+ *
+ * @throws LogicException   PDO::startTransaction
+ *                          should only happen if a transaction is active
+ */
+function startTransaction()
+{
+    try {
+        return startTransactionQuery();
+    } catch (PDOException $e) {
+        throw new LogicException("Failed to rollback", 0, $e);
+    }
+}
+
+/**
+ * Rollback a transaction
+ *
+ * @return bool             If succeeds
+ *
+ * @throws LogicException   PDO::rollBack
+ *                          should only happen if no transaction is active
+ */
+function rollback()
+{
+    try {
+        return rollBackQuery();
+    } catch (PDOException $e) {
+        throw new LogicException("Failed to rollback", 0, $e);
+    }
+}
+
+/**
+ * Commit a transaction
+ *
+ * @return bool             If succeeds
+ *
+ * @throws LogicException   DO::commit exception
+ *                          should only happen if no transaction is active
+ */
+function commit()
+{
+    try {
+        return commitQuery();
+    } catch (PDOException $e) {
+        throw new LogicException("Failed to commit", 0, $e);
+    }
+}
+
+/**
+ * Check if within a transaction
+ * Only for internal/backend use.
+ *
+ * @return bool If in transaction
+ */
+function inTransaction()
+{
+    return inTransactionQuery();
+}
+
+/**
  * Gets details about a table attribute
  *
  * @param string $tableName     name of table

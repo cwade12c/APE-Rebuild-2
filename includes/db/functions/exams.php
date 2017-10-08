@@ -11,7 +11,7 @@
 /**
  * Check if a given exam ID exists
  *
- * @param int $id   Exam ID
+ * @param int $id Exam ID
  *
  * @return bool     If exam exists
  */
@@ -149,9 +149,22 @@ function getExamInformation(int $id)
 }
 
 /**
+ * Get location ID of exam
+ *
+ * @param int $id Exam ID
+ *
+ * @return int|null Location ID, null if unset
+ */
+function getExamLocationID(int $id)
+{
+    $info = getExamInformation($id);
+    return $info['location_id'];
+}
+
+/**
  * Get state for given exam ID
  *
- * @param int $id   exam ID
+ * @param int $id exam ID
  *
  * @return int      exam state
  */
@@ -165,7 +178,7 @@ function getExamState(int $id)
  * Gets all categories for an exam, will contain
  * category_id and the points value set.
  *
- * @param int $id   exam ID
+ * @param int $id exam ID
  *
  * @return array    array of exam categories, element format
  *                      'id' => category ID

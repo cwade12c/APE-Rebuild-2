@@ -499,7 +499,8 @@ function validateExamRoomSeat(int $examID, int $roomID, int $seat)
                 // invalid seat number
                 throw new InvalidArgumentException(
                     sprintf(
-                        "Invalid seat(%d), invalid for room(%d)", $seat, $roomID
+                        "Invalid seat(%d), invalid for room(%d)",
+                        $seat, $roomID
                     )
                 );
             }
@@ -508,7 +509,8 @@ function validateExamRoomSeat(int $examID, int $roomID, int $seat)
 
     // invalid room ID
     throw new InvalidArgumentException(
-        sprintf("Invalid room id(%d), not part of exam(%d)", $roomID, $examID)
+        sprintf("Invalid room id(%d), not part of exam(%d)",
+            $roomID, $examID)
     );
 }
 
@@ -527,8 +529,8 @@ function validateExamRoomAvailable(int $examID)
  * Validates the exam's location has the given room
  * Throws InvalidArgumentException if there is an issue
  *
- * @param int $examID   Exam ID
- * @param int $roomID   Room ID
+ * @param int $examID Exam ID
+ * @param int $roomID Room ID
  */
 function validateExamHasRoom(int $examID, int $roomID)
 {

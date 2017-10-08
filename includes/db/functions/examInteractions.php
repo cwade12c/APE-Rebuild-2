@@ -9,6 +9,11 @@
  * @subpackage     Database
  */
 
+/*
+ * TODO: validate exam state allows registration/seating
+ *      for relevant functions
+ */
+
 /**
  * Gets a list of exam IDs the student is registered for.
  *
@@ -18,81 +23,45 @@
  */
 function getExamsRegisteredFor(string $studentID)
 {
-    // validate info
     validateStudentID($studentID);
 
     return getExamsRegisteredForQuery($studentID);
 }
 
 /**
- * Register student for an exam
+ * Get list of student IDs registered for an exam
  *
- * @param int    $examID    Exam ID
- * @param string $studentID Student ID
+ * @param int $examID Exam ID
+ *
+ * @return array      List of student IDs
  */
-function registerStudentForExam(int $examID, string $studentID)
+function getExamRegistrations(int $examID)
 {
-    // validate info
-    validateStudentID($studentID);
-    validateRegistrationStateIs($studentID, STUDENT_STATE_READY);
-    validateExamAllowsRegistration($examID);
-    validateExamLocationAvailable($examID);
-    validateExamRoomAvailable($examID);
+    validateExamID($examID);
 
-    // register, assign seat
-    registerStudentForExamQuery($examID, $studentID);
+    $results = getAllExamRegistrationsQuery($examID);
+    $studentIDs = array();
+    foreach ($results as $result) {
+        array_push($studentIDs, $result['student_id']);
+    }
+
+    return $studentIDs;
 }
 
 /**
- * Register student for an exam and assign a seat
- *
- * @param int    $examID        Exam ID
- * @param string $studentID     Student ID
- */
-function registerStudentForExamWithSeat(int $examID, string $studentID)
-{
-    // validate info
-    validateStudentID($studentID);
-    validateRegistrationStateIs($studentID, STUDENT_STATE_READY);
-    validateExamAllowsRegistration($examID);
-    validateExamLocationAvailable($examID);
-
-    // find open seat
-
-    // register, assign seat
-    registerStudentForExamQuery($examID, $studentID);
-    assignExamSeat($examID, $studentID);
-
-    /*
-     * TODO: edit for transaction support
-     * Start Transaction / make savepoint
-     * ...
-     * Check if seat is double booked, if so - rollback and repeat
-     *  Need to verify if a double commit is possible
-     *  May need to make a new table w/ primary keys for
-     *      Exam ID, Room ID, Seat #
-     *      Student ID
-     * ...
-     * Commit, check - rollback?
-     *
-     */
-}
-
-/**
- * Deregister from an exam
+ * Check if a student is registered for an exam
  *
  * @param int    $examID    Exam ID
  * @param string $studentID Student ID
+ *
+ * @return bool             If student is registered for
  */
-function deregisterStudentFromExam(int $examID, string $studentID)
+function isStudentRegisteredFor(int $examID, string $studentID)
 {
-    // validate info
+    validateExamID($examID);
     validateStudentID($studentID);
-    validateRegistrationStateIs($studentID, STUDENT_STATE_REGISTERED);
-    validateExamAllowsRegistration($examID);
-    validateStudentIsRegisteredFor($studentID, $examID);
 
-    deregisterStudentFromExamQuery($examID, $studentID);
+    return isStudentRegisteredForQuery($examID, $studentID);
 }
 
 /**
@@ -117,11 +86,42 @@ function getRegistrationState(string $studentID)
  */
 function setRegistrationState(string $studentID, int $state)
 {
-    // validate info
     validateStudentID($studentID);
     validateRegistrationState($state);
 
     setRegistrationStateQuery($studentID, $state);
+}
+
+/**
+ * Register student for an exam
+ *
+ * @param int    $examID    Exam ID
+ * @param string $studentID Student ID
+ */
+function registerStudentForExam(int $examID, string $studentID)
+{
+    validateStudentID($studentID);
+    validateRegistrationStateIs($studentID, STUDENT_STATE_READY);
+    validateExamAllowsRegistration($examID);
+    validateExamRoomAvailable($examID);
+
+    registerStudentForExamQuery($examID, $studentID);
+}
+
+/**
+ * Deregister from an exam
+ *
+ * @param int    $examID    Exam ID
+ * @param string $studentID Student ID
+ */
+function deregisterStudentFromExam(int $examID, string $studentID)
+{
+    validateStudentID($studentID);
+    validateRegistrationStateIs($studentID, STUDENT_STATE_REGISTERED);
+    validateExamAllowsRegistration($examID);
+    validateStudentIsRegisteredFor($studentID, $examID);
+
+    deregisterStudentFromExamQuery($examID, $studentID);
 }
 
 /**
@@ -137,7 +137,6 @@ function setRegistrationState(string $studentID, int $state)
  */
 function getAssignedSeat(string $studentID, int $examID)
 {
-    // validate info
     validateExamID($examID);
     validateStudentIsRegisteredFor($studentID, $examID);
 
@@ -145,302 +144,256 @@ function getAssignedSeat(string $studentID, int $examID)
 }
 
 /**
- * Get the number of open seats for an exam
- * Takes into account reserved seats and limited seats
+ * Internal function, should only be used on the state change
+ * Assigns all seats for an exam
+ *
+ * @param int $examID Exam ID
+ */
+function assignExamSeats(int $examID)
+{
+    // get all registrations
+    // get location/rooms, info
+    // determine info
+    // randomly grab seat, assign - repeat
+}
+
+/**
+ * Internal function
+ * Un-assigns all seats for an exam
+ *
+ * @param int $examID Exam ID
+ */
+function resetExamSeats(int $examID)
+{
+    // get all registrations
+    // room id = null,
+}
+
+/**
+ * Get all assigned seats for an exam
  *
  * @param int $examID Exam ID
  *
- * @return int        Amount of open seats
+ * @return array      Array of assigned seats, element format
+ *                    'student_id' => student ID
+ *                    'room_id' => room ID
+ *                    'seat' => seat
  */
-function getOpenSeatCount(int $examID)
+function getAssignedSeats(int $examID)
 {
-    // validateExamLocationAvailable($examID);
+    validateExamID($examID);
 
-    // get max room seats
-    // get reserved seat count
-    // get amount of open/assigned seats
-    // return (max - reserved - assigned)
-    // TODO: populate
-    return 0;
+    $registrations = getAllExamRegistrationsQuery($examID);
+
+    // need to filter out seats that aren't correct
+    foreach ($registrations as $i => $registration) {
+        if (!isSeatSet($registration['room_id'], $registration['seat'])) {
+            unset($registration[$i]);
+        }
+    }
+
+    return $registrations;
 }
 
 /**
  * Get the number of assigned seats
  *
- * @param int $examID   Exam ID
+ * @param int $examID Exam ID
  *
- * @return int          Assigned seat count
+ * @return int        Assigned seat count
  */
 function getAssignedSeatCount(int $examID)
 {
-    // validate info
-    validateExamID($examID);
-    validateExamLocationAvailable($examID);
+    // TODO: make query for
 
-    $assignedSeats = array();
-    return count($assignedSeats);
+    return count(getAssignedSeats($examID));
 }
 
 /**
- * Get the total seat count for an exam
+ * Get amount of registrations for an exam
  *
- * @param int $examID Exam ID
+ * @param $examID Exam ID
  *
- * @return int        total seat count
+ * @return int    Number of registrations
  */
-function getTotalExamSeatCount(int $examID)
+function getRegisteredCount($examID)
 {
-    // validate
-    validateExamID($examID);
-    validateExamLocationAvailable($examID);
+    // TODO: make query for
 
-    $examInfo = getExamInformation($examID);
-    return getLocationRoomsMaxSeats($examInfo['location_id']);
+    return count(getAllExamRegistrationsQuery($examID));
 }
-
-// assign student to room/seat
-// randomly assign all students for given exam (room, seat)
-// get students registered
-// get all assigned seats
-
-/**
- * Check if student is assigned a seat
- *
- * @param int    $examID    Exam ID
- * @param string $studentID Student ID
- *
- * @return bool             If student is assigned a seat
- */
-function seatAssigned(int $examID, string $studentID)
-{
-    // validateExamLocationAvailable($examID);
-
-    // check if student is registered for an exam
-    // check if student is assigned a room/seat
-    // TODO: populate
-    return false;
-}
-
-/**
- * Assign a student to a random open seat in an exam
- *
- * @param int    $examID    Exam ID
- * @param string $studentID Student ID
- */
-function assignOpenExamSeat(int $examID, string $studentID)
-{
-    // validateExamLocationAvailable($examID);
-
-    // check open seat count
-    // randomly select a room
-    //
-    // randomly select a seat
-    // if filled, redo seat
-    //
-    // transaction may be necessary
-    // TODO: populate, figure out efficient way
-}
-
-/**
- * Assign a student to a specific seat in an exam
- *
- * @param int    $examID    Exam ID
- * @param string $studentID Student ID
- * @param int    $roomID    Room ID
- * @param int    $seat      Seat number
- */
-function assignExamSeat(int $examID, string $studentID, int $roomID, int $seat)
-{
-    // validate info
-    validateExamID($examID);
-    validateStudentIsRegisteredFor($studentID, $examID);
-    validateExamLocationAvailable($examID);
-    validateExamRoomSeat($examID, $roomID, $seat);
-
-    // validate that seat is open/available
-
-    // start transaction
-    // query set seat
-    // commit
-    //
-
-    //
-
-    // TODO: populate
-}
-
-/**
- * Undo seat assignment for student/exam
- *
- * @param int    $examID    Exam ID
- * @param string $studentID Student ID
- */
-function deassignSeat(int $examID, string $studentID)
-{
-    // validate info
-    validateExamID($examID);
-    validateStudentIsRegisteredFor($studentID, $examID);
-
-
-    // TODO: populate
-}
-
-/**
- * Reset seat assignments for an exam
- *
- * @param int $examID Exam ID
- */
-function resetSeatAssignments(int $examID)
-{
-    // get all currently registered students
-    // un-assign all seating
-    // assign all seating
-    // transaction may be necessary for all queries
-    // TODO: populate
-}
-
-/**
- * Get all seating for an exam/room
- *
- * @param int $examID   Exam ID
- * @param int $roomID   Room ID
- *
- * @return array        Array of seating in format
- *                      'student_id' => student id
- *                      'seat' => seat number
- */
-function getExamRoomSeating(int $examID, int $roomID)
-{
-    // validate
-    validateExamID($examID);
-    validateExamHasRoom($examID, $roomID);
-
-    return getExamRoomRegistrationsQuery($examID, $roomID);
-}
-
-/**
- * Attempt to find an open seat for an exam
- * Not intended for outside use
- * Only finds an open seat, does not assign
- *
- * @param int $examID Exam ID
- *
- * @return array      The seating found as an array
- *                      'id' => room ID
- *                      'seat' => seat #
- *
- * @throws InvalidArgumentException When no open seat is available
- */
-function findRandomOpenSeat(int $examID)
-{
-    // get exam information and rooms
-    $examInfo = getExamInformation($examID);
-    $examLocationID = $examInfo['location_id'];
-    $examRooms = getLocationRooms($examLocationID);
-
-    $openRoomsSeating = array();
-
-    // search for rooms w/ space
-    foreach ($examRooms as $room) {
-        // get all student seating
-        $seating = getExamRoomSeating($examID, $room['id']);
-        // check for an open seat
-        if (count($seating) >= $room['seats']) {
-            continue;
-        }
-        array_push(
-            $openRoomsSeating, array('room' => $room, 'seating' => $seating)
-        );
-    }
-
-    // select random room, random seat
-    $roomAndSeating = array_rand($openRoomsSeating);
-    $room = $roomAndSeating['room'];
-    $openSeats = getOpenSeatNumbers($roomAndSeating['seating'], $room['seats']);
-    $seat = array_rand($openSeats);
-
-    return array('id' => $room['id'], 'seat' => $seat);
-}
-
-/**
- * Helper function for various exam interactions functions
- * Not intended for outside use
- * Get an array of open seat numbers
- *
- * @param array $seating    Array of seating, element format
- *                          'student_id'/'id' => student ID
- *                          'seat' => seat number
- * @param int   $max        Max number of seats
- *
- * @return array            Array of open seat numbers, sorted
- */
-function getOpenSeatNumbers(array $seating, int $max)
-{
-    // determine seat numbers used
-    $seatNumbers = array();
-    foreach ($seating as $seat) {
-        array_push($seatNumbers, $seat['seat']);
-    }
-
-    // determine open seats
-    $openSeatNumbers = array();
-    for ($i = 1; $i <= $max; $i++) {
-        if (!in_array($i, $seatNumbers)) {
-            array_push($openSeatNumbers, $i);
-        }
-    }
-
-    return $openSeatNumbers;
-}
-
-// TODO: function to check for duplicate seating ?
 
 /**
  * Find any exam seating that is invalid
  * Which means room_id=null or seat=0
  * This function would just serve as a redundancy/error checking
  *
- * @param int $examID   Exam ID
+ * @param int $examID Exam ID
  *
- * @return array        For invalid seating found
- *                      Element format
- *                      'student_id' => student id
- *                      'exam_id' => exam id
+ * @return array      List of student IDs for invalid seating
  */
 function checkForInvalidSeating(int $examID)
 {
-    // TODO: populate
-}
+    validateExamID($examID);
+    validateExamLocationAvailable($examID);
 
-/**
- * Check for duplicate seating of given seat
- *
- * @param int $examID   Exam ID
- * @param int $roomID   Room ID
- * @param int $seat     Seat
- *
- * @return array        Array of student IDs assigned to seat (duplicates)
- */
-function checkForDuplicateSeat(int $examID, int $roomID, int $seat)
-{
-    // TODO: populate
+    $info = getExamInformation($examID);
+    $locationID = $info['location_id'];
+
+    $roster = getAllExamRegistrationsQuery($examID);
+    $students = array();
+    foreach ($roster as $registration) {
+        $roomID = $registration['room_id'];
+        $seat = $registration['seat'];
+
+        if (!isSeatSet($roomID, $seat) || !locationHasRoom($roomID, $seat)
+            || ($seat >= getLocationRoomSeats($locationID, $roomID))
+        ) {
+            array_push($students, $registration['student_id']);
+        }
+    }
+
+    return $students;
 }
 
 /**
  * Check for any duplicate exam seating
  * Serves as redundancy/error checking
  *
- * @param int $examID   Exam ID
+ * @param int $examID Exam ID
  *
  * @return array        For duplicate seats found
  *                      Elements will be an array of duplicates
  *                      Each subarrays format
- *                      'exam_id' => exam id
  *                      'room_id' => room id
  *                      'seat' => seat
  *                      'students' => array of student IDs
  */
 function checkForDuplicateSeating(int $examID)
 {
-    // TODO: populate
+    validateExamID($examID);
+    validateExamLocationAvailable($examID);
+
+    $roster = getAllExamRegistrationsQuery($examID);
+
+    $quickSeating = array();
+    foreach ($roster as $registration) {
+        $roomID = $registration['room_id'];
+        $seat = $registration['seat'];
+        $studentID = $registration['student_id'];
+
+        if (!isSeatSet($roomID, $seat)) {
+            continue;
+        }
+
+        if (!array_key_exists($roomID, $quickSeating)) {
+            $newRoomArr = array();
+            $newRoomArr[$seat] = array($studentID);
+            $quickSeating[$roomID] = $newRoomArr;
+            continue;
+        }
+
+        if (!array_key_exists($seat, $quickSeating[$roomID])) {
+            $quickSeating[$roomID][$seat] = array($studentID);
+        }
+
+        array_push($quickSeating[$roomID][$seat], $studentID);
+    }
+
+    $duplicates = array();
+    foreach ($quickSeating as $roomID => $roomSeats) {
+        foreach ($roomSeats as $seat => $students) {
+            if (count($students) > 1) {
+                array_push(
+                    $duplicates,
+                    array('room_id'  => $roomID, 'seat' => $seat,
+                          'students' => $students)
+                );
+            }
+        }
+    }
+
+    return $duplicates;
+}
+
+/**
+ * Get the max space for an exam
+ * Does not take into account reserved seats
+ *
+ * @param int $examID Exam ID
+ *
+ * @return int        Max amount of seats
+ */
+function getMaxExamSpace(int $examID)
+{
+    $locationID = getExamLocationID($examID);
+    return getLocationRoomsMaxSeats($locationID);
+}
+
+/**
+ * Check if space is available to register.
+ * Takes into account reserved seats.
+ * Intended to be used for normal registration.
+ *
+ * @param int $examID Exam ID
+ *
+ * @return bool       If space available for registration
+ */
+function examRegistrationSpaceAvailable(int $examID)
+{
+    $info = getLocationInformation($examID);
+    $maxSeats = getLocationRoomsMaxSeats($info['location_id']);
+    $reservedSeats = $info['reserved_seats'];
+
+    $maxSeats -= $reservedSeats;
+    $registeredAmount = getAssignedSeatCount($examID);
+
+    return ($registeredAmount < $maxSeats);
+}
+
+/**
+ * Check if there is any seat space available for an exam.
+ * Does not take the reserved seat count into account.
+ * Intended to be used for emergency/forced registration
+ *
+ * @param int $examID Exam ID
+ *
+ * @return bool       If seat space available
+ */
+function examSeatSpaceAvailable(int $examID)
+{
+    $locationID = getExamLocationID($examID);
+    $maxSeats = getLocationRoomsMaxSeats($locationID);
+
+    $registeredAmount = getAssignedSeatCount($examID);
+
+    return ($registeredAmount < $maxSeats);
+}
+
+/**
+ * Check if given exam has a location available
+ *
+ * @param int $examID Exam ID
+ *
+ * @return bool       Location available
+ */
+function examLocationAvailable(int $examID)
+{
+    $info = getExamInformation($examID);
+    return is_null($info['location_id']);
+}
+
+/**
+ * Check if given seating means a seat is set
+ *
+ * @param int $roomID Room ID
+ * @param int $seat   Seat
+ *
+ * @return bool       If set set
+ */
+function isSeatSet(int $roomID, int $seat)
+{
+    return !(is_null($roomID) || is_null($seat) || ($roomID <= 0)
+        || ($seat <= 0));
+    // TODO: check if seat number is within the room seat max
 }

@@ -9,21 +9,6 @@
  */
 
 /**
- * Get registration info for a student and exam
- *
- * @param string $studentID Student ID
- * @param int    $examID    Exam ID
- *
- * @return array            Registration information, format
- *                          'room
- */
-function getExamRegistrationInfoQuery(string $studentID, int $examID)
-{
-    // TODO: populate
-    return array();
-}
-
-/**
  * Query to get the list exam IDs the student is registered for
  *
  * @param string $studentID Student ID
@@ -34,6 +19,38 @@ function getExamsRegisteredForQuery(string $studentID)
 {
     // TODO: populate
     return array();
+}
+
+/**
+ * Query to pull all registrations on the exam roster
+ *
+ * @param int $examID Exam ID
+ *
+ * @return array      Array of registrations, element format
+ *                        'student_id' => student ID
+ *                        'room_id' => room ID
+ *                        'seat' => room seat
+ *                    NOTE: if room_id=null or seat=0
+ *                          then no seat is set
+ */
+function getAllExamRegistrationsQuery(int $examID)
+{
+    // TODO: populate
+    return array();
+}
+
+/**
+ * Check if student registered for a given exam
+ *
+ * @param int    $examID    Exam ID
+ * @param string $studentID Student ID
+ *
+ * @return bool             If student is registered for
+ */
+function isStudentRegisteredForQuery(int $examID, string $studentID)
+{
+    // TODO: populate
+    return false;
 }
 
 /**
@@ -61,23 +78,6 @@ function setRegistrationStateQuery(string $studentID, int $state)
 }
 
 /**
- * Query to get the assigned seating for an exam registration
- *
- * @param string $studentID Student ID
- * @param int    $examID    Exam ID
- *
- * @return array            Associative array w/ seating information
- *                          'room_id' => room ID
- *                          'seat' => seat number
- *                          if room_id=null or seat=0, no seat assigned
- */
-function getAssignedSeatQuery(string $studentID, int $examID)
-{
-    // TODO: populate
-    return array();
-}
-
-/**
  * Query to register a student for an exam
  *
  * @param int    $examID    Exam ID
@@ -100,38 +100,32 @@ function deregisterStudentFromExamQuery(int $examID, string $studentID)
 }
 
 /**
- * Query to pull all registrations on the exam roster
+ * Query to get the assigned seating for an exam registration
  *
- * @param int $examID Exam ID
+ * @param string $studentID Student ID
+ * @param int    $examID    Exam ID
  *
- * @return array        Array of registrations, element format
- *                          'student_id' => student ID
+ * @return array            Associative array w/ seating information
  *                          'room_id' => room ID
- *                          'seat' => room seat
- *                      NOTE: if room_id=null or seat=0
- *                            then no seat is set
+ *                          'seat' => seat number
+ *                          if room_id=null or seat=0, no seat assigned
  */
-function getAllExamRegistrationsQuery(int $examID)
+function getAssignedSeatQuery(string $studentID, int $examID)
 {
     // TODO: populate
     return array();
 }
 
 /**
- * Query to get all registrations for an exam ID
- * w/ seat assignments in a given room
+ * Set the registration seating info
  *
- * @param int $examID Exam ID
- * @param int $roomID Room ID
- *
- * @return array        Array of registrations, element format
- *                          'student_id' => student ID
- *                          'seat' => room seat number
- *                      NOTE:   if seat=0, then no seat is assigned
- *                              should be assumed to be an error
+ * @param string $studentID Student ID
+ * @param int    $examID    Exam ID
+ * @param int    $roomID    Room ID
+ * @param int    $seat      Seat
  */
-function getExamRoomRegistrationsQuery(int $examID, int $roomID)
-{
+function setAssignedSeatQuery(string $studentID, int $examID, int $roomID,
+    int $seat
+) {
     // TODO: populate
-    return array();
 }

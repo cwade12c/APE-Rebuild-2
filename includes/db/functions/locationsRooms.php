@@ -61,7 +61,6 @@ function getLocations()
 function createLocation(string $name, int $seatsReserved, int $limitedSeats,
     array $rooms
 ) {
-    // validate rooms, seats
     validateLocationNameDoesNotExist($name);
     validateLocationRooms($seatsReserved, $limitedSeats, $rooms);
 
@@ -92,7 +91,6 @@ function createLocation(string $name, int $seatsReserved, int $limitedSeats,
 function updateLocationFull(int $id, string $name, int $seatsReserved,
     int $limitedSeats, array $rooms
 ) {
-    // validate info
     validateLocationIDExists($id);
     validateLocationRooms($seatsReserved, $limitedSeats, $rooms);
 
@@ -345,7 +343,7 @@ function getRooms()
 {
     $roomIDs = getRoomsQuery();
     $ids = array();
-    foreach($roomIDs as $roomIDArr) {
+    foreach ($roomIDs as $roomIDArr) {
         array_push($ids, $roomIDArr['id']);
     }
     return $ids;
@@ -459,7 +457,7 @@ function getLocationRooms(int $id)
  * Get the max number of seats from all location rooms
  * Does take into account the limited seats max
  *
- * @param int $id Exam ID
+ * @param int $id Location ID
  *
  * @return int    Max number of seats
  */
@@ -497,4 +495,48 @@ function getRoomInformation(int $id)
     validateRoomIDExists($id);
 
     return getRoomInformationQuery($id);
+}
+
+/**
+ * Check if location has the given room
+ *
+ * @param int $locationID Location ID
+ * @param int $roomID     Room ID
+ *
+ * @return bool             If location has room
+ */
+function locationHasRoom(int $locationID, int $roomID)
+{
+    $rooms = getLocationRooms($locationID);
+    foreach ($rooms as $room) {
+        if ($room['id'] == $roomID) {
+            return true;
+        }
+    }
+    return false;
+    // TODO: can make query just for this for efficiency
+}
+
+/**
+ * Get the number of seats for a location/room
+ *
+ * @param int $locationID Location ID
+ * @param int $roomID     Room ID
+ *
+ * @return int            Seat count
+ *
+ * @throws InvalidArgumentException If location does not contain the room
+ */
+function getLocationRoomSeats(int $locationID, int $roomID)
+{
+    $rooms = getLocationRooms($locationID);
+    foreach ($rooms as $room) {
+        if ($room['id'] == $roomID) {
+            return $room['seats'];
+        }
+    }
+    throw new InvalidArgumentException(
+        sprintf("Location(%d) does not contain room(%d)", $locationID, $roomID)
+    );
+    // TODO: can make query just for this for efficiency
 }

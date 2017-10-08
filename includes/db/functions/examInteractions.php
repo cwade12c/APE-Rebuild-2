@@ -25,7 +25,14 @@ function getExamsRegisteredFor(string $studentID)
 {
     validateStudentID($studentID);
 
-    return getExamsRegisteredForQuery($studentID);
+    $results = getExamsRegisteredForQuery($studentID);
+    $exams = array_map(
+        function ($row) {
+            return $row['exam_id'];
+        }, $results
+    );
+
+    return $exams;
 }
 
 /**
@@ -40,10 +47,11 @@ function getExamRegistrations(int $examID)
     validateExamID($examID);
 
     $results = getAllExamRegistrationsQuery($examID);
-    $studentIDs = array();
-    foreach ($results as $result) {
-        array_push($studentIDs, $result['student_id']);
-    }
+    $studentIDs = array_map(
+        function ($row) {
+            return $row['student_id'];
+        }, $results
+    );
 
     return $studentIDs;
 }
@@ -106,6 +114,27 @@ function registerStudentForExam(int $examID, string $studentID)
     validateExamRoomAvailable($examID);
 
     registerStudentForExamQuery($examID, $studentID);
+
+    setRegistrationState($studentID, STUDENT_STATE_REGISTERED);
+}
+
+/**
+ * Force registers a student, bypasses any checks
+ * Other than valid student/exam ID
+ *
+ * @param int    $examID
+ * @param string $studentID
+ */
+function registerStudentForExamForced(int $examID, string $studentID)
+{
+    validateStudentID($studentID);
+    validateExamID($examID);
+    // TODO: validate registration state is not 'passed' ?
+    // TODO: check if within grading exam state and update?
+
+    registerStudentForExamQuery($examID, $studentID);
+
+    setRegistrationState($studentID, STUDENT_STATE_REGISTERED);
 }
 
 /**
@@ -122,6 +151,23 @@ function deregisterStudentFromExam(int $examID, string $studentID)
     validateStudentIsRegisteredFor($studentID, $examID);
 
     deregisterStudentFromExamQuery($examID, $studentID);
+
+    refreshRegistrationStateFromDeregister($studentID);
+}
+
+/**
+ * Helper function for deregisterStudentFromExam()
+ * Used to determine the students registration state
+ *
+ * @param string $studentID Student ID
+ */
+function refreshRegistrationStateFromDeregister(string $studentID)
+{
+    $failures = getFailedExamCount($studentID);
+
+    $newState = ($failures < MAX_FAILURES_BEFORE_BLOCK) ? STUDENT_STATE_READY
+        : STUDENT_STATE_BLOCKED;
+    setRegistrationState($studentID, $newState);
 }
 
 /**
@@ -151,10 +197,35 @@ function getAssignedSeat(string $studentID, int $examID)
  */
 function assignExamSeats(int $examID)
 {
-    // get all registrations
-    // get location/rooms, info
-    // determine info
-    // randomly grab seat, assign - repeat
+    $students = getExamRegistrations($examID);
+
+    $locationID = getExamLocationID($examID);
+    $rooms = getLocationRooms($locationID);
+
+    $seating = array();
+    foreach($rooms as $room) {
+        $seatingRoom = array();
+        $seatingRoom['id'] = $room['id'];
+        $seatingRoom['seats'] = range(1, $room['seats']);
+        array_push($seating, $seatingRoom);
+    }
+
+    foreach($students as $studentID) {
+        $roomKey = array_rand($seating);
+        $room = &$seating[$roomKey];
+        $roomID = $room['id'];
+
+        $seats = &$room['seats'];
+        $seatKey = array_rand($seats);
+        $seat = $seats[$seatKey];
+
+        setAssignedSeatQuery($studentID, $examID, $roomID, $seat);
+
+        unset($seats[$seatKey]);
+        if (count($seats) == 0) {
+            unset($seating[$roomKey]);
+        }
+    }
 }
 
 /**
@@ -165,8 +236,10 @@ function assignExamSeats(int $examID)
  */
 function resetExamSeats(int $examID)
 {
-    // get all registrations
-    // room id = null,
+    $students = getExamRegistrations($examID);
+    foreach ($students as $studentID) {
+        setAssignedSeatQuery($studentID, $examID, null, null);
+    }
 }
 
 /**
@@ -264,7 +337,7 @@ function checkForInvalidSeating(int $examID)
  *
  * @return array        For duplicate seats found
  *                      Elements will be an array of duplicates
- *                      Each subarrays format
+ *                      Each sub array's format
  *                      'room_id' => room id
  *                      'seat' => seat
  *                      'students' => array of student IDs

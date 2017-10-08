@@ -17,8 +17,12 @@
  */
 function getExamsRegisteredForQuery(string $studentID)
 {
-    // TODO: populate
-    return array();
+    $query = "SELECT `exam_id` FROM `exam_roster` "
+        . " WHERE `student_id`=:id";
+    $sql = executeQuery(
+        $query, array(array(':id', $studentID, PDO::PARAM_STR))
+    );
+    return getQueryResults($sql);
 }
 
 /**
@@ -35,8 +39,12 @@ function getExamsRegisteredForQuery(string $studentID)
  */
 function getAllExamRegistrationsQuery(int $examID)
 {
-    // TODO: populate
-    return array();
+    $query = "SELECT `student_id`, `room_id`, `seat` FROM `exam_roster` "
+        . " WHERE `exam_id`=:id";
+    $sql = executeQuery(
+        $query, array(array(':id', $examID, PDO::PARAM_INT))
+    );
+    return getQueryResults($sql);
 }
 
 /**
@@ -49,8 +57,15 @@ function getAllExamRegistrationsQuery(int $examID)
  */
 function isStudentRegisteredForQuery(int $examID, string $studentID)
 {
-    // TODO: populate
-    return false;
+    $query = "SELECT (:studentID IN ( "
+        . "SELECT `student_id` FROM `exam_roster` WHERE `exam_id` = :examID"
+        . " )) AS `registered_for`";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':studentID', $studentID, PDO::PARAM_STR))
+    );
+
+    return getQueryResult($sql);
 }
 
 /**
@@ -62,8 +77,13 @@ function isStudentRegisteredForQuery(int $examID, string $studentID)
  */
 function getRegistrationStateQuery(string $studentID)
 {
-    // TODO: populate
-    return 0;
+    $query = "SELECT `state` FROM `student_registrations` "
+        . " WHERE `id` = :studentID";
+    $sql = executeQuery(
+        $query, array(array(':studentID', $studentID, PDO::PARAM_STR))
+    );
+
+    return getQueryResult($sql);
 }
 
 /**
@@ -74,7 +94,13 @@ function getRegistrationStateQuery(string $studentID)
  */
 function setRegistrationStateQuery(string $studentID, int $state)
 {
-    // TODO: populate
+    $query = "INSERT INTO `student_registrations`(`id`,`state`) "
+        . " VALUES (:studentID, :state) "
+        . " ON DUPLICATE KEY UPDATE `state`=:state";
+    $sql = executeQuery(
+        $query, array(array(':studentID', $studentID, PDO::PARAM_STR),
+                      array(':state', $state, PDO::PARAM_INT))
+    );
 }
 
 /**
@@ -85,7 +111,12 @@ function setRegistrationStateQuery(string $studentID, int $state)
  */
 function registerStudentForExamQuery(int $examID, string $studentID)
 {
-    // TODO: populate
+    $query = "INSERT INTO `exam_roster`(`exam_id`,`student_id`) "
+        . " VALUES (:examID, :studentID) ";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':studentID', $studentID, PDO::PARAM_STR))
+    );
 }
 
 /**
@@ -96,7 +127,12 @@ function registerStudentForExamQuery(int $examID, string $studentID)
  */
 function deregisterStudentFromExamQuery(int $examID, string $studentID)
 {
-    // TODO: populate
+    $query = "DELETE FROM `exam_roster` "
+        . " WHERE `exam_id` = :examID AND `student_id` = :studentID";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':studentID', $studentID, PDO::PARAM_STR))
+    );
 }
 
 /**
@@ -108,16 +144,22 @@ function deregisterStudentFromExamQuery(int $examID, string $studentID)
  * @return array            Associative array w/ seating information
  *                          'room_id' => room ID
  *                          'seat' => seat number
- *                          if room_id=null or seat=0, no seat assigned
  */
 function getAssignedSeatQuery(string $studentID, int $examID)
 {
-    // TODO: populate
-    return array();
+    $query = "SELECT `room_id`, `seat` FROM `exam_roster` "
+        . " WHERE `exam_id` = :examID AND `student_id` = :studentID";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':studentID', $studentID, PDO::PARAM_STR))
+    );
+
+    return getQueryResultRow($sql);
 }
 
 /**
- * Set the registration seating info
+ * Query to set the registration seating info
+ * Assumes registration exists already
  *
  * @param string $studentID Student ID
  * @param int    $examID    Exam ID
@@ -127,5 +169,13 @@ function getAssignedSeatQuery(string $studentID, int $examID)
 function setAssignedSeatQuery(string $studentID, int $examID, int $roomID,
     int $seat
 ) {
-    // TODO: populate
+    $query = "UPDATE `exam_roster` "
+        . " SET `room_id` = :roomID, `seat` = :seat "
+        . " WHERE `exam_id` = :examID AND `student_id` = :studentID ";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':studentID', $studentID, PDO::PARAM_STR),
+                      array(':roomID', $roomID, PDO::PARAM_INT),
+                      array(':seat', $seat, PDO::PARAM_INT))
+    );
 }

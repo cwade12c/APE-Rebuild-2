@@ -38,6 +38,9 @@ define('EXAM_STATE_ARCHIVED', 7);
 
 // TODO: constants for report type indexes ?
 
+/* for max failures a student can have before being blocked */
+define('MAX_FAILURES_BEFORE_BLOCK', 3);
+
 /* for get exams functions */
 define('GET_EXAMS_ALL', 0);
 define('GET_EXAMS_OPEN', 1);

@@ -1,0 +1,15 @@
+{% extends "base.twig.html" %}
+
+{% block title %}Upcoming Apes{% endblock %}
+
+{% block head %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+
+Hello, {{params.firstName}} {{params.lastName}}! You are a {{params.type}}. Your ewuId is {{params.id}} and your email is {{params.email}}
+<br />
+Let's test a <a href="javascript:post('{{params.firstName}} {{params.lastName}}');">javascript POST request</a>.
+
+{% endblock %}

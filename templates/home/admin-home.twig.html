@@ -1,0 +1,116 @@
+<h1 class="page-header">Welcome home, {{ params.firstName }} {{ params.lastName }}</h1>
+
+<div class="col-lg-3 col-md-6">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <div class="row">
+        <div class="col-xs-3">
+          <i class="fa fa-calendar-check-o fa-5x"></i>
+        </div>
+        <div class="col-xs-9 text-right">
+          <div class="huge">2</div>
+          <div>Upcoming Exams</div>
+        </div>
+      </div>
+    </div>
+    <a href="#">
+      <div class="panel-footer">
+        <span class="pull-left">View Upcoming Exams</span>
+        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+        <div class="clearfix"></div>
+      </div>
+    </a>
+  </div>
+</div>
+<div class="col-lg-3 col-md-6">
+  <div class="panel panel-green">
+    <div class="panel-heading">
+      <div class="row">
+        <div class="col-xs-3">
+          <i class="fa fa-plus-square fa-5x"></i>
+        </div>
+        <div class="col-xs-9 text-right">
+          <div class="huge">New</div>
+          <div>Exam</div>
+        </div>
+      </div>
+    </div>
+    <a href="#">
+      <div class="panel-footer">
+        <span class="pull-left">Create New Exam</span>
+        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+        <div class="clearfix"></div>
+      </div>
+    </a>
+  </div>
+</div>
+<div class="col-lg-3 col-md-6">
+  <div class="panel panel-yellow">
+    <div class="panel-heading">
+      <div class="row">
+        <div class="col-xs-3">
+          <i class="fa fa-archive fa-5x"></i>
+        </div>
+        <div class="col-xs-9 text-right">
+          <div class="huge">4</div>
+          <div>Archived Exams</div>
+        </div>
+      </div>
+    </div>
+    <a href="#">
+      <div class="panel-footer">
+        <span class="pull-left">View Archived Exams</span>
+        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+        <div class="clearfix"></div>
+      </div>
+    </a>
+  </div>
+</div>
+<div class="col-lg-3 col-md-6">
+  <div class="panel panel-red">
+    <div class="panel-heading">
+      <div class="row">
+        <div class="col-xs-3">
+          <i class="fa fa-user-circle-o fa-5x"></i>
+        </div>
+        <div class="col-xs-9 text-right">
+          <div class="huge">45</div>
+          <div>Users</div>
+        </div>
+      </div>
+    </div>
+    <a href="#">
+      <div class="panel-footer">
+        <span class="pull-left">Manage Users</span>
+        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+        <div class="clearfix"></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<h2 class="sub-header">Your Created Exams</h2>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Date</th>
+      <th>Location</th>
+      <th>State</th>
+    </tr>
+    </thead>
+    <tbody>
+    {#            <tr>
+                    <td>1,001</td>
+                    <td>Lorem</td>
+                    <td>ipsum</td>
+                    <td>dolor</td>
+                    <td>sit</td>
+                </tr>#}
+    </tbody>
+  </table>
+</div>
+
+
+Let's test a <a href="javascript:post('{{params.firstName}} {{params.lastName}}');">javascript POST request</a>.

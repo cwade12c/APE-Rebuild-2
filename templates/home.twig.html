@@ -1,15 +1,19 @@
 {% extends "base.twig.html" %}
 
-{% block title %}Upcoming Apes{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block head %}
 {{ parent() }}
 {% endblock %}
 
 {% block content %}
-
-Hello, {{params.firstName}} {{params.lastName}}! You are a {{params.type}}. Your ewuId is {{params.id}} and your email is {{params.email}}
-<br />
-Let's test a <a href="javascript:post('{{params.firstName}} {{params.lastName}}');">javascript POST request</a>.
-
+    {% if params.type == constant('ACCOUNT_TYPE_STUDENT') %}
+        {{ include('home/student-home.twig.html') }}
+    {% elseif params.type == constant('ACCOUNT_TYPE_GRADER') %}
+        {{ include('home/grader-home.twig.html') }}
+    {% elseif params.type == constant('ACCOUNT_TYPE_TEACHER') %}
+        {{ include('home/teacher-home.twig.html') }}
+    {% elseif params.type == constant('ACCOUNT_TYPE_ADMIN') %}
+        {{ include('home/admin-home.twig.html') }}
+    {% endif %}
 {% endblock %}

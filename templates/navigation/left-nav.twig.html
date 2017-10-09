@@ -1,0 +1,24 @@
+<ul class="nav nav-sidebar">
+    {% for link in params.availableNavLinks %}
+        {% if link.children == true %}
+            <li>
+                <a data-toggle="collapse" href="#{{link.text|lower}}-tree">{{link.text}}</a>
+            </li>
+            <li>
+                <div id="{{link.text|lower}}-tree" class="panel-collapse collapse">
+                    <ul class="nav nav-sidebar nav-child">
+                        {% for child in link.childLinks %}
+                            <li class="fa fa-calendar">
+                                <a href="{{child.link}}" title="{{child.title}}">{{child.text}}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </li>
+        {% else %}
+            <li>
+                <a href="{{link.url}}" title="{{link.title}}">{{link.text}}</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>

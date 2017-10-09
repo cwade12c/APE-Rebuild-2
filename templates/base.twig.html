@@ -1,12 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    {% block head %}
-    <link rel="stylesheet/less" type="text/css" href="styles/general.less" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Home</title>
+
+    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="styles/animate.css" />
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.7.2/less.min.js"></script>
+    <link rel="stylesheet/less" type="text/css" href="styles/general.less" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/less.min.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -20,15 +30,18 @@
         });
     </script>
 
-    <title>{% block title %}{% endblock %} - My Webpage</title>
-    {% endblock %}
 </head>
-<body class="bg">
-    <div id="content" class="container-fluid">
+<body>
+    {{ include('navigation/top-nav.twig.html') }}
+    <div class="container-fluid">
         <div class="row">
-            {{ include('nav.twig.html') }}
+            <div class="col-sm-3 col-md-2 sidebar">
+                {{ include('navigation/left-nav.twig.html') }}
+            </div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                {% block content %}{% endblock %}
+            </div>
         </div>
-        {% block content %}{% endblock %}
     </div>
 </body>
 </html>

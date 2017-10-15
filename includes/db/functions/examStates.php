@@ -236,3 +236,36 @@ function refreshExam(int $id)
 
     // TODO: populate function
 }
+
+/**
+ * Transfer exam state to grading
+ *
+ * @param int $examID
+ */
+function transitionExamToGrading(int $examID)
+{
+    // TODO: populate
+    // use transaction
+}
+
+/**
+ * Transfer exam state to finalization
+ *
+ * @param int $examID
+ */
+function transitionExamToFinalization(int $examID)
+{
+    // TODO: populate
+    // use transaction
+}
+
+/**
+ * Transfer exam state to archived
+ *
+ * @param int $examID
+ */
+function transitionExamToArchived(int $examID)
+{
+    // TODO: populate
+    // use transaction
+}

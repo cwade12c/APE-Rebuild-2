@@ -9,6 +9,10 @@
  * @subpackage     Database
  */
 
+
+////////////////////////////////////////////////////////////////////////
+// TODO: reuse necessary functions/queries
+
 function assignGraderQuery(string $graderId, int $examId, int $categoryId,
     int $wasSubmitted
 ) {

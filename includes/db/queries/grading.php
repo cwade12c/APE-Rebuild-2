@@ -29,6 +29,49 @@ function assignGraderQuery(int $examID, int $categoryID, string $graderID)
 }
 
 /**
+ * Query to un-assign a grader from an exam, category
+ * Note: only removes from "assigned_graders" table
+ *       Additional modifications may be needed depending on exam state
+ *
+ * @param int    $examID
+ * @param int    $categoryID
+ * @param string $graderID
+ */
+function deleteAssignedGraderExamCategoryQuery(int $examID, int $categoryID,
+    string $graderID
+) {
+    $query
+        = "DELETE FROM `assigned_graders` "
+        . " WHERE `exam_id` = :examID AND `category_id` = :categoryID "
+        . " AND `grader_id` = :graderID";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':categoryID', $categoryID, PDO::PARAM_INT),
+                      array(':graderID', $graderID, PDO::PARAM_STR))
+    );
+}
+
+/**
+ * Query to un-assign grader from an exam fully
+ * NOTE: only removes from "assigned_graders" table
+ *       Additional actions may be needed depending on exam state
+ *
+ * @param int    $examID
+ * @param string $graderID
+ */
+function deleteAssignedGraderExamQuery(int $examID, string $graderID)
+{
+    $query
+        = "DELETE FROM `assigned_graders` "
+        . " WHERE `exam_id` = :examID AND `grader_id` = :graderID";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':graderID', $graderID, PDO::PARAM_STR))
+    );
+}
+
+
+/**
  * Query to get assigned grader IDs
  *
  * @param int $examID
@@ -1015,8 +1058,45 @@ function getExamsFailedCountQuery(string $studentID)
     return getQueryResult($sql);
 }
 
+/**
+ * Query to delete entries in "grader_category_grades"
+ * for an exam/grader
+ *
+ * @param int    $examID
+ * @param string $graderID
+ */
+function deleteGraderExamGrades(int $examID, string $graderID)
+{
+    $query
+        = "DELETE FROM `grader_category_grades` "
+        . " WHERE `exam_id` = :examID AND `grader_id` = :graderID";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':graderID', $graderID, PDO::PARAM_STR))
+    );
+}
 
-
+/**
+ * Query to delete entries in "grader_category_grades"
+ * for an exam/category/grader
+ *
+ * @param int    $examID
+ * @param int    $categoryID
+ * @param string $graderID
+ */
+function deleteGraderCategoryGradesQuery(int $examID, int $categoryID,
+    string $graderID
+) {
+    $query
+        = "DELETE FROM `grader_category_grades` "
+        . " WHERE `exam_id` = :examID AND `category_id` = :categoryID "
+        . " AND `grader_id` = :graderID";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':categoryID', $categoryID, PDO::PARAM_INT),
+                      array(':graderID', $graderID, PDO::PARAM_STR))
+    );
+}
 
 
 

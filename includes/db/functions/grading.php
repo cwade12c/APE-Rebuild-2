@@ -18,7 +18,7 @@
  */
 function assignGrader(int $examID, int $categoryID, string $graderID)
 {
-    // TODO: validation
+    // TODO: validations
     // validate exam ID, category ID
     // validate exam state allows
     // validate grader ID
@@ -40,14 +40,14 @@ function assignGrader(int $examID, int $categoryID, string $graderID)
  */
 function unAssignGrader(int $examID, int $categoryID, string $graderID)
 {
-    // TODO: validation
+    // TODO: validations
     // validate exam ID, category ID
     // validate grader ID
     // validate assigned as grader to exam/category
     // validate exam state allows
     // validate exam grader limits ?
 
-    unAssignCategoryGraderQuery($examID, $categoryID, $graderID);
+    deleteAssignedGraderExamCategoryQuery($examID, $categoryID, $graderID);
 
     $state = getExamState($examID);
     if ($state == EXAM_STATE_GRADING) {
@@ -63,14 +63,14 @@ function unAssignGrader(int $examID, int $categoryID, string $graderID)
  */
 function unAssignGraderFromExam(int $examID, string $graderID)
 {
-    // TODO: validation
+    // TODO: validations
     // validate exam ID
     // validate grader ID
     // validate assigned as grader to exam
     // validate exam state allows
     // validate exam grader limits ?
 
-    unAssignExamGraderQuery($examID, $graderID);
+    deleteAssignedGraderExamQuery($examID, $graderID);
 
     $state = getExamState($examID);
     if ($state == EXAM_STATE_GRADING) {
@@ -965,16 +965,6 @@ function getExamsFailedCount(string $studentID)
 }
 
 /**
- * Delete all entries for a grader
- *
- * @param string $graderID
- */
-function deleteGraderGrades(string $graderID)
-{
-    // TODO: populate
-}
-
-/**
  * Delete all grade entries for a grader from an exam
  *
  * @param int    $examID
@@ -982,7 +972,9 @@ function deleteGraderGrades(string $graderID)
  */
 function deleteGraderExamGrades(int $examID, string $graderID)
 {
-    // TODO: populate
+    // TODO: validations
+
+    deleteGraderExamGrades($examID, $graderID);
 }
 
 /**
@@ -995,5 +987,7 @@ function deleteGraderExamGrades(int $examID, string $graderID)
 function deleteGraderCategoryGrades(int $examID, int $categoryID,
     string $graderID
 ) {
-    // TODO: populate
+    // TODO: validations
+
+    deleteGraderCategoryGradesQuery($examID, $categoryID, $graderID);
 }

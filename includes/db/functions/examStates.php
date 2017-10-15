@@ -145,6 +145,72 @@ function doesExamStateAllowEdits(int $state)
 }
 
 /**
+ * Check if the exam state allows graders to be assigned
+ *
+ * @param int $state
+ *
+ * @return bool
+ */
+function doesExamStateAllowGraderAssignments(int $state)
+{
+    if (!isExamStateValid($state)) {
+        throw new InvalidArgumentException('Invalid exam state: ' . $state);
+    }
+
+    switch ($state) {
+        // allows
+        case EXAM_STATE_HIDDEN:
+        case EXAM_STATE_OPEN:
+        case EXAM_STATE_CLOSED:
+        case EXAM_STATE_IN_PROGRESS:
+        case EXAM_STATE_GRADING:
+            return true;
+        // does not allow
+        case EXAM_STATE_FINALIZING:
+        case EXAM_STATE_ARCHIVED:
+            return false;
+        // invalid state
+        default:
+            throw new InvalidArgumentException(
+                'Unhandled exam state: ' . $state
+            );
+    }
+}
+
+/**
+ * Check if exam state allows graders to be un-assigned
+ *
+ * @param int $state
+ *
+ * @return bool
+ */
+function doesExamStateAllowGraderRemovals(int $state)
+{
+    if (!isExamStateValid($state)) {
+        throw new InvalidArgumentException('Invalid exam state: ' . $state);
+    }
+
+    switch ($state) {
+        // allows
+        case EXAM_STATE_HIDDEN:
+        case EXAM_STATE_OPEN:
+        case EXAM_STATE_CLOSED:
+        case EXAM_STATE_IN_PROGRESS:
+        case EXAM_STATE_GRADING:
+            return true;
+        // does not allow
+        case EXAM_STATE_FINALIZING:
+        case EXAM_STATE_ARCHIVED:
+            return false;
+        // invalid state
+        default:
+            throw new InvalidArgumentException(
+                'Unhandled exam state: ' . $state
+            );
+    }
+}
+
+/**
  * Check if given exam state is valid (recognized in 'db/constants.php')
  *
  * @param int $state
@@ -235,6 +301,18 @@ function refreshExam(int $id)
     }
 
     // TODO: populate function
+}
+
+/**
+ * Transfer exam state to in-progress
+ *
+ * @param int $examID
+ */
+function transitionExamToInProgress(int $examID)
+{
+    // TODO: populate
+    // use transaction
+    // assign seats
 }
 
 /**

@@ -18,11 +18,17 @@
  */
 function assignGrader(int $examID, int $categoryID, string $graderID)
 {
+    // TODO: validation
     // validate exam ID, category ID
     // validate exam state allows
     // validate grader ID
 
-    // TODO: populate
+    assignGraderQuery($examID, $categoryID, $graderID);
+
+    $state = getExamState($examID);
+    if ($state == EXAM_STATE_GRADING) {
+        insertGraderDuringGrading($examID, $categoryID, $graderID);
+    }
 }
 
 /**
@@ -34,12 +40,19 @@ function assignGrader(int $examID, int $categoryID, string $graderID)
  */
 function unAssignGrader(int $examID, int $categoryID, string $graderID)
 {
+    // TODO: validation
     // validate exam ID, category ID
     // validate grader ID
     // validate assigned as grader to exam/category
-    // validate exam valid after un-assign
+    // validate exam state allows
+    // validate exam grader limits ?
 
-    // TODO: populate
+    unAssignCategoryGraderQuery($examID, $categoryID, $graderID);
+
+    $state = getExamState($examID);
+    if ($state == EXAM_STATE_GRADING) {
+        deleteGraderCategoryGrades($examID, $categoryID, $graderID);
+    }
 }
 
 /**
@@ -50,25 +63,41 @@ function unAssignGrader(int $examID, int $categoryID, string $graderID)
  */
 function unAssignGraderFromExam(int $examID, string $graderID)
 {
+    // TODO: validation
     // validate exam ID
     // validate grader ID
     // validate assigned as grader to exam
-    // validate exam valid after un-assign
+    // validate exam state allows
+    // validate exam grader limits ?
 
-    // TODO: populate
+    unAssignExamGraderQuery($examID, $graderID);
+
+    $state = getExamState($examID);
+    if ($state == EXAM_STATE_GRADING) {
+        deleteGraderExamGrades($examID, $graderID);
+    }
 }
 
 /**
  * Un-assign grader from all assigned exams
+ * Will only work for exam's whose state allows removal of graders
  *
  * @param string $graderID
  */
 function unAssignGraderFull(string $graderID)
 {
     // validate grader ID
-    // validate un-assign is valid for exams
+    // validate un-assign is valid for exams, state
 
-    // TODO: populate
+    $exams = getAssignedExams($graderID);
+    foreach ($exams as $examID) {
+        $state = getExamState($examID);
+        if (!doesExamStateAllowGraderRemovals($state)) {
+            continue;
+        }
+
+        unAssignGraderFromExam($examID, $graderID);
+    }
 }
 
 /**
@@ -80,11 +109,46 @@ function unAssignGraderFull(string $graderID)
  */
 function getAssignedExamGraders(int $examID)
 {
+    // TODO: validation
     // validate exam ID
 
-    // TODO: populate
+    $results = getAssignedExamGradersQuery($examID);
+    $graders = array_map(
+        function ($row) {
+            return $row['grader_id'];
+        }, $results
+    );
 
-    return array();
+    return $graders;
+}
+
+/**
+ * Get assigned graders and categories
+ *
+ * @param int $examID
+ *
+ * @return array      Array of graders and assigned categories
+ *                    "graderID" => grader ID
+ *                    "categories" => category IDs
+ */
+function getAssignedExamGradersCategories(int $examID)
+{
+    // TODO: validation
+
+    $assigned = array();
+
+    $graders = getAssignedExamGraders($examID);
+    foreach ($graders as $graderID) {
+        $assignedCategories = array();
+        $assignedCategories["graderID"] = $graderID;
+
+        $categories = getAssignedExamCategories($graderID, $examID);
+        $assignedCategories["categories"] = $categories;
+
+        array_push($assigned, $assignedCategories);
+    }
+
+    return $assigned;
 }
 
 /**
@@ -100,9 +164,14 @@ function getAssignedExamCategoryGraders(int $examID, int $categoryID)
     // validate exam ID, category ID
     // validate exam category
 
-    // TODO: populate
+    $results = getAssignedExamCategoryGradersQuery($examID, $categoryID);
+    $graders = array_map(
+        function ($row) {
+            return $row['grader_id'];
+        }, $results
+    );
 
-    return array();
+    return $graders;
 }
 
 /**
@@ -116,9 +185,14 @@ function getAssignedExams(string $graderID)
 {
     // validate grader ID
 
-    // TODO: populate
+    $results = getAssignedExamsQuery($graderID);
+    $exams = array_map(
+        function ($row) {
+            return $row['exam_id'];
+        }, $results
+    );
 
-    return array();
+    return $exams;
 }
 
 /**
@@ -134,9 +208,14 @@ function getAssignedExamCategories(string $graderID, int $examID)
     // validate grader ID
     // validate grader assigned to exam
 
-    // TODO: populate
+    $results = getAssignedExamCategoriesQuery($examID, $graderID);
+    $categories = array_map(
+        function ($row) {
+            return $row['category_id'];
+        }, $results
+    );
 
-    return array();
+    return $categories;
 }
 
 /**
@@ -152,9 +231,20 @@ function getAssignedExamsCategories(string $graderID)
 {
     // validate grader ID
 
-    // TODO: populate
+    $assigned = array();
 
-    return array();
+    $exams = getAssignedExams($graderID);
+    foreach ($exams as $examID) {
+        $assignedExam = array();
+        $assignedExam["examID"] = $examID;
+
+        $categories = getAssignedExamCategories($graderID, $examID);
+        $assignedExam["categories"] = $categories;
+
+        array_push($assigned, $assignedExam);
+    }
+
+    return $assigned;
 }
 
 /**
@@ -166,28 +256,54 @@ function getAssignedExamsCategories(string $graderID)
  */
 function createGraderStudentCategoryGradeEntries(int $examID)
 {
-    // get exam categories
-    // get category graders
-    // get students
-    // build all permutations
-    // TODO: populate
+    $categoryGraders = getAssignedExamGradersCategories($examID);
+    $students = getExamRegistrations($examID);
+
+    foreach ($categoryGraders as $graderCategories) {
+        createGraderCategoryGradesQuery(
+            $examID, $graderCategories["graderID"],
+            $graderCategories["categories"], $students
+        );
+    }
+}
+
+/**
+ * Internal function
+ * To insert a grader during the grading state
+ *
+ * @param int    $examID
+ * @param int    $categoryID
+ * @param string $graderID
+ */
+function insertGraderDuringGrading(int $examID, int $categoryID,
+    string $graderID
+) {
+    $students = getExamRegistrations($examID);
+    insertGraderToGraderCategoryGradesQuery(
+        $examID, $graderID, $categoryID, $students
+    );
 }
 
 /**
  * To insert a student for grading
- * Intended for students that are added to the roster at a later date
+ * Intended for students that are added to the roster during grading
  *
  * @param int    $examID
  * @param string $studentID
  */
 function insertStudentForGrading(int $examID, string $studentID)
 {
+    // TODO: validation
     // validate exam id
     // validate student ID
     // validate student registered for exam
 
-    // TODO: populate
-    // transaction, state check
+    $gradersCategories = getAssignedExamGradersCategories($examID);
+    insertStudentToGraderCategoryGradesQuery(
+        $examID, $studentID, $gradersCategories
+    );
+
+    resetAllSubmitted($examID);
 }
 
 /**
@@ -199,8 +315,9 @@ function insertStudentForGrading(int $examID, string $studentID)
  */
 function resetAllSubmitted(int $examID)
 {
-    // TODO: populate
-    // transaction, state check
+    // TODO: validation
+
+    resetAllSubmittedQuery($examID);
 }
 
 /**
@@ -215,13 +332,12 @@ function resetAllSubmitted(int $examID)
 function isGraderCategorySubmitted(int $examID, int $categoryID,
     string $graderID
 ) {
+    // TODO: validation
     // validate exam id, category id
     // validate grader id
     // validate grader assigned
 
-    // TODO: populate
-
-    return false;
+    return isGraderCategorySubmittedQuery($examID, $categoryID, $graderID);
 }
 
 /**
@@ -234,13 +350,26 @@ function isGraderCategorySubmitted(int $examID, int $categoryID,
  */
 function isGraderExamSubmitted(int $examID, string $graderID)
 {
+    // TODO: validation
     // validate exam ID
     // validate grader ID
     // validate grader assigned
 
-    // TODO: populate
+    return isGraderExamSubmittedQuery($examID, $graderID);
+}
 
-    return false;
+/**
+ * Check if all graders for an exam have submitted
+ *
+ * @param int $examID
+ *
+ * @return mixed
+ */
+function isExamSubmitted(int $examID)
+{
+    // TODO: validation
+
+    return isExamSubmittedQuery($examID);
 }
 
 /**
@@ -251,18 +380,26 @@ function isGraderExamSubmitted(int $examID, string $graderID)
  * @param string $graderID
  *
  * @return array             List of students and points, format
- *                           "student_id" => student ID
- *                           "points" => points set
+ *                           "studentID" => student ID
+ *                           "points" => points set, can be null
  */
 function getGraderCategoryGrades(int $examID, int $categoryID, string $graderID)
 {
+    // TODO: validation
     // validate exam ID, category ID
     // validate grader ID
     // validate grader assigned
 
-    // TODO: populate
+    $results = getGraderCategoryGradesQuery($examID, $categoryID, $graderID);
+    $categoryPoints = array_map(
+        function ($row) {
+            $row['studentID'] = $row['student_id'];
+            unset($row['student_id']);
+            return $row;
+        }, $results
+    );
 
-    return array();
+    return $categoryPoints;
 }
 
 /**
@@ -279,12 +416,23 @@ function getGraderCategoryGrades(int $examID, int $categoryID, string $graderID)
 function setGraderCategoryGrades(int $examID, int $categoryID, string $graderID,
     array $points
 ) {
+    // TODO: validation
     // validate exam ID, category ID
     // validate grader ID
     // validate grader assigned
     // validate points array
 
-    // TODO: populate
+    foreach ($points as $studentPoints) {
+        $studentID = $studentPoints['studentID'];
+        $pointsSet = $studentPoints['points'];
+        if ($pointsSet < 0) {
+            $pointsSet = null;
+        }
+
+        setGraderCategoryStudentGradeQuery(
+            $examID, $categoryID, $graderID, $studentID, $pointsSet
+        );
+    }
 }
 
 /**
@@ -299,9 +447,15 @@ function setGraderCategoryGrades(int $examID, int $categoryID, string $graderID,
 function setStudentCategoryPoints(int $examID, int $categoryID,
     string $graderID, string $studentID, int $points
 ) {
-    // validate
+    // TODO: validation
 
-    // TODO: populate
+    if ($points < 0) {
+        $points = null;
+    }
+
+    setGraderCategoryStudentGradeQuery(
+        $examID, $categoryID, $graderID, $studentID, $points
+    );
 }
 
 /**
@@ -315,10 +469,9 @@ function setStudentCategoryPoints(int $examID, int $categoryID,
 function setGraderCategorySubmitted(int $examID, int $categoryID,
     string $graderID, bool $submit
 ) {
-    // validate
-    // validate can submit (if true)
+    // TODO: validation
 
-    // TODO: populate
+    setGraderCategorySubmittedQuery($examID, $categoryID, $graderID, $submit);
 }
 
 /**
@@ -333,11 +486,9 @@ function setGraderCategorySubmitted(int $examID, int $categoryID,
 function allGraderCategoryPointsSet(int $examID, int $categoryID,
     string $graderID
 ) {
-    // validate
+    // TODO: validation
 
-    // TODO: populate
-
-    return false;
+    return allGraderCategoryPointsSetQuery($examID, $categoryID, $graderID);
 }
 
 /**
@@ -348,10 +499,24 @@ function allGraderCategoryPointsSet(int $examID, int $categoryID,
  */
 function createStudentCategoryGrades(int $examID)
 {
-    // get students
-    // get categories
-    // get category points for each student
-    // TODO: populate
+    // TODO: validation ?
+
+    $students = getExamRegistrations($examID);
+    $categories = getExamCategories($examID);
+    $categoryIDs = array_column($categories, "id");
+
+    foreach ($students as $studentID) {
+        foreach ($categoryIDs as $categoryID) {
+            $points = getStudentCategoryPoints(
+                $examID, $categoryID, $studentID
+            );
+            $calculatedGrade = determineCategoryGrade($points);
+            createStudentCategoryGradeQuery(
+                $examID, $categoryID, $studentID,
+                $calculatedGrade['categoryGrade'], $calculatedGrade['conflict']
+            );
+        }
+    }
 }
 
 /**
@@ -366,8 +531,12 @@ function createStudentCategoryGrades(int $examID)
 function getStudentCategoryPoints(int $examID, int $categoryID,
     string $studentID
 ) {
-    // TODO: populate
-    return array();
+    // TODO: validation
+
+    $results = getStudentCategoryPointsQuery($examID, $categoryID, $studentID);
+    $points = array_column($results, "points");
+
+    return $points;
 }
 
 /**
@@ -375,9 +544,9 @@ function getStudentCategoryPoints(int $examID, int $categoryID,
  *
  * @param array $points
  *
- * @return array                Results
- *                              "categoryGrade" => category grade
- *                              "conflict" => if conflict exists
+ * @return array         Results
+ *                       "categoryGrade" => category grade
+ *                       "conflict" => if conflict exists
  */
 function determineCategoryGrade(array $points)
 {
@@ -394,9 +563,14 @@ function determineCategoryGrade(array $points)
  * @param int    $points
  * @param bool   $conflict
  */
-function createStudentCategoryGradeEntry(int $examID, int $categoryID, string $studentID, int $points, bool $conflict)
-{
-    // TODO: populate
+function createStudentCategoryGradeEntry(int $examID, int $categoryID,
+    string $studentID, int $points, bool $conflict
+) {
+    // TODO: validation
+
+    createStudentCategoryGradeQuery(
+        $examID, $categoryID, $studentID, $points, $conflict
+    );
 }
 
 /**
@@ -407,9 +581,65 @@ function createStudentCategoryGradeEntry(int $examID, int $categoryID, string $s
  * @param string $studentID
  * @param int    $grade
  */
-function resolveStudentCategoryGrade(int $examID, int $categoryID, string $studentID, int $grade)
+function resolveStudentCategoryGradeConflict(int $examID, int $categoryID,
+    string $studentID, int $grade
+) {
+    // TODO: validation
+
+    setStudentCategoryGradeQuery(
+        $examID, $categoryID, $studentID, $grade, false
+    );
+}
+
+/**
+ * Check if conflicts exist for an exam
+ * Used for an exam in the finalization state
+ *
+ * @param int $examID
+ *
+ * @return bool
+ */
+function conflictsExist(int $examID)
 {
-    // TODO: populate
+    // TODO: validation
+
+    return conflictsExistQuery($examID);
+}
+
+/**
+ * Get all conflicts for an exam
+ *
+ * @param int $examID
+ *
+ * @return array      List of students and conflicting categories
+ *                    "studentID" => student ID
+ *                    "categories" => list of category IDs in conflict
+ */
+function getConflicts(int $examID)
+{
+    // TODO: validation
+
+    $results = getConflictsQuery($examID);
+
+    $studentIDsToCategories = array();
+    foreach ($results as $row) {
+        $studentID = $row['student_id'];
+        $categoryID = $row['category_id'];
+
+        if (!array_key_exists($studentID, $studentIDsToCategories)) {
+            $studentIDsToCategories[$studentID] = array();
+        }
+        array_push($studentIDsToCategories[$studentID], $categoryID);
+    }
+
+    $conflicts = array();
+    foreach ($studentIDsToCategories as $studentID => $categories) {
+        $conflict = array('studentID'  => $studentID,
+                          'categories' => $categories);
+        array_push($conflict, $conflict);
+    }
+
+    return $conflicts;
 }
 
 /**
@@ -419,10 +649,20 @@ function resolveStudentCategoryGrade(int $examID, int $categoryID, string $stude
  */
 function createStudentExamGrades(int $examID)
 {
-    // get students
-    // get student category grades
-    // calculate exam grades / passed
-    // TODO: populate
+    $examInfo = getExamInformation($examID);
+    $passingGrade = $examInfo['passing_grade'];
+
+    $students = getExamRegistrations($examID);
+    foreach ($students as $studentID) {
+        $grades = getStudentCategoryGrades($examID, $studentID);
+        $categoryGrades = array_column($grades, 'grade');
+
+        $examGrade = determineExamGrade($passingGrade, $categoryGrades);
+
+        createStudentExamGradeQuery(
+            $examID, $studentID, $examGrade['grade'], $examGrade['passed']
+        );
+    }
 }
 
 /**
@@ -449,9 +689,12 @@ function determineExamGrade(int $pointsToPass, array $categoryPoints)
  * @param int    $points
  * @param bool   $passed
  */
-function createStudentExamGradeEntry(int $examID, string $studentID, int $points, bool $passed)
-{
-    // TODO: populate
+function createStudentExamGradeEntry(int $examID, string $studentID,
+    int $points, bool $passed
+) {
+    // TODO: validation
+
+    createStudentExamGradeQuery($examID, $studentID, $points, $passed);
 }
 
 /**
@@ -466,8 +709,20 @@ function createStudentExamGradeEntry(int $examID, string $studentID, int $points
  */
 function getStudentCategoryGrades(int $examID, string $studentID)
 {
-    // TODO: populate
-    return array();
+    // TODO: validation
+
+    $results = getStudentCategoryGradesQuery($examID, $studentID);
+    $categoryGrades = array_map(
+        function ($row) {
+            $newRow = array();
+            $newRow['categoryID'] = $row['category_id'];
+            $newRow['grade'] = $row['points'];
+
+            return $newRow;
+        }, $results
+    );
+
+    return $categoryGrades;
 }
 
 /**
@@ -479,10 +734,11 @@ function getStudentCategoryGrades(int $examID, string $studentID)
  *
  * @return int
  */
-function getStudentCategoryGrade(int $examID, int $categoryID, string $studentID)
-{
-    // TODO: populate
-    return 0;
+function getStudentCategoryGrade(int $examID, int $categoryID, string $studentID
+) {
+    // TODO: validations
+
+    return getStudentCategoryGradeQuery($examID, $categoryID, $studentID);
 }
 
 /**
@@ -495,8 +751,9 @@ function getStudentCategoryGrade(int $examID, int $categoryID, string $studentID
  */
 function getStudentExamGrade(int $examID, string $studentID)
 {
-    // TODO: populate
-    return 0;
+    // TODO: validations
+
+    return getStudentExamGradeQuery($examID, $studentID);
 }
 
 /**
@@ -509,12 +766,13 @@ function getStudentExamGrade(int $examID, string $studentID)
  */
 function getStudentExamComment(int $examID, string $studentID)
 {
-    // TODO: populate
-    return "";
+    // TODO: validations
+
+    return getStudentExamGradeCommentQuery($examID, $studentID);
 }
 
 /**
- * Get if student has passed an exam
+ * Get if student has passed the exam
  *
  * @param int    $examID
  * @param string $studentID
@@ -523,8 +781,52 @@ function getStudentExamComment(int $examID, string $studentID)
  */
 function getStudentExamPassed(int $examID, string $studentID)
 {
-    // TODO: populate
-    return false;
+    // TODO: validations
+
+    return getStudentExamGradePassedQuery($examID, $studentID);
+}
+
+/**
+ * Get information about a student's exam grade
+ *
+ * @param int    $examID
+ * @param string $studentID
+ *
+ * @return array            Array of exam grade information
+ *                          "grade" => grade of exam
+ *                          "passed" => if passed exam
+ */
+function getStudentExamGradeDetails(int $examID, string $studentID)
+{
+    // TODO: validations
+
+    $result = getStudentExamGradeDetailsQuery($examID, $studentID);
+    $result['grade'] = $result['points'];
+    unset($result['points']);
+
+    return $result;
+}
+
+/**
+ * Get all fields for a students exam grade
+ *
+ * @param int    $examID
+ * @param string $studentID
+ *
+ * @return array            Exam grade information
+ *                          "grade" => exam grade
+ *                          "passed" => is passed exam
+ *                          "comment" => exam grade comment (can be null)
+ */
+function getStudentExamGradeFull(int $examID, string $studentID)
+{
+    // TODO: validations
+
+    $result = getStudentExamGradeFullQuery($examID, $studentID);
+    $result['grade'] = $result['points'];
+    unset($result['points']);
+
+    return $result;
 }
 
 /**
@@ -539,39 +841,25 @@ function getStudentExamPassed(int $examID, string $studentID)
  *                           "graderID" => grader ID
  *                           "grade" => points set
  */
-function getStudentCategoryGraderPoints(int $examID, int $categoryID, string $studentID)
-{
-    // TODO: populate
-    return array();
-}
+function getStudentCategoryGraderPoints(int $examID, int $categoryID,
+    string $studentID
+) {
+    // TODO: validations
 
-/**
- * Check if conflicts exist for an exam
- * Used for an exam in the finalization state
- *
- * @param int $examID
- *
- * @return array
- */
-function conflictsExist(int $examID)
-{
-    // TODO: populate
-    return array();
-}
+    $results = getStudentCategoryGraderPointsQuery(
+        $examID, $categoryID, $studentID
+    );
+    $graderPoints = array_map(
+        function ($row) {
+            $newRow = array();
+            $newRow['graderID'] = $row['grader_id'];
+            $newRow['grade'] = $row['points'];
 
-/**
- * Get all conflicts for an exam
- *
- * @param int $examID
- *
- * @return array      List of students and conflicting categories
- *                    "studentID" => student ID
- *                    "categories" => list of category IDs in conflict
- */
-function getConflicts(int $examID)
-{
-    // TODO: populate
-    return array();
+            return $newRow;
+        }, $results
+    );
+
+    return $graderPoints;
 }
 
 /**
@@ -583,9 +871,12 @@ function getConflicts(int $examID)
  * @param bool        $passed
  * @param string|null $comment
  */
-function setStudentExamEntry(int $examID, string $studentID, int $points, bool $passed, string $comment = null)
-{
-    // TODO: populate
+function setStudentExamEntry(int $examID, string $studentID, int $points,
+    bool $passed, string $comment
+) {
+    // TODO: validations
+
+    setStudentExamEntryQuery($examID, $studentID, $points, $passed, $comment);
 }
 
 /**
@@ -597,7 +888,9 @@ function setStudentExamEntry(int $examID, string $studentID, int $points, bool $
  */
 function setStudentExamPoints(int $examID, string $studentID, int $points)
 {
-    // TODO: populate
+    // TODO: validations
+
+    setStudentExamPointsQuery($examID, $studentID, $points);
 }
 
 /**
@@ -609,7 +902,9 @@ function setStudentExamPoints(int $examID, string $studentID, int $points)
  */
 function setStudentExamPassed(int $examID, string $studentID, bool $passed)
 {
-    // TODO: populate
+    // TODO: validations
+
+    setStudentExamPassedQuery($examID, $studentID, $passed);
 }
 
 /**
@@ -619,178 +914,12 @@ function setStudentExamPassed(int $examID, string $studentID, bool $passed)
  * @param string      $studentID
  * @param string|null $comment
  */
-function setStudentExamComment(int $examID, string $studentID, string $comment = null)
-{
-    // TODO: populate
-}
-
-////////////////////////////////////////////////////////////////////////
-// TODO: reuse necessary functions/queries
-
-// assign grader to exam/category
-function aAssignGrader(int $graderId, int $examId, int $categoryId, $submitted)
-{
-    return assignGraderQuery($graderId, $examId, $categoryId, $submitted);
-}
-
-// remove grader from exam/category
-function removeGrader(int $graderId, int $examId, int $categoryId)
-{
-    return removeGraderQuery($graderId, $examId, $categoryId);
-}
-
-// get graders for exam/category
-function getGradersByExam(int $examId)
-{
-    return getAssignedGradersByExamIdQuery($examId);
-}
-
-function getGradersByCategory(int $categoryId)
-{
-    return getAssignedGradersByCategoryIdQuery($categoryId);
-}
-
-// get assigned exams/category for grader
-function getExamsAndCategoriesByGrader(int $graderId)
-{
-    return getExamsAndCategoriesByGraderIdQuery($graderId);
-}
-
-// get if all graders submitted
-function isAllGradesSubmitted(int $examId)
-{
-    return isAllGradesSubmittedByExamIdQuery($examId);
-}
-
-// submit for grader
-
-// get graders submitted/not submitted
-function getSubmittedGraders(int $examId)
-{
-    return getSubmittedGradersByExamIdQuery($examId);
-}
-
-function getUnsubmittedGraders(int $examId)
-{
-    return getUnsubmittedGradersByExamIdQuery($examId);
-}
-
-/// get count for each
-
-function getNumberOfSubmittedGraders(int $examId)
-{
-    return getNumberOfSubmittedGradersByExamIdQuery($examId);
-}
-
-function getNumberOfUnsubmittedGraders(int $examId)
-{
-    return getNumberOfUnsubmittedGradersByExamIdQuery($examId);
-}
-
-
-// state shift from grading to finalizing
-function setExamToFinalizing(int $examId)
-{
-    setExamState($examId, EXAM_STATE_FINALIZING);
-}
-
-
-// check student/category grades for conflicts between graders
-function getStudentCategoryGradeConflicts(int $examId)
-{
-    return getStudentCategoryGradeConflictsByExamIdQuery($examId);
-}
-
-// get all student category grades for exam from all graders
-/// only for 1 category
-/// return [ [grader_id, grade] , ... ]
-
-function getCategoryGrades(int $categoryId)
-{
-    return getGraderCategoryGradesByCategoryIdQuery($categoryId);
-}
-
-// get student grade for category
-/// the average/set final
-
-function getStudentAverageByCategory(string $studentId, int $categoryId)
-{
-    return getStudentAverageByCategoryIdQuery($studentId, $categoryId);
-}
-
-// get all student grades for exam
-/// return array [ [category_id, grade], ... ]
-
-function getStudentGradesByExam(int $examId)
-{
-    return getStudentCategoryGradesByExamIdQuery($examId);
-}
-
-// get all student grades of student by studentId
-function getStudentGrades(string $studentId)
-{
-    return getExamGradesByStudentId($studentId);
-}
-
-// pass/fail student, set comment/grade for category
-/// separate one for exam
-
-function passStudent(int $examId, string $studentId)
-{
-    return pass;
-    //logSecurityIncident(IS_NOT_GRADER, $_SESSION['ewuId']);StudentQuery($examId, $studentId);
-}
-
-function failStudent(int $examId, string $studentId)
-{
-    return failStudentQuery($examId, $studentId);
-}
-
-function gradeCategory(int $examId, int $categoryId, string $studentId,
-    int $grade, string $comments
+function setStudentExamComment(int $examID, string $studentID,
+    string $comment
 ) {
-    $cleanComments = sanitize($comments);
-    return gradeCategoryByIdQuery(
-        $examId, $categoryId, $studentId, $grade, $cleanComments
-    );
-}
+    // TODO: validations
 
-// finalize exam
-/// check in correct state
-/// check all conflicts have been handled, all grades available
-
-function finalizeExam(int $examId)
-{
-    $examState = getExamState($examId);
-
-    if ($examState == EXAM_STATE_GRADING) {
-        $potentialConflicts = getStudentCategoryGradeConflicts($examId);
-        $isAllSubmitted = isAllGradesSubmitted($examId);
-
-        if (count($potentialConflicts) == 0 && $isAllSubmitted == true) {
-            return finalizeExamByIdQuery($examId);
-        }
-    }
-
-    return false;
-}
-
-
-// cleanup exam grades
-/// cleanup all grader information not necessary
-/// TODO: determine if necessary, make manual operation by admin/db admin?
-
-/**
- * Get the number of exams failed
- *
- * @param string $studentID Student ID
- *
- * @return int              Number of exams failed
- */
-function getFailedExamCount(string $studentID)
-{
-    // TODO: populate
-    return 0;
+    setStudentExamCommentQuery($examID, $studentID, $comment);
 }
 
 /**
@@ -802,10 +931,69 @@ function getFailedExamCount(string $studentID)
  */
 function hasPassedExam(string $studentID)
 {
-    // TODO: populate
-    return false;
+    // TODO: validations
+
+    return hasPassedExamQuery($studentID);
 }
 
+/**
+ * Get the number of exams passed
+ *
+ * @param string $studentID
+ *
+ * @return int
+ */
+function getExamsPassedCount(string $studentID)
+{
+    // TODO: validations
 
+    return getExamsPassedCountQuery($studentID);
+}
 
+/**
+ * Get the number of exams failed
+ *
+ * @param string $studentID
+ *
+ * @return int
+ */
+function getExamsFailedCount(string $studentID)
+{
+    // TODO: validations
 
+    return getExamsFailedCountQuery($studentID);
+}
+
+/**
+ * Delete all entries for a grader
+ *
+ * @param string $graderID
+ */
+function deleteGraderGrades(string $graderID)
+{
+    // TODO: populate
+}
+
+/**
+ * Delete all grade entries for a grader from an exam
+ *
+ * @param int    $examID
+ * @param string $graderID
+ */
+function deleteGraderExamGrades(int $examID, string $graderID)
+{
+    // TODO: populate
+}
+
+/**
+ * Delete the entries for an assigned grader / category
+ *
+ * @param int    $examID
+ * @param int    $categoryID
+ * @param string $graderID
+ */
+function deleteGraderCategoryGrades(int $examID, int $categoryID,
+    string $graderID
+) {
+    // TODO: populate
+}

@@ -95,7 +95,7 @@ function setSessionVariables()
         'isLoggedIn' => true,
         'firstName' => $_SESSION['firstName'],
         'lastName' => $_SESSION['lastName'],
-        'type' => $_SESSION['userGroup'],
+        'type' => getAccountTypeQuery((string)$_SESSION['ewuid']),
         'id' => $_SESSION['ewuid'],
         'email' => $_SESSION['email'],
         'availableNavLinks' => getAvailableNavigationLinks()

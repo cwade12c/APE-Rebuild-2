@@ -5,3 +5,7 @@ credentials.php
 creds.php
 config.php
 vendor/
+config/db.config.php
+config/general.config.php
+config/host.config.php
+config/path.config.php

@@ -19,8 +19,8 @@
  * Check if given type has given permission
  * Can be used to avoid multiple queries in short span of time
  *
- * @param int $type       , type for account
- * @param int $permission , account type value (check 'constants.php')
+ * @param int $type       Type for account
+ * @param int $permission Account type value (check 'constants.php')
  *
  * @return bool
  */
@@ -30,17 +30,28 @@ function typeHas(int $type, int $permission)
 }
 
 /**
+ * Get the type for the account ID
+ *
+ * @param string $accountID Account ID
+ *
+ * @return int              Account type
+ */
+function getAccountType(string $accountID)
+{
+    return getAccountTypeQuery($accountID);
+}
+
+/**
  * check if account has given permission on type
  * permission values available in 'constants.php'
  *
- * @param string $accountID
- * @param int    $permission
+ * @param string $accountID  Account ID
+ * @param int    $permission Permission value
  *
- * @return bool
+ * @return bool              If account has given type
  */
 function accountTypeHas(string $accountID, int $permission)
 {
-    // get type
     $type = getAccountTypeQuery($accountID);
 
     return typeHas($type, $permission);
@@ -49,9 +60,9 @@ function accountTypeHas(string $accountID, int $permission)
 /**
  * Check if given account has any type set
  *
- * @param string $accountID
+ * @param string $accountID Account ID
  *
- * @return bool
+ * @return bool             If account has any type set
  */
 function accountHasPermissions(string $accountID)
 {
@@ -63,9 +74,9 @@ function accountHasPermissions(string $accountID)
 /**
  * Check if account has temp permission
  *
- * @param string $accountID
+ * @param string $accountID Account ID
  *
- * @return bool
+ * @return bool             If account has temp type
  */
 function accountIsTemp(string $accountID)
 {
@@ -75,9 +86,9 @@ function accountIsTemp(string $accountID)
 /**
  * Check if account has student permission
  *
- * @param string $accountID
+ * @param string $accountID Account ID
  *
- * @return bool
+ * @return bool             If account has student type
  */
 function accountIsStudent(string $accountID)
 {
@@ -87,9 +98,9 @@ function accountIsStudent(string $accountID)
 /**
  * Check if account has grader permission
  *
- * @param string $accountID
+ * @param string $accountID Account ID
  *
- * @return bool
+ * @return bool             If account has grader type
  */
 function accountIsGrader(string $accountID)
 {
@@ -99,9 +110,9 @@ function accountIsGrader(string $accountID)
 /**
  * Check if account has teacher permission
  *
- * @param string $accountID
+ * @param string $accountID Account ID
  *
- * @return bool
+ * @return bool             If account has teacher type
  */
 function accountIsTeacher(string $accountID)
 {
@@ -111,9 +122,9 @@ function accountIsTeacher(string $accountID)
 /**
  * Check if account has admin permission
  *
- * @param string $accountID
+ * @param string $accountID Account ID
  *
- * @return bool
+ * @return bool             If account has admin type
  */
 function accountIsAdmin(string $accountID)
 {
@@ -121,38 +132,37 @@ function accountIsAdmin(string $accountID)
 }
 
 /**
+ * Internal function, not intended for outside use
  * Set account to given type
- * Not intended for outside use
  *
- * @param string $accountID
- * @param int    $type
+ * @param string $accountID Account ID
+ * @param int    $type      Account type
  */
 function setAccountType(string $accountID, int $type)
 {
     setAccountTypeQuery($accountID, $type);
-
-    // TODO: return type for success/failure ?
 }
 
 /**
  * Strip account of all permissions
  * Intended to be used over a delete from the accounts table
  *
- * @param string $accountID
+ * @param string $accountID Account ID
  */
 function stripAccountType(string $accountID)
 {
-    setAccountType($accountID, ACCOUNT_TYPE_NONE);
+    // TODO: validate account is not temporary
+    // make base function to determine if temporary, strip only to temp
 
-    // TODO: check for success
+    setAccountType($accountID, ACCOUNT_TYPE_NONE);
 }
 
 /**
  * Check if given account exists
  *
- * @param string $accountID
+ * @param string $accountID Account ID
  *
- * @return bool
+ * @return bool             If account exists
  */
 function accountExists(string $accountID)
 {
@@ -163,11 +173,11 @@ function accountExists(string $accountID)
  * Create account w/ given information
  * Not intended for outside use
  *
- * @param string      $accountID
- * @param int         $type
- * @param string|null $firstName
- * @param string|null $lastName
- * @param string|null $email
+ * @param string      $accountID Account ID
+ * @param int         $type      Account type
+ * @param string|null $firstName First name, can be null
+ * @param string|null $lastName  Last name, can be null
+ * @param string|null $email     Email, can be null
  */
 function createAccount(string $accountID, int $type = ACCOUNT_TYPE_NONE,
     string $firstName = null, string $lastName = null, string $email = null
@@ -195,13 +205,14 @@ function createTempStudent(string $firstName = null, string $lastName = null,
     string $email = null
 ) {
     // TODO: check at least 1 identification field filled
+    /// first & last name, or email
 
     // TODO: generate random/unique temp ID
     // generate random temp id, check if exists
     // may need to lock DB someway
     // create account
     $id = generateTempID();
-    // TODO: validate random id is unqiue / does not exist
+    // TODO: validate random id is unique / does not exist
 
     $type = ACCOUNT_TYPE_TEMP | ACCOUNT_TYPE_STUDENT;
     createAccount($id, $type, $firstName, $lastName, $email);

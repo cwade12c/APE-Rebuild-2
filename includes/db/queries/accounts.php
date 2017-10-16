@@ -19,14 +19,13 @@
  */
 function getAccountTypeQuery(string $accountID)
 {
-    $query = "SELECT type FROM `accounts` WHERE (`id` = :id);";
+    $query = "SELECT `type` FROM `accounts` WHERE (`id` = :id);";
     $sql   = executeQuery(
         $query, array(
             array(':id', $accountID, PDO::PARAM_STR))
     );
-    $type  = $sql->fetchColumn();
 
-    return $type;
+    return getQueryResult($sql);
 }
 
 /**
@@ -85,7 +84,7 @@ function updateAccountInfoQuery(string $accountID,
 ) {
 
     // get set string and params
-    $ret = buildParamStringArr($firstName, $lastName, $email);
+    $ret = buildUpdateAccountParamStringArr($firstName, $lastName, $email);
     if ( ! $ret) {
         return;
     }
@@ -114,7 +113,7 @@ function updateAccountInfoQuery(string $accountID,
  * @return array|bool, returns set string and parameter array on success
  *                   returns false on error (or no values are set to update)
  */
-function buildParamStringArr(
+function buildUpdateAccountParamStringArr(
     string $firstName = null, string $lastName = null, string $email = null
 ) {
     // determine values to update

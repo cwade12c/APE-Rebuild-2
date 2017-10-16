@@ -6,10 +6,6 @@
         "files": [
             "vendor/phpcas/CAS.php",
             "includes/db/constants.php",
-            "includes/db/dbConstants.php",
-            "includes/db/dbExceptions.php",
-            "includes/db/dbQueriesGrading.php",
-            "includes/db/dbQueriesReports.php",
             "includes/db/exceptions.php",
             "includes/db/functions/accounts.php",
             "includes/db/functions/categories.php",

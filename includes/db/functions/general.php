@@ -9,95 +9,85 @@
  */
 
 /**
- * Checks if start and cutoff datetimes for an exam are valid
- * if any issues are found, an invalid argument exception is thrown.
- * Helper method for exam functions.
+ * Start a transaction
  *
- * @param DateTime $start
- * @param DateTime $cutoff
+ * @return bool             If succeeds
+ *
+ * @throws LogicException   PDO::startTransaction
+ *                          should only happen if a transaction is active
  */
-function validateDates(DateTime $start, DateTime $cutoff)
+function startTransaction()
 {
-    // null check
-    if ($start == null || $cutoff == null) {
-        throw new InvalidArgumentException('null date');
+    try {
+        return startTransactionQuery();
+    } catch (PDOException $e) {
+        throw new LogicException("Failed to rollback", 0, $e);
     }
-
-    $unixStart  = $start->getTimestamp();
-    $unixCutoff = $cutoff->getTimestamp();
-    // check that start datetime is before/on cutoff datetime
-    if ($unixStart > $unixCutoff) {
-        throw new InvalidArgumentException(
-            'Start datetime after registration cutoff datetime'
-        );
-    }
-
-
-    $unixNow = (new DateTime())->getTimestamp();
-    // check that start datetime is before current datetime
-    if ($unixStart < $unixNow) {
-        throw new InvalidArgumentException(
-            'Start datetime set before current datetime'
-        );
-    }
-
-    // TODO: max time difference (between start and cutoff, config) ?
 }
 
 /**
- * Checks if exam length (in minutes) is valid
- * Throws argument exceptions if there is an issue
+ * Rollback a transaction
  *
- * @param int $length
+ * @return bool             If succeeds
+ *
+ * @throws LogicException   PDO::rollBack
+ *                          should only happen if no transaction is active
  */
-function validateExamLength(int $length)
+function rollback()
 {
-    if ($length <= 0) {
-        throw new InvalidArgumentException('Invalid exam length: ' . $length);
+    try {
+        return rollBackQuery();
+    } catch (PDOException $e) {
+        throw new LogicException("Failed to rollback", 0, $e);
     }
-    // TODO: check config max length value (minutes)
 }
 
 /**
- * Checks if a location ID is valid
- * Throws argument exceptions if there is an issue
+ * Commit a transaction
  *
- * @param int $id
+ * @return bool             If succeeds
  *
- * @return bool
+ * @throws LogicException   DO::commit exception
+ *                          should only happen if no transaction is active
  */
-function validateLocationID(int $id)
+function commit()
 {
-    if ($id < 0) {
-        throw new InvalidArgumentException('Invalid location id: ' . $id);
+    try {
+        return commitQuery();
+    } catch (PDOException $e) {
+        throw new LogicException("Failed to commit", 0, $e);
     }
-    // TODO: check id exists
 }
 
 /**
- * Checks if teacher ID is valid
- * Throws argument exceptions if there is an issue
+ * Check if within a transaction
+ * Only for internal/backend use.
  *
- * @param bool   $inClass
- * @param string $teacherID
+ * @return bool If in transaction
  */
-function validateTeacherID(string $teacherID)
+function inTransaction()
 {
-    // TODO: validate teacher id, validate exists
-    /// throw exception if not valid
+    return inTransactionQuery();
 }
 
 /**
- * Checks if list of categories and passing grade is valid for an exam
- * Throws argument exceptions if there is an issue
+ * Gets details about a table attribute
  *
- * @param int   $passingGrade
- * @param array $categories
+ * @param string $tableName     name of table
+ * @param string $attributeName name of attribute
+ *
+ * @return mixed                associative array of result
+ *                              'DATA_TYPE' => mysql datatype as string
+ *                              'CHARACTER_MAXIMUM_LENGTH' => max string length
+ *                                  if applicable, else null
+ *                              'NUMERIC_PRECISION' => number precision
+ *                                  if applicable, else null
+ *                              if table/attribute does not exist,
+ *                                  false is returned
  */
-function validateExamCategories(int $passingGrade, array $categories)
+function getTableAttributeDetails(string $tableName, string $attributeName)
 {
-    // validate categories array
-
-    // validate passing grade
-    // check if reachable
+    return getTableAttributeDetailsQuery($tableName, $attributeName);
+    // TODO: check return to see if valid
+    /// if false, no records were found
 }

@@ -14,6 +14,60 @@
 /// once error checking is implemented in the db functions
 
 /**
+ * Starts transaction on DB PDO object
+ * Only for internal use
+ *
+ * @return bool         If succeeds
+ *
+ * @throws PDOException See PDO:beginTransaction()
+ */
+function startTransactionQuery()
+{
+    global $db;
+    return $db->beginTransaction();
+}
+
+/**
+ * Rollback a DB PDO transaction
+ * Only for internal use
+ *
+ * @return bool         If succeeds
+ *
+ * @throws PDOException See PDO:beginTransaction()
+ */
+function rollBackQuery()
+{
+    global $db;
+    return $db->rollBack();
+}
+
+/**
+ * Commits transaction on DB PDO object
+ * Only for internal use
+ *
+ * @return bool         If succeeds
+ *
+ * @throws PDOException See PDO:commit()
+ */
+function commitQuery()
+{
+    global $db;
+    return $db->commit();
+}
+
+/**
+ * Check if DB PDO object in a transaction
+ * Only for internal use
+ *
+ * @return bool If in Transaction
+ */
+function inTransactionQuery()
+{
+    global $db;
+    return $db->inTransaction();
+}
+
+/**
  * general query method
  * prepares given query string, executes
  *
@@ -44,10 +98,13 @@ function executeQuery(string $query, array $params = array())
     }
 
     try {
+        // TODO: check true/false return of execute
         $sql->execute();
 
         return $sql;
     } catch (PDOException $error) {
+        // TODO: need to forward an exception
+        /// otherwise, will report of nothing wrong and return null
         if (DEBUG) {
             echo "<div class=\"debug\">";
             print_r($sql->errorInfo());
@@ -124,17 +181,21 @@ function getQueryResults(PDOStatement $sql)
 /**
  * Grab the ID of the last inserted row.
  * Just a wrapper for PDO::lastInsertId()
+ * Appears to only work correctly w/ tables that use AUTO_INCREMENT
+ * for the primary key.
+ * Return is the value parsed from the return string.
  *
  * @param string $name
  *
- * @return string
+ * @return int
  */
 function getLastInsertedID(string $name = null)
 {
     try {
         global $db;
-
-        return $db->lastInsertId($name);
+        $lastIDStr = $db->lastInsertId($name);
+        $lastID = intval($lastIDStr);
+        return $lastID;
     } catch (PDOException $error) {
         if (DEBUG) {
             print_r($db->errorInfo());
@@ -143,7 +204,48 @@ function getLastInsertedID(string $name = null)
     }
 }
 
-// TODO: check for string size / value type for given table/column
+/**
+ * Query to get details about a table attribute
+ * Intended to be used by the wrapping function getTableAttributeDetails()
+ *
+ * @param string $tableName     name of table
+ * @param string $attributeName name of attribute
+ *
+ * @return mixed                associative array of result
+ *                              'DATA_TYPE' => mysql datatype as string
+ *                              'CHARACTER_MAXIMUM_LENGTH' => max string length
+ *                                  if applicable, else null
+ *                              'NUMERIC_PRECISION' => number precision
+ *                                  if applicable, else null
+ *                              if no row found, false is returned
+ */
+function getTableAttributeDetailsQuery(string $tableName, string $attributeName)
+{
+    // additional details about query:
+    // https://dev.mysql.com/doc/refman/5.7/en/columns-table.html
+    $query
+        = "SELECT DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION "
+        . "FROM INFORMATION_SCHEMA.COLUMNS "
+        . "WHERE table_schema = :schemaName "
+        . " && table_name = :tableName "
+        . " && COLUMN_NAME = :attributeName ";
+    $sql = executeQuery(
+        $query, array(
+            array(':schemaName', DB, PDO::PARAM_STR),
+            array(':tableName', $tableName, PDO::PARAM_STR),
+            array(':attributeName', $attributeName, PDO::PARAM_STR)
+        )
+    );
+
+    return getQueryResultRow($sql);
+}
+
+/*
+ * SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION
+  FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE table_name = 'accounts' && table_schema = 'test_new_ape_database';
+ */
+
 
 /**
  * Converts a PHP DateTime object to the parameter string for a query
@@ -151,7 +253,8 @@ function getLastInsertedID(string $name = null)
  * @param string   $key      key for the parameter
  * @param DateTime $datetime datetime object to convert
  *
- * @return array
+ * @return array    array in format of ('key', value, param_type),
+ *                  used as param for prepared statement
  */
 function buildDateTimeStrParam(string $key, DateTime $datetime)
 {
@@ -170,7 +273,7 @@ function buildDateTimeStrParam(string $key, DateTime $datetime)
  */
 function buildDateTimeFromQuery(string $value)
 {
-    $datetime = DateTime::date_create_from_format(DATETIME_FORMAT, $value);
+    $datetime = DateTime::createFromFormat(DATETIME_FORMAT, $value);
 
     return $datetime;
 }

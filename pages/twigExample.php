@@ -26,15 +26,15 @@ $studentC = new Student("Mathew");
 $students = array(
     array(
         "name" => "Curran",
-        "age" => 1024
+        "age" => 24
     ),
     array(
         "name" => "Kyle",
-        "age" => 2048
+        "age" => 27
     ),
     array(
         "name" => "Matthew",
-        "age" => 3072
+        "age" => 25
     )
 );
 

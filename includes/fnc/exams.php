@@ -10,6 +10,49 @@
  * @subpackage     Exams
  */
 
+class UpcomingExam
+{
+    private $start;
+    private $location;
+    private $reservedSeats;
+    private $limitedSeats;
+    private $passingGrade;
+
+    public function __construct( $start, $location, $reserved, $limited, $passing )
+    {
+        $this->start = $start;
+        $this->location = $location;
+        $this->reservedSeats = $reserved;
+        $this->limitedSeats = $limited;
+        $this->passingGrade = $passing;
+    }
+
+    public function getStart()
+    {
+        return $this->start;
+    }
+
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    public function getReservedSeats()
+    {
+        return $this->reservedSeats;
+    }
+
+    public function getLimitedSeats()
+    {
+        return $this->limitedSeats;
+    }
+
+    public function getPassingGrade()
+    {
+        return $this->passingGrade;
+    }
+}
+
 /**
  * @author  Curran Higgins
  */
@@ -24,6 +67,7 @@ function getUpcomingExams()
     $currentDate  = date('Y-m-d G:i:s');
     $currentDate  = date_create($currentDate);
     $upcomingApes = array();
+    $upcomingApesWithFullDetails = array();
 
     foreach ($results as &$value) {
         $examDate         = date_create($value["start"]);
@@ -36,13 +80,36 @@ function getUpcomingExams()
 
     if (count($upcomingApes) > 0) {
         foreach ($upcomingApes as &$value) {
-            displayExam($value);
+            $id = $value["location_id"];
+
+            $sql    = executeQuery(
+                "SELECT * FROM locations WHERE (`id` = :id);", array(array("id", $id))
+            );
+            $result = getQueryResults($sql);
+            $result = $result[0];
+
+            $examStart         = $value["start"];
+            $examLocation      = $result["name"];
+            $examReservedSeats = $result["reserved_seats"];
+            $examLimitedSeats  = $result["limited_seats"];
+            $examPassingGrade  = $value["passing_grade"];
+
+            $exam = new UpcomingExam($examStart, $examLocation, $examReservedSeats, $examLimitedSeats, $examPassingGrade);
+            array_push($upcomingApesWithFullDetails, $exam);
         }
     }
+
+    return $upcomingApesWithFullDetails;
+
+/*    if (count($upcomingApes) > 0) {
+        foreach ($upcomingApes as &$value) {
+            displayExam($value);
+        }
+    }*/
 }
 
 /**
- *
+ * @author  Curran Higgins
  *
  * @param $exam
  */

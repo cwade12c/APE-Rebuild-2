@@ -12,43 +12,30 @@ require_once '../config.php';
 
 // TODO: remove
 
-if (!isPost()) {
+if ( ! isPost()) {
     $queryResult = 'N/A';
 } else {
     // get query text, build, execute query
     $queryStr = $_POST['queryText'];
-    $getResult = empty($_POST['getResult']) ? false : true;
-
     try {
-        $sql = executeQuery($queryStr);
+        $sql     = executeQuery($queryStr);
+        $results = getQueryResults($sql);
 
-        if ($getResult) {
-            $results = getQueryResults($sql);
-            // build result string
-            if (!is_array($results)) {
-                $queryResult = $results;
-            } else {
-                $queryResult = '';
-                foreach ($results as $row) {
-                    if (is_array($row)) {
-                        $queryResult = $queryResult . implode(",", $row)
-                            . '<br>';
-                    } else {
-                        $queryResult = $queryResult . $row . '<br>';
-                    }
+        // build result string
+        if ( ! is_array($results)) {
+            $queryResult = $results;
+        } else {
+            $queryResult = '';
+            foreach ($results as $row) {
+                if (is_array($row)) {
+                    $queryResult = $queryResult . implode(",", $row) . '<br>';
+                } else {
+                    $queryResult = $queryResult . $row . '<br>';
                 }
             }
-        } else {
-            // get last inserted ID
             $lastID = getLastInsertedID();
-            $queryResult = "<b>Last ID</b>: {$lastID}<br>";
-
-            $sql = executeQuery("SELECT LAST_INSERT_ID()");
-            $lastID = getQueryResult($sql);
-            $queryResult = $queryResult
-                . "<b>Last ID (query)</b>: {$lastID}<br>";
+            $queryResult = $queryResult . "<b>Last ID</b>: {$lastID}<br>";
         }
-
     } catch (Exception $e) {
         $queryResult = 'Exception(\"' . get_class($e) . '\")<br>'
             . $e->getMessage() . '<br>'
@@ -75,7 +62,7 @@ if (!isPost()) {
 
     <!-- settings -->
     <h5>Get Results?</h5>
-    <input type="checkbox" name="getResult" value="true" checked/>
+    <input type="radio" name="getResult" 
     <br/>
 
     <!-- query result -->

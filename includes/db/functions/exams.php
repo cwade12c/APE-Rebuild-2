@@ -124,7 +124,7 @@ function getExamInformation(int $id)
     // TODO: check that row returned (or exam id existed)
 
     // convert date time values
-    $info['start'] = buildDateTimeFromQuery($info['start']);
+    $info['start']  = buildDateTimeFromQuery($info['start']);
     $info['cutoff'] = buildDateTimeFromQuery($info['cutoff']);
 
     return $info;
@@ -220,45 +220,36 @@ function createInClassExam(DateTime $start, DateTime $cutoff, int $minutes,
  * @param DateTime $cutoff
  * @param int      $minutes
  * @param int      $passingGrade
- * @param array    $categories array of exam category information
- *                             Each index must follow format
- *                             array(
- *                             'id' => category id
- *                             'points' => points possible
- *                             )
+ * @param array    $categories
  * @param int      $locationID
- * @param bool     $inClass    set to true if an in class exam
- * @param string   $teacherID  if in class id, the teacher id associated
+ * @param bool     $inClass   set to true if an in class exam
+ * @param string   $teacherID if in class id, the teacher id associated
  */
 function createExamExtended(DateTime $start, DateTime $cutoff, int $minutes,
     int $passingGrade, array $categories, int $locationID,
     bool $inClass = false, string $teacherID = ""
 ) {
     // validate arguments
-    validateExamAttributes(
-        $start, $cutoff, $minutes, $passingGrade, $categories, $locationID,
-        $inClass, $teacherID
-    );
+    validateDates($start, $cutoff);
+    validateExamLength($minutes);
+    validateLocationID($locationID);
+    if ($inClass) {
+        validateTeacherID($teacherID);
+    }
+    validateExamCategories($passingGrade, $categories);
 
     // TODO: check for conflicting information w/ existing non-archived exams
-    // TODO: create transaction for query set
 
     // create exam
-    createExamQuery(
-        $start, $cutoff, $minutes, $passingGrade, $locationID, !$inClass
-    );
-    $id = getLastInsertedID();
+    // TODO: create transaction for creation ?
 
-    // create in class entry
-    if ($inClass) {
-        createExamInClassQuery($id, $teacherID);
-    }
+    $id = createExamQuery($start, $cutoff, $minutes, $passingGrade);
 
+    // create exam query
+    // get exam id
+    // if in class, set teacher id
     // create exam categories
-    createExamCategoriesQuery($id, $categories);
-
     // set exam state
-    setExamState($id, EXAM_STATE_HIDDEN);
 
     // TODO: validate success
     // TODO: return exam id ?
@@ -267,20 +258,17 @@ function createExamExtended(DateTime $start, DateTime $cutoff, int $minutes,
 // TODO: add/remove exam categories ?
 
 // TODO: update exam
-function updateExam(int $id, DateTime $start, DateTime $cutoff, int $minutes,
-    int $passingGrade, int $locationID, array $categories
+function updateExam(int $id, DateTime $start, DateTime $cutoff, int $length,
+    int $passingGrade, int $location_id, array $categoryIDs
 ) {
-    // validate arguments
-    validateExamID($id);
-    validateExamAttributes(
-        $start, $cutoff, $minutes, $passingGrade, $categories, $locationID
-    );
-
+    // TODO: validate arguments
+    /// id exists, datetime(s) valid, length valid, passingGrade valid (reachable)
+    /// location (registration count?)
     // TODO: does state allow editing ?
 
     // get current exam information
 
-    // TODO: determine category differences (points, add/remove categories)
+    // TODO: determine add/remove categories
 
     // TODO: re-assign seats for location change
 
@@ -294,7 +282,7 @@ function setExamState(int $id, int $state)
 {
     // TODO: validate id exists
 
-    if (!isExamStateValid($state)) {
+    if ( ! isExamStateValid($state)) {
         throw new InvalidArgumentException('Illegal exam state: ' . $state);
     }
 
@@ -305,16 +293,3 @@ function setExamState(int $id, int $state)
 }
 
 // set exam location
-function setExamLocation(int $id, int $locationID)
-{
-    // validate arguments
-    validateExamID($id);
-    validateLocationID($locationID);
-
-    // TODO: check if new location will cause issues with existing seating
-    setExamLocationQuery($id, $locationID);
-
-    // TODO: reset seating
-
-    // TODO: check for success
-}

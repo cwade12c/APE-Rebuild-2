@@ -44,7 +44,6 @@ function executeQuery(string $query, array $params = array())
     }
 
     try {
-        // TODO: check true/false return of execute
         $sql->execute();
 
         return $sql;
@@ -125,21 +124,17 @@ function getQueryResults(PDOStatement $sql)
 /**
  * Grab the ID of the last inserted row.
  * Just a wrapper for PDO::lastInsertId()
- * Appears to only work correctly w/ tables that use AUTO_INCREMENT
- * for the primary key.
- * Return is the value parsed from the return string.
  *
  * @param string $name
  *
- * @return int
+ * @return string
  */
 function getLastInsertedID(string $name = null)
 {
     try {
         global $db;
-        $lastIDStr = $db->lastInsertId($name);
-        $lastID = intval($lastIDStr);
-        return $lastID;
+
+        return $db->lastInsertId($name);
     } catch (PDOException $error) {
         if (DEBUG) {
             print_r($db->errorInfo());

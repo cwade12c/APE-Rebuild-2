@@ -12,19 +12,26 @@
 
 class UpcomingExam
 {
+    private $id;
     private $start;
     private $location;
     private $reservedSeats;
     private $limitedSeats;
     private $passingGrade;
 
-    public function __construct( $start, $location, $reserved, $limited, $passing )
+    public function __construct( $id, $start, $location, $reserved, $limited, $passing )
     {
+        $this->id = $id;
         $this->start = $start;
         $this->location = $location;
         $this->reservedSeats = $reserved;
         $this->limitedSeats = $limited;
         $this->passingGrade = $passing;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function getStart()
@@ -88,13 +95,14 @@ function getUpcomingExams()
             $result = getQueryResults($sql);
             $result = $result[0];
 
+            $examId            = $value["id"];
             $examStart         = $value["start"];
             $examLocation      = $result["name"];
             $examReservedSeats = $result["reserved_seats"];
             $examLimitedSeats  = $result["limited_seats"];
             $examPassingGrade  = $value["passing_grade"];
 
-            $exam = new UpcomingExam($examStart, $examLocation, $examReservedSeats, $examLimitedSeats, $examPassingGrade);
+            $exam = new UpcomingExam($examId, $examStart, $examLocation, $examReservedSeats, $examLimitedSeats, $examPassingGrade);
             array_push($upcomingApesWithFullDetails, $exam);
         }
     }

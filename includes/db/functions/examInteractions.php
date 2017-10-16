@@ -23,7 +23,7 @@
  */
 function getExamsRegisteredFor(string $studentID)
 {
-    validateStudentID($studentID);
+    //validateStudentID($studentID);
 
     $results = getExamsRegisteredForQuery($studentID);
     $exams = array_map(
@@ -94,8 +94,8 @@ function getRegistrationState(string $studentID)
  */
 function setRegistrationState(string $studentID, int $state)
 {
-    validateStudentID($studentID);
-    validateRegistrationState($state);
+/*    validateStudentID($studentID);
+    validateRegistrationState($state);*/
 
     setRegistrationStateQuery($studentID, $state);
 }
@@ -105,17 +105,19 @@ function setRegistrationState(string $studentID, int $state)
  *
  * @param int    $examID    Exam ID
  * @param string $studentID Student ID
+ * @return boolean result
  */
 function registerStudentForExam(int $examID, string $studentID)
 {
-    validateStudentID($studentID);
+/*    validateStudentID($studentID);
     validateRegistrationStateIs($studentID, STUDENT_STATE_READY);
     validateExamAllowsRegistration($examID);
-    validateExamRoomAvailable($examID);
+    validateExamRoomAvailable($examID);*/
 
     registerStudentForExamQuery($examID, $studentID);
 
     setRegistrationState($studentID, STUDENT_STATE_REGISTERED);
+    return true;
 }
 
 /**
@@ -145,14 +147,15 @@ function registerStudentForExamForced(int $examID, string $studentID)
  */
 function deregisterStudentFromExam(int $examID, string $studentID)
 {
-    validateStudentID($studentID);
+/*    validateStudentID($studentID);
     validateRegistrationStateIs($studentID, STUDENT_STATE_REGISTERED);
     validateExamAllowsRegistration($examID);
-    validateStudentIsRegisteredFor($studentID, $examID);
+    validateStudentIsRegisteredFor($studentID, $examID);*/
 
     deregisterStudentFromExamQuery($examID, $studentID);
 
     refreshRegistrationStateFromDeregister($studentID);
+    return true;
 }
 
 /**
@@ -163,7 +166,9 @@ function deregisterStudentFromExam(int $examID, string $studentID)
  */
 function refreshRegistrationStateFromDeregister(string $studentID)
 {
-    $failures = getFailedExamCount($studentID);
+    //TODO uncomment failures and fill in the getFailedExamCount function
+    //$failures = getFailedExamCount($studentID);
+    $failures = null;
 
     $newState = ($failures < MAX_FAILURES_BEFORE_BLOCK) ? STUDENT_STATE_READY
         : STUDENT_STATE_BLOCKED;

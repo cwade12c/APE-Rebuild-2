@@ -1,0 +1,32 @@
+<h2 class="sub-header">Upcoming Exams</h2>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Location</th>
+            <th>Available Seats</th>
+            <th>Reserved Seats</th>
+            <th>Passing Grade</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for exam in upcomingExams %}
+            <tr>
+                <td>{{ exam.id }}</td>
+                <td>{{ exam.location }}</td>
+                <td>{{ exam.limitedSeats }}</td>
+                <td>{{ exam.reservedSeats }}</td>
+                <td>{{ exam.passingGrade }}</td>
+                <td>
+                    {% if exam.id in registeredExams %}
+                        <button id="exam-{{ exam.id }}" class="btn btn-warning" onclick="deregisterStudentForExam({{ exam.id }}, {{ params.id }})">Unregister</button></td>
+                    {% else %}
+                        <button id="exam-{{ exam.id }}" class="btn btn-primary" onclick="registerStudentForExam({{ exam.id }}, {{ params.id }})">Register</button></td>
+                    {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

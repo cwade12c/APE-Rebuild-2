@@ -1,6 +1,6 @@
 <h2 class="sub-header">Your Registered Exams</h2>
 <div class="table-responsive">
-  <table class="table table-striped">
+  <table id="registered-exams" class="table table-striped">
     <thead>
     <tr>
       <th>ID</th>
@@ -14,7 +14,7 @@
     <tbody>
     {% for exam in upcomingExams %}
       {% if exam.id in registeredExams %}
-      <tr>
+      <tr id="row-{{ exam.id }}">
         <td>{{ exam.id }}</td>
         <td>{{ exam.location }}</td>
         <td>{{ exam.limitedSeats }}</td>

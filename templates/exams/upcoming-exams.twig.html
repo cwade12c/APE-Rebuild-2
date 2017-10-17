@@ -21,9 +21,23 @@
                 <td>{{ exam.passingGrade }}</td>
                 <td>
                     {% if exam.id in registeredExams %}
-                        <button id="exam-{{ exam.id }}" class="btn btn-warning" onclick="deregisterStudentForExam({{ exam.id }}, {{ params.id }})">Unregister</button></td>
+                        <button id="exam-{{ exam.id }}" class="btn btn-warning" onclick="deregisterStudentForExam({{ exam.id }}, {{ params.id }},
+                            [
+                                '{{ exam.id }}',
+                                '{{ exam.location }}',
+                                '{{ exam.limitedSeats }}',
+                                '{{ exam.reservedSeats }}',
+                                '{{ exam.passingGrade }}'
+                            ])">Unregister</button></td>
                     {% else %}
-                        <button id="exam-{{ exam.id }}" class="btn btn-primary" onclick="registerStudentForExam({{ exam.id }}, {{ params.id }})">Register</button></td>
+                        <button id="exam-{{ exam.id }}" class="btn btn-primary" onclick="registerStudentForExam({{ exam.id }}, {{ params.id }},
+                            [
+                                '{{ exam.id }}',
+                                '{{ exam.location }}',
+                                '{{ exam.limitedSeats }}',
+                                '{{ exam.reservedSeats }}',
+                                '{{ exam.passingGrade }}'
+                            ])">Register</button></td>
                     {% endif %}
             </tr>
         {% endfor %}

@@ -27,6 +27,20 @@ function updateAttribute(elementId, attr, value) {
   $('#' + elementId).attr(attr, value);
 }
 
+function addRowToTable(tableElementId, tdCollection) {
+  var html = '<tr id="row-' + _.first(tdCollection) + '">';
+  _.each(tdCollection, function(currentTd) {
+    html += ('<td>' + currentTd + '</td>');
+  });
+  html += '</tr>';
+
+  $('#' + tableElementId).append(html);
+}
+
+function removeRowFromTable(tableElementId, rowElementId) {
+  $('#' + tableElementId + ' tr#' + rowElementId).remove();
+}
+
 /**
  * A function to display a notification message on the window using bootstrap
  * styles

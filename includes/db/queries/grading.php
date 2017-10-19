@@ -1065,7 +1065,7 @@ function getExamsFailedCountQuery(string $studentID)
  * @param int    $examID
  * @param string $graderID
  */
-function deleteGraderExamGrades(int $examID, string $graderID)
+function deleteGraderExamGradesQuery(int $examID, string $graderID)
 {
     $query
         = "DELETE FROM `grader_category_grades` "

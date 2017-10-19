@@ -58,6 +58,11 @@ define('GET_EXAMS_TYPE_IN_CLASS', 2);
 /* php.net/manual/en/function.date.php */
 define('DATETIME_FORMAT', 'Y-m-d H:i:s');
 
+/* For how long before an exam start datetime to open for registration
+   Temporary solution until individual datetime can be implemented
+ */
+define('TIME_BEFORE_OPENING_EXAM_REGISTRATION', '3 months');
+
 // TODO: fill the following values
 /* values that could be pulled from a config file */
 // EWU ID regex

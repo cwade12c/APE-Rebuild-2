@@ -9,6 +9,18 @@
  */
 
 /**
+ * Check if current datetime has passed the given datetime
+ *
+ * @param datetime $check
+ *
+ * @return bool
+ */
+function currentDatePassed(datetime $check) {
+    $diff = date_diff(new DateTime(), $check);
+    return ($diff->invert) ? true : false;
+}
+
+/**
  * Start a transaction
  *
  * @return bool             If succeeds

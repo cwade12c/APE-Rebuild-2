@@ -643,7 +643,9 @@ function getConflicts(int $examID)
 }
 
 /**
+ * Internal function
  * Creates the exam grades for an exam
+ * Used for moving to exam finalization
  *
  * @param int $examID
  */
@@ -922,6 +924,22 @@ function setStudentExamComment(int $examID, string $studentID,
     setStudentExamCommentQuery($examID, $studentID, $comment);
 }
 
+
+/**
+ * Used to finalize an exam
+ * Checks for
+ *
+ * @param int $examID
+ */
+function finalizeExam(int $examID)
+{
+    // TODO: validations
+    // validate in 'finalizing' state
+    // validate no conflicts exist
+
+    transitionExamToArchived($examID);
+}
+
 /**
  * Check if student has passed an exam
  *
@@ -974,7 +992,7 @@ function deleteGraderExamGrades(int $examID, string $graderID)
 {
     // TODO: validations
 
-    deleteGraderExamGrades($examID, $graderID);
+    deleteGraderExamGradesQuery($examID, $graderID);
 }
 
 /**

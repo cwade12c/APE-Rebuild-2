@@ -15,7 +15,8 @@
  *
  * @return bool
  */
-function currentDatePassed(datetime $check) {
+function currentDatePassed(datetime $check)
+{
     $diff = date_diff(new DateTime(), $check);
     return ($diff->invert) ? true : false;
 }
@@ -32,8 +33,10 @@ function startTransaction()
 {
     try {
         return startTransactionQuery();
-    } catch (PDOException $e) {
-        throw new LogicException("Failed to rollback", 0, $e);
+    } catch (Exception $e) {
+        throw new RuntimeException(
+            "Failed to start transaction", ERROR_CODE_DB, $e
+        );
     }
 }
 
@@ -49,8 +52,8 @@ function rollback()
 {
     try {
         return rollBackQuery();
-    } catch (PDOException $e) {
-        throw new LogicException("Failed to rollback", 0, $e);
+    } catch (Exception $e) {
+        throw new RuntimeException("Failed to rollback", ERROR_CODE_DB, $e);
     }
 }
 
@@ -66,8 +69,8 @@ function commit()
 {
     try {
         return commitQuery();
-    } catch (PDOException $e) {
-        throw new LogicException("Failed to commit", 0, $e);
+    } catch (Exception $e) {
+        throw new RuntimeException("Failed to commit", ERROR_CODE_DB, $e);
     }
 }
 
@@ -85,10 +88,10 @@ function inTransaction()
 /**
  * Gets details about a table attribute
  *
- * @param string $tableName     name of table
+ * @param string $tableName name of table
  * @param string $attributeName name of attribute
  *
- * @return mixed                associative array of result
+ * @return array                associative array of result
  *                              'DATA_TYPE' => mysql datatype as string
  *                              'CHARACTER_MAXIMUM_LENGTH' => max string length
  *                                  if applicable, else null
@@ -99,7 +102,65 @@ function inTransaction()
  */
 function getTableAttributeDetails(string $tableName, string $attributeName)
 {
-    return getTableAttributeDetailsQuery($tableName, $attributeName);
-    // TODO: check return to see if valid
-    /// if false, no records were found
+    try {
+        return getTableAttributeDetailsQuery($tableName, $attributeName);
+    } catch (Exception $e) {
+        throw new RuntimeException(
+            "Exception fetching table attributes", ERROR_CODE_DB, $e
+        );
+    }
+
+}
+
+/**
+ * Handle an exception from a backend function call.
+ *
+ * @param Exception $exception
+ *
+ * @return string              Message to display to the user
+ *                             If an empty/null string is returned, do nothing
+ *
+ */
+function handleBackendException(Exception $exception)
+{
+    logBackendException($exception);
+
+    $code = $exception->getCode();
+    if ($code > 0) {
+        switch ($code) {
+            case ERROR_CODE_ARG:
+            case ERROR_CODE_ACTION:
+                return $exception->getMessage();
+            case ERROR_CODE_DB:
+            default:
+                return GENERIC_BACKEND_EXCEPTION_MESSAGE;
+        }
+    }
+
+    switch(get_class($exception)) {
+        case 'InvalidArgumentException':
+            return $exception->getMessage();
+        case 'RuntimeException':
+        case 'LogicException':
+        case 'PDOException':
+        default:
+            return GENERIC_BACKEND_EXCEPTION_MESSAGE;
+    }
+}
+
+/**
+ * Internal function, helper for handleBackendException()
+ * Log the given exception from the backend
+ *
+ * @param Exception $exception
+ */
+function logBackendException(Exception $exception)
+{
+    $type = gettype($exception);
+    $code = $exception->getCode();
+    $msg = $exception->getMessage();
+    $trace = $exception->getTraceAsString();
+    error_log(
+        "Backend exception({$type}, {$code}): \"{$msg}\". Trace: {$trace}"
+    );
 }

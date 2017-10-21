@@ -77,3 +77,20 @@ define('MAX_GRADER_CATEGORY_GRADE_DIFFERENT_PERCENT', 0.2);
 // open registration values
 /// 1) days before start date to open
 /// or 2) date per quarter to open any registrations
+
+/* Error codes for exceptions */
+// TODO: remove and replace w/ custom exceptions, do in OO transition
+/* error code base */
+define('ERROR_CODE_BASE', 100);
+/* General DB error, do not display any info about - log */
+define('ERROR_CODE_DB', ERROR_CODE_BASE + 1);
+/* Error about an invalid input, specific message should be available */
+define('ERROR_CODE_ARG', ERROR_CODE_DB + 1);
+/* Error about an invalid action, specific message should be displayed */
+define('ERROR_CODE_ACTION', ERROR_CODE_ARG + 1);
+
+/* Generic message for backend exceptions */
+define(
+    'GENERIC_BACKEND_EXCEPTION_MESSAGE',
+    'An error occurred, please try again later or contact an administrator.'
+);

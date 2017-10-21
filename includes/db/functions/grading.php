@@ -550,8 +550,17 @@ function getStudentCategoryPoints(int $examID, int $categoryID,
  */
 function determineCategoryGrade(array $points)
 {
-    // TODO: populate
-    return array();
+    $lowest = min($points);
+    $highest = max($points);
+    $grade = array_sum($points) / count($points);
+
+    $differenceFlat = $highest - $lowest;
+    $differencePercent = 1 - ($highest / $lowest);
+
+    $conflict = ($differenceFlat >= MAX_GRADER_CATEGORY_GRADE_DIFFERENCE_FLAT)
+        || ($differencePercent >= MAX_GRADER_CATEGORY_GRADE_DIFFERENT_PERCENT);
+
+    return array('categoryGrade' => $grade, 'conflict' => $conflict);
 }
 
 /**
@@ -679,8 +688,10 @@ function createStudentExamGrades(int $examID)
  */
 function determineExamGrade(int $pointsToPass, array $categoryPoints)
 {
-    // TODO: populate
-    return array();
+    $grade = array_sum($categoryPoints);
+    $passed = $grade >= $pointsToPass;
+
+    return array('grade' => $grade, 'passed' => $passed);
 }
 
 /**

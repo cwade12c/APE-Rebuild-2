@@ -435,7 +435,6 @@ function transitionExamToClosed(int $examID)
  */
 function transitionExamToInProgress(int $examID)
 {
-    // set state at end in case of exceptions
     setExamState($examID, EXAM_STATE_IN_PROGRESS);
 }
 

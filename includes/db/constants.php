@@ -63,6 +63,13 @@ define('DATETIME_FORMAT', 'Y-m-d H:i:s');
  */
 define('TIME_BEFORE_OPENING_EXAM_REGISTRATION', '3 months');
 
+/* For the max difference between grades set by a grader for a student's
+   category grade.
+ */
+define('MAX_GRADER_CATEGORY_GRADE_DIFFERENCE_FLAT', 10);
+/* Same as above but by percent, use value between 0-1 */
+define('MAX_GRADER_CATEGORY_GRADE_DIFFERENT_PERCENT', 0.2);
+
 // TODO: fill the following values
 /* values that could be pulled from a config file */
 // EWU ID regex

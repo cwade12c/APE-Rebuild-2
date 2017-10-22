@@ -87,6 +87,29 @@ function isStudentRegisteredFor(int $examID, string $studentID)
 }
 
 /**
+ * Check if registration state value is valid
+ *
+ * @param int $state
+ *
+ * @return bool
+ */
+function isValidRegistrationState(int $state)
+{
+    switch ($state) {
+        case STUDENT_STATE_READY:
+        case STUDENT_STATE_REGISTERED:
+        case STUDENT_STATE_PASSED:
+        case STUDENT_STATE_BLOCKED:
+        case STUDENT_STATE_BLOCKED_BYPASSED:
+        case STUDENT_STATE_BLOCKED_IGNORED:
+            return true;
+        case STUDENT_STATE_INVALID:
+        default:
+           return false;
+    }
+}
+
+/**
  * Get registration state of a student
  *
  * @param string $studentID Student ID

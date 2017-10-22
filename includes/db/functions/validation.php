@@ -289,36 +289,253 @@ function validateRoomIDSafeEdit(int $id, int $seats)
 
 /**
  * Checks if account ID is valid
- * Throws argument exception if not valid
  *
  * @param string $id
  */
 function validateAccountID(string $id)
 {
-    // TODO: validate is account id, exists
+    if (!validID($id) && !validTempID($id)) {
+        throw new InvalidArgumentException(
+            "Account ID is not a valid format", ERROR_CODE_ARG
+        );
+    }
+}
+
+/**
+ * Validate the given account exists
+ *
+ * @param string $id
+ *
+ * @throws InvalidArgumentException
+ */
+function validateAccountExists(string $id)
+{
+    validateAccountID($id);
+    if (!accountExists($id)) {
+        throw new InvalidArgumentException(
+            "Account ID does not exist", ERROR_CODE_ARG
+        );
+    }
+}
+
+/**
+ * Validate the account id is a temp id
+ * and the account exists
+ *
+ * @param string $id
+ */
+function validateTempExists(string $id)
+{
+    if (!validTempID($id)) {
+        throw new InvalidArgumentException(
+            "Account ID ({$id}) is not a valid temp ID"
+        );
+    }
+    validateAccountExists($id);
+}
+
+/**
+ * Validate an account has the given type set
+ *
+ * @param string $id
+ * @param int    $type
+ *
+ * @throws InvalidArgumentException
+ */
+function validateAccountHasType(string $id, int $type)
+{
+    if (!accountTypeHas($id, $type)) {
+        throw new InvalidArgumentException(
+            "Account ID({$id}) does not have type({$type})", ERROR_CODE_ARG
+        );
+    }
+}
+
+/**
+ * Validates that at least one field is available for a temp student
+ * And any given value is valid
+ *
+ * @param string|null $firstName
+ * @param string|null $lastName
+ * @param string|null $email
+ *
+ * @throws  InvalidArgumentException
+ */
+function validateTempStudentFields(string $firstName = null,
+    string $lastName = null, string $email = null
+) {
+    if (is_null($firstName) && is_null($lastName) && is_null($email)) {
+        throw new InvalidArgumentException(
+            "At least one identification field is required for a temp student (first name, last name or email)",
+            ERROR_CODE_ARG
+        );
+    }
+
+    if (!is_null($firstName)) {
+        validateAccountName("first", $firstName);
+    }
+    if (!is_null($lastName)) {
+        validateAccountName("last", $lastName);
+    }
+    if (!is_null($email)) {
+        validateAccountEmail($email);
+    }
+}
+
+/**
+ * Validate all fields for an account
+ *
+ * @param string $id
+ * @param string $firstName
+ * @param string $lastName
+ * @param string $email
+ *
+ * @throws InvalidArgumentException
+ */
+function validateAccountFields(string $id, string $firstName, string $lastName,
+    string $email
+) {
+    validateAccountID($id);
+    validateAccountName("first", $firstName);
+    validateAccountName("last", $lastName);
+    validateAccountEmail($email);
+}
+
+/**
+ * Validate the given name is valid for an account
+ * Works for either first/last names
+ *
+ * @param string $identifier Identifier for error messages
+ * @param string $name
+ *
+ * @throws InvalidArgumentException
+ */
+function validateAccountName(string $identifier, string $name)
+{
+    $name = trim($name);
+    if (!$name) {
+        throw new InvalidArgumentException("Invalid {$identifier} name, empty");
+    }
+
+    // TODO: name validation
+}
+
+/**
+ * Validate the given email is valid for an account
+ *
+ * @param string $email
+ *
+ * @throws InvalidArgumentException
+ */
+function validateAccountEmail(string $email)
+{
+    $email = trim($email);
+    if (!$email) {
+        throw new InvalidArgumentException("Invalid email, empty");
+    }
+
+    // TODO: email validation
+}
+
+/**
+ * Validate the given ID is valid for the type
+ * Mainly checks against EWU and temp IDs
+ *
+ * @param string $accountID
+ * @param int    $type
+ */
+function validateAccountIDAndType(string $accountID, int $type)
+{
+    if (validID($accountID) && typeHas($type, ACCOUNT_TYPE_TEMP)) {
+        throw new InvalidArgumentException(
+            "Account ID w/ EWU ID set cannot have a temp type."
+        );
+    }
+    if (validTempID($accountID) && !typeHas($type, ACCOUNT_TYPE_TEMP)) {
+        throw new InvalidArgumentException(
+            "Account ID w/ temp ID must have a temp type."
+        );
+    }
 }
 
 /**
  * Check if student ID is valid
- * Throws argument exceptions if there is an issue
  *
  * @param string $studentID Student ID
+ *
+ * @throws InvalidArgumentException
  */
 function validateStudentID(string $studentID)
 {
-    // TODO: validate
+    validateAccountExists($studentID);
+    validateAccountHasType($studentID, ACCOUNT_TYPE_STUDENT);
+}
+
+/**
+ * Validate account ID exists and has temp type
+ *
+ * @param string $tempID
+ *
+ * @throws InvalidArgumentException
+ */
+function validateTempID(string $tempID)
+{
+    validateAccountExists($tempID);
+    validateAccountHasType($tempID, ACCOUNT_TYPE_TEMP);
+}
+
+/**
+ * Validate account ID has student/temp type
+ *
+ * @param string $tempStudentID
+ *
+ * @throws InvalidArgumentException
+ */
+function validateTempStudentID(string $tempStudentID)
+{
+    validateTempExists($tempStudentID);
+
+    validateAccountHasType($tempStudentID, ACCOUNT_TYPE_TEMP);
+    validateAccountHasType($tempStudentID, ACCOUNT_TYPE_STUDENT);
 }
 
 /**
  * Checks if teacher ID is valid
- * Throws argument exceptions if there is an issue
  *
  * @param string $teacherID
+ *
+ * @throws InvalidArgumentException
  */
 function validateTeacherID(string $teacherID)
 {
-    // TODO: validate is account id, validate teacher id exists
-    /// throw exception if not valid
+    validateAccountExists($teacherID);
+    validateAccountHasType($teacherID, ACCOUNT_TYPE_TEACHER);
+}
+
+/**
+ * Validate if grader ID is valid
+ *
+ * @param string $graderID
+ *
+ * @throws InvalidArgumentException
+ */
+function validateGraderID(string $graderID)
+{
+    validateAccountExists($graderID);
+    validateAccountHasType($graderID, ACCOUNT_TYPE_GRADER);
+}
+
+/**
+ * Validate if admin ID is valid
+ *
+ * @param string $adminID
+ *
+ * @throws InvalidArgumentException
+ */
+function validateAdminID(string $adminID)
+{
+    validateAccountExists($adminID);
+    validateAccountHasType($adminID, ACCOUNT_TYPE_ADMIN);
 }
 
 /**
@@ -337,10 +554,16 @@ function validateCategoryID(int $id)
  * Validate the value is valid registration state
  *
  * @param int $state Registration state
+ *
+ * @throws InvalidArgumentException
  */
 function validateRegistrationState(int $state)
 {
-    // TODO: validate value is a registration state value
+    if (!isValidRegistrationState($state)) {
+        throw new InvalidArgumentException(
+            "Invalid registration state({$state})"
+        );
+    }
 }
 
 /**
@@ -509,8 +732,10 @@ function validateExamRoomSeat(int $examID, int $roomID, int $seat)
 
     // invalid room ID
     throw new InvalidArgumentException(
-        sprintf("Invalid room id(%d), not part of exam(%d)",
-            $roomID, $examID)
+        sprintf(
+            "Invalid room id(%d), not part of exam(%d)",
+            $roomID, $examID
+        )
     );
 }
 

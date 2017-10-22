@@ -146,15 +146,17 @@ function setAccountType(string $accountID, int $type)
 /**
  * Strip account of all permissions
  * Intended to be used over a delete from the accounts table
+ * If account has the temp flag set, strips only down to temp
  *
  * @param string $accountID Account ID
  */
 function stripAccountType(string $accountID)
 {
-    // TODO: validate account is not temporary
-    // make base function to determine if temporary, strip only to temp
+    $type
+        = accountTypeHas($accountID, ACCOUNT_TYPE_TEMP)
+        ? ACCOUNT_TYPE_TEMP : ACCOUNT_TYPE_NONE;
 
-    setAccountType($accountID, ACCOUNT_TYPE_NONE);
+    setAccountType($accountID, $type);
 }
 
 /**
@@ -170,8 +172,8 @@ function accountExists(string $accountID)
 }
 
 /**
+ * Internal function
  * Create account w/ given information
- * Not intended for outside use
  *
  * @param string      $accountID Account ID
  * @param int         $type      Account type
@@ -182,15 +184,9 @@ function accountExists(string $accountID)
 function createAccount(string $accountID, int $type = ACCOUNT_TYPE_NONE,
     string $firstName = null, string $lastName = null, string $email = null
 ) {
-    // TODO: check that account ID is valid for type (temp or EWU ID format)
-    // TODO: check that information provided (names, email), can be combined with
-    //      information already available for complete set
-    //      temp accounts, need at-least 1 identification field (name, email)
-    //      all other accounts must have them all filled
+    validateAccountIDAndType($accountID, $type);
 
     createAccountQuery($accountID, $type, $firstName, $lastName, $email);
-
-    // TODO: check for success
 }
 
 /**
@@ -204,20 +200,12 @@ function createAccount(string $accountID, int $type = ACCOUNT_TYPE_NONE,
 function createTempStudent(string $firstName = null, string $lastName = null,
     string $email = null
 ) {
-    // TODO: check at least 1 identification field filled
-    /// first & last name, or email
+    validateTempStudentFields($firstName, $lastName, $email);
 
-    // TODO: generate random/unique temp ID
-    // generate random temp id, check if exists
-    // may need to lock DB someway
-    // create account
     $id = generateTempID();
-    // TODO: validate random id is unique / does not exist
 
     $type = ACCOUNT_TYPE_TEMP | ACCOUNT_TYPE_STUDENT;
     createAccount($id, $type, $firstName, $lastName, $email);
-
-    // TODO: check for success
 }
 
 /**
@@ -231,13 +219,9 @@ function createTempStudent(string $firstName = null, string $lastName = null,
 function createStudent(string $id, string $firstName, string $lastName,
     string $email
 ) {
-    // TODO: check if student exists, update information if so or throw exception
-    // if account exists, ensure that type matches (student)
-    // TODO: check all identification information available
+    validateAccountFields($id, $firstName, $lastName, $email);
 
     createAccount($id, ACCOUNT_TYPE_STUDENT, $firstName, $lastName, $email);
-
-    // TODO: check for success
 }
 
 /**
@@ -251,14 +235,9 @@ function createStudent(string $id, string $firstName, string $lastName,
 function createGrader(string $id, string $firstName, string $lastName,
     string $email
 ) {
-    // TODO: check if grader exists, update information if so or throw exception
-    // if account exists, ensure that type matches (grader)
-    // TODO: ensure information is not empty
-    // TODO: check all identification information available
+    validateAccountFields($id, $firstName, $lastName, $email);
 
     createAccount($id, ACCOUNT_TYPE_GRADER, $firstName, $lastName, $email);
-
-    // TODO: check for success
 }
 
 /**
@@ -273,16 +252,12 @@ function createGrader(string $id, string $firstName, string $lastName,
 function createTeacher(string $id, string $firstName, string $lastName,
     string $email
 ) {
-    // TODO: check if teacher exists, update information if so or throw exception
-    // if account exists, ensure that type matches (teacher at least)
-    // TODO: check all identification information available
+    validateAccountFields($id, $firstName, $lastName, $email);
 
     createAccount(
         $id, ACCOUNT_TYPE_TEACHER | ACCOUNT_TYPE_GRADER, $firstName, $lastName,
         $email
     );
-
-    // TODO: check for success
 }
 
 /**
@@ -297,13 +272,9 @@ function createTeacher(string $id, string $firstName, string $lastName,
 function createAdmin(string $id, string $firstName, string $lastName,
     string $email
 ) {
-    // TODO: check if admin exists, update information if so or throw exception
-    // if account exists, ensure that type matches (admin)
-    // TODO: check all identification information available
+    validateAccountFields($id, $firstName, $lastName, $email);
 
     createAccount($id, ACCOUNT_TYPE_ADMIN, $firstName, $lastName, $email);
-
-    // TODO: check for success
 }
 
 /**
@@ -315,46 +286,91 @@ function createAdmin(string $id, string $firstName, string $lastName,
  */
 function promoteTempToStudent(string $tempID, string $id)
 {
-    // TODO: check if temp id is actually temp account
-    // TODO: check if new id exists, combine accounts
-    // TODO: lock db / create transaction for all queries involved
-    // TODO: include parameters for updating account information (names, email)
-    // TODO: ensure identification information exists/available
+    validateTempStudentID($tempID);
+    validateAccountID($id);
 
-    updateAccountIDQuery($tempID, $id);
-    setAccountType($id, ACCOUNT_TYPE_STUDENT);
+    if (accountExists($id)) {
+        combineStudent($tempID, $id);
+    }else{
+        startTransaction();
 
-    // TODO: check for success
+        // strip off temp type - retain others
+        $type = getAccountType($id) & (~ACCOUNT_TYPE_TEMP);
+        setAccountType($id, $type);
+
+        updateAccountIDQuery($tempID, $id);
+
+        commit();
+    }
 }
 
 /**
+ * Internal function
  * Used by promoteTempToStudent()
- * Not intended for outside use
  *
  * @param string $tempID
  * @param string $id
  */
 function combineStudent(string $tempID, string $id)
 {
-    // TODO: merge temp account to student account
-    // will move over all related table entries
-    // TODO: check if update operation will update all tables correctly
-    // this operation may get complex
-
-    // TODO: check for success
+    /*
+     * goal:
+     * want all foreign keys pointing to temp id to be updated to mew id
+     * then, delete old key/row
+     *
+     * https://dba.stackexchange.com/questions/103828/update-all-foreign-keys-to-a-different-primary-key
+     * exact situation
+     * but have way too many tables to update for this
+     *
+     * should not have done the account ID as the primary keys
+     *  would've solved a lot of issues.
+     * good enough for now though
+     */
 }
 
 /**
  * Generate a random temporary ID
- * Is not guaranteed unique/ existing
+ * ID will be based off the existing time
+ * Not guaranteed unique
  *
  * @return string
  */
 function generateTempID()
 {
-    // TODO: generate random ID according to defined format
-    // TODO: find library to generate strings off regex?
-    return "unimplemented";
+    /*
+     * See -
+     * http://php.net/manual/en/function.uniqid.php
+     * http://php.net/manual/en/function.random-bytes.php
+     * Due to limitations of uniqid() and random_bytes(), made a mix
+     * uniqid() puts in a unix timestamp in hex format and some random bytes
+     * that are also in hex.
+     * random_bytes() returns random bytes
+     *
+     * A mix approach was done as a temporary solution
+     * Takes the timestamp, and a set of random bytes - packs/64 bit encodes
+     * Due to how rarely temp account will be made, collisions unlikely
+     * and if they do, the admin/teacher can try again
+     *
+     * this done over uniqid() provides - more possible characters (16 vs 64)
+     * and a bit more randomness, but not much due to the timestamp.
+     * the timestamp is kept in just as a guarantee.
+     *
+     * Some possible replacements:
+     * 1) all random, if it fails then it fails - can just retry.
+     * - can also implement an automatic retry, just hard-code a value for
+     * max attempts to avoid any issues.
+     * 2) have a table with an incrementing value to go off, can
+     * implement a hash within the final string (but need more length)
+     */
+
+    $rand = random_bytes(TEMP_ID_BYTES_GENERATED);
+    $pack = pack("iA*", time(), $rand);
+    $encode = base64_encode($pack);
+
+    // base 64 encoding will expand the number of bytes - need to trim
+    $id = TEMP_ID_PREFIX . substr($encode, 0, TEMP_ID_BYTES_GENERATED);
+
+    return $id;
 }
 
 /**
@@ -362,12 +378,17 @@ function generateTempID()
  *
  * @param string $id
  *
- * @return bool
+ * @return mixed     may return 1 for true, 0 for false or boolean false
+ *                   false will be returned for errors as well.
+ *                   See php docs
+ *                   http://php.net/manual/en/function.preg-match.php
+ *                   In either case, the value is safe to be used
+ *                   as a condition in an if statement.
  */
 function validID(string $id)
 {
-    // TODO: pull regex from config file to check against
-    return false;
+    $id = trim($id);
+    return ($id && preg_match(REGEX_ACCOUNT_ID, $id));
 }
 
 /**
@@ -375,12 +396,12 @@ function validID(string $id)
  *
  * @param string $id
  *
- * @return bool
+ * @return mixed     see validID() doc comment
  */
 function validTempID(string $id)
 {
-    // TODO: pull regex from config file to check against
-    return false;
+    $id = trim($id);
+    return ($id && preg_match(REGEX_TEMP_ID, $id));
 }
 
 // get all account (by id)

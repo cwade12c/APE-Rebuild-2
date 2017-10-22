@@ -70,16 +70,32 @@ define('MAX_GRADER_CATEGORY_GRADE_DIFFERENCE_FLAT', 10);
 /* Same as above but by percent, use value between 0-1 */
 define('MAX_GRADER_CATEGORY_GRADE_DIFFERENT_PERCENT', 0.2);
 
-// TODO: fill the following values
-/* values that could be pulled from a config file */
-// EWU ID regex
-// temp ID regex
-// open registration values
-/// 1) days before start date to open
-/// or 2) date per quarter to open any registrations
+/*
+ * The max length of an account ID.
+ * Do not increase w/out increasing in the DB schema as well.
+ * Hardcoded as a temporary setup to avoid querying the DB for size.
+ */
+define('ACCOUNT_ID_MAX_LENGTH', 20);
+
+/* prefix for temp IDs */
+define('TEMP_ID_PREFIX', 'T');
+/* how many generated values exist for a temp ID */
+/* WARNING: DO NOT CHANGE WITHOUT MODIFYING EXISTING VALUES */
+/* 20 is the max length within the db */
+define(
+    'TEMP_ID_BYTES_GENERATED',
+    ACCOUNT_ID_MAX_LENGTH - strlen(TEMP_ID_PREFIX)
+);
+
+/* regex string for an EWU ID */
+define('REGEX_ACCOUNT_ID', '^00\d{6}$');
+/* regex string for a temp ID */
+define(
+    'REGEX_TEMP_ID',
+    '^' . TEMP_ID_PREFIX . '[a-zA-Z0-9+/=]{' . TEMP_ID_BYTES_GENERATED . '}$'
+);
 
 /* Error codes for exceptions */
-// TODO: remove and replace w/ custom exceptions, do in OO transition
 /* error code base */
 define('ERROR_CODE_BASE', 100);
 /* General DB error, do not display any info about - log */

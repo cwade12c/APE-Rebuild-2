@@ -38,6 +38,12 @@ function deregisterStudentForExam(examId, studentId, examObj) {
   });
 }
 
+function viewExamDetails (examId) {
+  $('.modal-content').load('api/controllers/examDetails.php?examId=' + examId,function(){
+    $('#myModal').modal({show:true});
+  });
+}
+
 function name(name) {
   var params = {
     name: name

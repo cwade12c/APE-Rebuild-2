@@ -1,6 +1,6 @@
 <h1 class="page-header">Welcome home, {{ params.firstName }} {{ params.lastName }}</h1>
 
-<div class="col-lg-3 col-md-6">
+{#<div class="col-lg-3 col-md-6">
   <div class="panel panel-primary">
     <div class="panel-heading">
       <div class="row">
@@ -21,8 +21,8 @@
       </div>
     </a>
   </div>
-</div>
-<div class="col-lg-3 col-md-6">
+</div>#}
+<div class="col-lg-4 col-md-6">
   <div class="panel panel-green">
     <div class="panel-heading">
       <div class="row">
@@ -44,7 +44,7 @@
     </a>
   </div>
 </div>
-<div class="col-lg-3 col-md-6">
+<div class="col-lg-4 col-md-6">
   <div class="panel panel-yellow">
     <div class="panel-heading">
       <div class="row">
@@ -66,7 +66,7 @@
     </a>
   </div>
 </div>
-<div class="col-lg-3 col-md-6">
+<div class="col-lg-4 col-md-6">
   <div class="panel panel-red">
     <div class="panel-heading">
       <div class="row">
@@ -89,28 +89,16 @@
   </div>
 </div>
 
-<h2 class="sub-header">Your Created Exams</h2>
+<div class="clearfix"></div>
 
-<div class="table-responsive">
-  <table class="table table-striped">
-    <thead>
-    <tr>
-      <th>Date</th>
-      <th>Location</th>
-      <th>State</th>
-    </tr>
-    </thead>
-    <tbody>
-    {#            <tr>
-                    <td>1,001</td>
-                    <td>Lorem</td>
-                    <td>ipsum</td>
-                    <td>dolor</td>
-                    <td>sit</td>
-                </tr>#}
-    </tbody>
-  </table>
+{{ include('exams/upcoming-exams.twig.html') }}
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+
+    </div>
+  </div>
 </div>
-
-
-Let's test a <a href="javascript:post('{{params.firstName}} {{params.lastName}}');">javascript POST request</a>.

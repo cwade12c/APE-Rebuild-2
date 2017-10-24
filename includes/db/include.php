@@ -2,29 +2,36 @@
 /**
  * Main include file for database package
  *
- * @author		Mathew McCain
- * @category	APE
- * @package		APE_includes
- * @subpackage	Database
+ * @author         Mathew McCain
+ * @category       APE
+ * @package        APE_includes
+ * @subpackage     Database
  */
 
 /* exceptions */
-require_once INCLUDES_PATH . 'db/dbExceptions.php';
+require_once INCLUDES_PATH . 'db/exceptions.php';
 
 /* constants */
-require_once INCLUDES_PATH . 'db/dbConstants.php';
-// may need constants for report type indexes
+require_once INCLUDES_PATH . 'db/constants.php';
 
 /* queries */
-require_once INCLUDES_PATH . 'db/dbQueriesGeneral.php';
-require_once INCLUDES_PATH . 'db/dbQueriesAccounts.php';
-// more splits needed
+require_once INCLUDES_PATH . 'db/queries/general.php';
+require_once INCLUDES_PATH . 'db/queries/accounts.php';
+require_once INCLUDES_PATH . 'db/queries/exams.php';
+require_once INCLUDES_PATH . 'db/queries/examInteractions.php';
+require_once INCLUDES_PATH . 'db/queries/grading.php';
+require_once INCLUDES_PATH . 'db/queries/locationsRooms.php';
+require_once INCLUDES_PATH . 'db/queries/categories.php';
+require_once INCLUDES_PATH . 'db/queries/reports.php';
 
 /* functions */
-require_once INCLUDES_PATH . 'db/dbFunctions.php';
-require_once INCLUDES_PATH . 'db/dbFunctionsAccounts.php';
-require_once INCLUDES_PATH . 'db/dbFunctionsExams.php';
-require_once INCLUDES_PATH . 'db/dbFunctionsGrading.php';
-require_once INCLUDES_PATH . 'db/dbFunctionsLocationsRooms.php';
-require_once INCLUDES_PATH . 'db/dbFunctionsCategories.php';
-require_once INCLUDES_PATH . 'db/dbFunctionsReports.php';
+require_once INCLUDES_PATH . 'db/functions/general.php';
+require_once INCLUDES_PATH . 'db/functions/validation.php';
+require_once INCLUDES_PATH . 'db/functions/accounts.php';
+require_once INCLUDES_PATH . 'db/functions/examStates.php';
+require_once INCLUDES_PATH . 'db/functions/exams.php';
+require_once INCLUDES_PATH . 'db/functions/examInteractions.php';
+require_once INCLUDES_PATH . 'db/functions/grading.php';
+require_once INCLUDES_PATH . 'db/functions/locationsRooms.php';
+require_once INCLUDES_PATH . 'db/functions/categories.php';
+require_once INCLUDES_PATH . 'db/functions/reports.php';

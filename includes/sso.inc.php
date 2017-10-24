@@ -7,7 +7,7 @@ function enforceAuthentication()
     phpCAS::handleLogoutRequests(true, CAS_HOSTS);
     phpCAS::forceAuthentication();
 
-    $_SESSION['username'] = phpCAS::getUser();
+    $_SESSION['username']        = phpCAS::getUser();
     $_SESSION['loggedInLocally'] = true;
 
     if (isset($_SESSION['username'])) {
@@ -28,6 +28,7 @@ function userIsLoggedIn()
     phpCAS::client(SAML_VERSION_1_1, CAS_DOMAIN, 443, '/cas', false);
     phpCAS::setCasServerCACert(CAS_CERT_PATH);
     phpCAS::handleLogoutRequests(true, CAS_HOSTS);
+
     return phpCAS::isAuthenticated();
 }
 
@@ -37,14 +38,14 @@ function setSessionVariables()
     $samlAttribs = phpCAS::getAttributes();
 
     $_SESSION['firstName'] = $samlAttribs['FirstName'];
-    $_SESSION['lastName'] = $samlAttribs['LastName'];
-    $_SESSION['userType'] = $samlAttribs['UserType'];
-    $_SESSION['ewuid'] = $samlAttribs['Ewuid'];
-    $_SESSION['email'] = $samlAttribs["Email"];
+    $_SESSION['lastName']  = $samlAttribs['LastName'];
+    $_SESSION['userType']  = $samlAttribs['UserType'];
+    $_SESSION['ewuid']     = $samlAttribs['Ewuid'];
+    $_SESSION['email']     = $samlAttribs["Email"];
 
     if ($_SESSION['ewuid'] && $_SESSION['username']) {
-        $id = $_SESSION['ewuid'];
-        $sql = executeQuery("SELECT type FROM accounts WHERE id = $id");
+        $id     = $_SESSION['ewuid'];
+        $sql    = executeQuery("SELECT type FROM accounts WHERE id = $id");
         $result = getQueryResult($sql);
 
         $_SESSION['userGroup'] = $result;
@@ -56,20 +57,21 @@ function checkFirstTimeLogin()
 {
     if ($_SESSION['userType'] == "Student") {
 
-        $id = $_SESSION['ewuid'];
-        $type = ACCOUNT_TYPE_STUDENT;
-        $lastName = $_SESSION['lastName'];
+        $id        = $_SESSION['ewuid'];
+        $type      = ACCOUNT_TYPE_STUDENT;
+        $lastName  = $_SESSION['lastName'];
         $firstName = $_SESSION['firstName'];
-        $email = $_SESSION['email'];
+        $email     = $_SESSION['email'];
 
-        $sql = executeQuery("SELECT * FROM accounts WHERE id = $id");
+        $sql    = executeQuery("SELECT * FROM accounts WHERE id = $id");
         $result = getQueryResult($sql);
 
         if ($result == false) {
-            $sql = executeQuery("INSERT INTO accounts(id, type, f_name, l_name, email) values('$id', '$type', '$firstName', '$lastName', '$email');");
+            $sql = executeQuery(
+                "INSERT INTO accounts(id, type, f_name, l_name, email) values('$id', '$type', '$firstName', '$lastName', '$email');"
+            );
         }
-    }
-    else if($_SESSION['userType'] == "Teacher") {
+    } else if ($_SESSION['userType'] == "Teacher") {
 
     }
 }
@@ -84,5 +86,3 @@ function logout()
     session_destroy();
     phpCAS::logout();
 }
-
-?>

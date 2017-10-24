@@ -1,15 +1,15 @@
 <?php
 
-if (!defined('INCLUDE_ACCESS')) {
+if ( ! defined('INCLUDE_ACCESS')) {
     die('Direct access to this file is denied.');
 }
 
-$directory = INCLUDES_PATH;
+$directory        = INCLUDES_PATH;
 $filesInDirectory = scandir($directory);
 
 foreach ($filesInDirectory as &$fileName) {
     $lengthOfFileName = strlen($fileName);
-    $extension = substr(
+    $extension        = substr(
         $fileName, $lengthOfFileName - 4, $lengthOfFileName - 1
     );
 

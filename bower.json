@@ -1,0 +1,11 @@
+{
+  "name": "php-ape",
+  "appPath": "web",
+  "version": "0.0.1",
+  "dependencies": {
+    "less": "~2.7.2",
+    "jquery": "~1.9.1",
+    "lodash": "~4.17.4",
+    "bootstrap": "v4.0.0-alpha.6"
+  }
+}

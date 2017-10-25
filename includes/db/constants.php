@@ -58,10 +58,55 @@ define('GET_EXAMS_TYPE_IN_CLASS', 2);
 /* php.net/manual/en/function.date.php */
 define('DATETIME_FORMAT', 'Y-m-d H:i:s');
 
-// TODO: fill the following values
-/* values that could be pulled from a config file */
-// EWU ID regex
-// temp ID regex
-// open registration values
-/// 1) days before start date to open
-/// or 2) date per quarter to open any registrations
+/* For how long before an exam start datetime to open for registration
+   Temporary solution until individual datetime can be implemented
+ */
+define('TIME_BEFORE_OPENING_EXAM_REGISTRATION', '3 months');
+
+/* For the max difference between grades set by a grader for a student's
+   category grade.
+ */
+define('MAX_GRADER_CATEGORY_GRADE_DIFFERENCE_FLAT', 10);
+/* Same as above but by percent, use value between 0-1 */
+define('MAX_GRADER_CATEGORY_GRADE_DIFFERENT_PERCENT', 0.2);
+
+/*
+ * The max length of an account ID.
+ * Do not increase w/out increasing in the DB schema as well.
+ * Hardcoded as a temporary setup to avoid querying the DB for size.
+ */
+define('ACCOUNT_ID_MAX_LENGTH', 20);
+
+/* prefix for temp IDs */
+define('TEMP_ID_PREFIX', 'T');
+/* how many generated values exist for a temp ID */
+/* WARNING: DO NOT CHANGE WITHOUT MODIFYING EXISTING VALUES */
+/* 20 is the max length within the db */
+define(
+    'TEMP_ID_BYTES_GENERATED',
+    ACCOUNT_ID_MAX_LENGTH - strlen(TEMP_ID_PREFIX)
+);
+
+/* regex string for an EWU ID */
+define('REGEX_ACCOUNT_ID', '^00\d{6}$');
+/* regex string for a temp ID */
+define(
+    'REGEX_TEMP_ID',
+    '^' . TEMP_ID_PREFIX . '[a-zA-Z0-9+/=]{' . TEMP_ID_BYTES_GENERATED . '}$'
+);
+
+/* Error codes for exceptions */
+/* error code base */
+define('ERROR_CODE_BASE', 100);
+/* General DB error, do not display any info about - log */
+define('ERROR_CODE_DB', ERROR_CODE_BASE + 1);
+/* Error about an invalid input, specific message should be available */
+define('ERROR_CODE_ARG', ERROR_CODE_DB + 1);
+/* Error about an invalid action, specific message should be displayed */
+define('ERROR_CODE_ACTION', ERROR_CODE_ARG + 1);
+
+/* Generic message for backend exceptions */
+define(
+    'GENERIC_BACKEND_EXCEPTION_MESSAGE',
+    'An error occurred, please try again later or contact an administrator.'
+);

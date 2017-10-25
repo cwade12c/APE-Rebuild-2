@@ -170,7 +170,7 @@ function getExamLocationID(int $id)
  */
 function getExamState(int $id)
 {
-    //validateExamID($id);
+    validateExamID($id);
     return getExamStateQuery($id);
 }
 
@@ -361,6 +361,7 @@ function updateExam(int $id, DateTime $start, DateTime $cutoff, int $minutes,
 
     // TODO: validate exam state allows updates
     // TODO: validate new location has enough space for current students
+
 
     // TODO: create transaction ? race conditions possible
 

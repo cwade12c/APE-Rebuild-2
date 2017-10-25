@@ -550,8 +550,17 @@ function getStudentCategoryPoints(int $examID, int $categoryID,
  */
 function determineCategoryGrade(array $points)
 {
-    // TODO: populate
-    return array();
+    $lowest = min($points);
+    $highest = max($points);
+    $grade = array_sum($points) / count($points);
+
+    $differenceFlat = $highest - $lowest;
+    $differencePercent = 1 - ($highest / $lowest);
+
+    $conflict = ($differenceFlat >= MAX_GRADER_CATEGORY_GRADE_DIFFERENCE_FLAT)
+        || ($differencePercent >= MAX_GRADER_CATEGORY_GRADE_DIFFERENT_PERCENT);
+
+    return array('categoryGrade' => $grade, 'conflict' => $conflict);
 }
 
 /**
@@ -643,7 +652,9 @@ function getConflicts(int $examID)
 }
 
 /**
+ * Internal function
  * Creates the exam grades for an exam
+ * Used for moving to exam finalization
  *
  * @param int $examID
  */
@@ -677,8 +688,10 @@ function createStudentExamGrades(int $examID)
  */
 function determineExamGrade(int $pointsToPass, array $categoryPoints)
 {
-    // TODO: populate
-    return array();
+    $grade = array_sum($categoryPoints);
+    $passed = $grade >= $pointsToPass;
+
+    return array('grade' => $grade, 'passed' => $passed);
 }
 
 /**
@@ -920,6 +933,21 @@ function setStudentExamComment(int $examID, string $studentID,
     // TODO: validations
 
     setStudentExamCommentQuery($examID, $studentID, $comment);
+}
+
+/**
+ * Used to finalize an exam
+ * Checks for
+ *
+ * @param int $examID
+ */
+function finalizeExam(int $examID)
+{
+    // TODO: validations
+    // validate in 'finalizing' state
+    // validate no conflicts exist
+
+    transitionExamToArchived($examID);
 }
 
 /**

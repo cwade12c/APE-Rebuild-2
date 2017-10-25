@@ -245,7 +245,6 @@ function refreshExams()
     $exams = getExamsAll();
     foreach ($exams as $id) {
         refreshExam($id);
-        // TODO: return value to issues to log ?
     }
 }
 
@@ -254,143 +253,242 @@ function refreshExams()
  *
  * @param int $id
  */
-function refreshExam(int $id)
+function refreshExam(int $examID)
 {
-    $state = getExamState($id);
+    $state = getExamState($examID);
     if (!isExamStateValid($state)) {
-        // TODO: log error of some kind
-        return;
+        error_log("Exam({$examID}) state({$state}) is invalid");
     }
 
-    switch ($state) {
-        case EXAM_STATE_HIDDEN:
-            refreshExamStateHidden($id);
-            break;
-        case EXAM_STATE_OPEN:
-            refreshExamStateOpen($id);
-            break;
-        case EXAM_STATE_CLOSED:
-            refreshExamStateClosed($id);
-            break;
-        case EXAM_STATE_IN_PROGRESS:
-            refreshExamStateInProgress($id);
-            break;
-        case EXAM_STATE_GRADING:
-            refreshExamStateGrading($id);
-            break;
-        case EXAM_STATE_FINALIZING:
-            refreshExamStateFinalizing($id);
-            break;
-        case EXAM_STATE_ARCHIVED:
-            refreshExamStateArchived($id);
-            break;
+    try {
+        switch ($state) {
+            case EXAM_STATE_HIDDEN:
+                refreshExamStateHidden($examID);
+                break;
+            case EXAM_STATE_OPEN:
+                refreshExamStateOpen($examID);
+                break;
+            case EXAM_STATE_CLOSED:
+                refreshExamStateClosed($examID);
+                break;
+            case EXAM_STATE_IN_PROGRESS:
+                refreshExamStateInProgress($examID);
+                break;
+            case EXAM_STATE_GRADING:
+                refreshExamStateGrading($examID);
+                break;
+            case EXAM_STATE_FINALIZING:
+                refreshExamStateFinalizing($examID);
+                break;
+            case EXAM_STATE_ARCHIVED:
+                refreshExamStateArchived($examID);
+                break;
+        }
+    } catch (Exception $e) {
+        error_log(
+            "Exception during exam({$examID}) state({$state}) refresh, {$e}"
+        );
     }
-}
 
-function refreshExamStateHidden(int $examID)
-{
-    // TODO: populate
-    /*
-     * Check if registration should be open
-     *  transition to open
-     */
-}
 
-function refreshExamStateOpen(int $examID)
-{
-    // TODO: populate
-    /*
-     * Check if cutoff date/time reached
-     *  transition to closed
-     * Check if location ID set ?
-     *
-     *
-     */
-}
-
-function refreshExamStateClosed(int $examID)
-{
-    // TODO: populate
-    /*
-     * check if start date/time reached
-     *  transition to in progress
-     * check if location ID set ?
-     */
-}
-
-function refreshExamStateInProgress(int $examID)
-{
-    // TODO: populate
-    /*
-     * check if length passed since start time
-     *  transition to grading
-     */
-}
-
-function refreshExamStateGrading(int $examID)
-{
-    // TODO: populate
-    /*
-     * check if all submitted (in case manual transition did not occur)
-     * log that all submitted, but no transition ?
-     */
-}
-
-function refreshExamStateFinalizing(int $examID)
-{
-    // TODO: populate
-    /*
-     * check if submitted by admin/teacher ?
-     * no transitions, log?
-     */
-}
-
-function refreshExamStateArchived(int $examID)
-{
-    // TODO: populate
 }
 
 /**
- * Transfer exam state to in-progress
+ * Internal function
+ * Refreshes exam in the 'hidden' state
+ * Checks if an exam should be open
+ *
+ * @param int $examID
+ */
+function refreshExamStateHidden(int $examID)
+{
+    $info = getExamInformation($examID);
+    $start = $info['start'];
+
+    $whenToOpenBeforeStart = DateInterval::createFromDateString(
+        TIME_BEFORE_OPENING_EXAM_REGISTRATION
+    );
+    $openOn = date_sub($start, $whenToOpenBeforeStart);
+
+    if (currentDatePassed($openOn)) {
+        // TODO log transitioning exam state
+        setExamState($examID, EXAM_STATE_OPEN);
+    }
+}
+
+/**
+ * Internal function
+ * Refreshes exam in the 'open' state
+ * Checks if an exam should have registration closed
+ *
+ * @param int $examID
+ */
+function refreshExamStateOpen(int $examID)
+{
+    $info = getExamInformation($examID);
+    $cutoff = $info['cutoff'];
+
+    if (currentDatePassed($cutoff)) {
+        // TODO log transitioning exam state
+        setExamState($examID,EXAM_STATE_CLOSED);
+    }
+}
+
+/**
+ * Internal function
+ * Refreshes exam in the 'closed' state
+ * Checks if exam should be in 'in-progress' state
+ *
+ * @param int $examID
+ */
+function refreshExamStateClosed(int $examID)
+{
+    $info = getExamInformation($examID);
+    $start = $info['start'];
+
+    if (currentDatePassed($start)) {
+        // TODO log transitioning exam state
+        transitionExamToInProgress($examID);
+    }
+}
+
+/**
+ * Internal function
+ * Refreshes exam in the 'in-progress' state
+ * Check if exam should be over
+ *
+ * @param int $examID
+ */
+function refreshExamStateInProgress(int $examID)
+{
+    $info = getExamInformation($examID);
+    $start = $info['start'];
+    $minutes = $info['length'];
+    $interval = new DateInterval("PT{$minutes}M");
+    $end = date_add($start, $interval);
+
+    if (currentDatePassed($end)) {
+        // TODO log transitioning exam state
+        transitionExamToGrading($examID);
+    }
+}
+
+/**
+ * Internal function
+ * Refreshes exam in the 'grading' state
+ * Check if all graders have submitted
+ *
+ * @param int $examID
+ */
+function refreshExamStateGrading(int $examID)
+{
+    if (isExamSubmitted($examID)) {
+        // TODO log transitioning exam state
+        transitionExamToFinalization($examID);
+    }
+}
+
+/**
+ * Internal function
+ * Refresh exam in 'finalizing' state
+ *
+ * @param int $examID
+ */
+function refreshExamStateFinalizing(int $examID)
+{
+    // nothing to do, finalization is done by admin/teacher
+}
+
+/**
+ * Internal function
+ * Refresh exam in 'archived' state
+ *
+ * @param int $examID
+ */
+function refreshExamStateArchived(int $examID)
+{
+    // nothing to do, archived
+}
+
+/**
+ * Internal function
+ * Transfer exam state to 'closed'
+ *
+ * @param int $examID
+ */
+function transitionExamToClosed(int $examID)
+{
+    startTransaction();
+
+    setExamState($examID, EXAM_STATE_CLOSED);
+
+    assignExamSeats($examID);
+
+    commit();
+}
+
+/**
+ * Internal function
+ * Transfer exam state to 'in-progress'
  *
  * @param int $examID
  */
 function transitionExamToInProgress(int $examID)
 {
-    // TODO: populate
-    // use transaction
-    // assign seats
+    setExamState($examID, EXAM_STATE_IN_PROGRESS);
 }
 
 /**
+ * Internal function
  * Transfer exam state to grading
  *
  * @param int $examID
  */
 function transitionExamToGrading(int $examID)
 {
-    // TODO: populate
-    // use transaction
+    startTransaction();
+
+    setExamState($examID, EXAM_STATE_GRADING);
+
+    createGraderStudentCategoryGradeEntries($examID);
+
+    commit();
 }
 
 /**
+ * Internal function
  * Transfer exam state to finalization
  *
  * @param int $examID
  */
 function transitionExamToFinalization(int $examID)
 {
-    // TODO: populate
-    // use transaction
+    startTransaction();
+
+    setExamState($examID, EXAM_STATE_FINALIZING);
+
+    createStudentCategoryGrades($examID);
+    createStudentExamGrades($examID);
+
+    commit();
 }
 
 /**
+ * Internal function
  * Transfer exam state to archived
  *
  * @param int $examID
  */
 function transitionExamToArchived(int $examID)
 {
-    // TODO: populate
-    // use transaction
+    startTransaction();
+
+    setExamState($examID, EXAM_STATE_ARCHIVED);
+
+    refreshStudentRegistrationStates($examID);
+
+    // TODO: cleanup of now unused grading / registration values
+    // registration can be derived from exam grades
+
+    commit();
 }

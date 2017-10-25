@@ -97,19 +97,22 @@ function executeQuery(string $query, array $params = array())
     }
 
     try {
-        // TODO: check true/false return of execute
-        $sql->execute();
-
-        return $sql;
-    } catch (PDOException $error) {
-        // TODO: need to forward an exception
-        /// otherwise, will report of nothing wrong and return null
+        if ($sql->execute()) {
+            return $sql;
+        }
+        throw new RuntimeException("Query execute failed");
+    } catch (Exception $error) {
         if (DEBUG) {
+            // TODO make debug error tag stand out more
             echo "<div class=\"debug\">";
             print_r($sql->errorInfo());
             $error->getMessage();
             echo "</div>";
         }
+        error_log("query execute exception, {$error}");
+        throw new RuntimeException(
+            "Query execute exception", ERROR_CODE_DB, $error
+        );
     }
 }
 
@@ -127,11 +130,16 @@ function getQueryResult(PDOStatement $sql, int $index = 0)
         $result = $sql->fetchColumn($index);
 
         return $result;
-    } catch (PDOException $error) {
+    } catch (Exception $error) {
         if (DEBUG) {
+            // TODO make debug error tag stand out more
             print_r($sql->errorInfo());
             die($error->getMessage());
         }
+        error_log("get query result exception, {$error}");
+        throw new RuntimeException(
+            "get query result exception", ERROR_CODE_DB, $error
+        );
     }
 }
 
@@ -145,14 +153,20 @@ function getQueryResult(PDOStatement $sql, int $index = 0)
 function getQueryResultRow(PDOStatement $sql)
 {
     try {
-        $results = $sql->fetch(PDO::FETCH_ASSOC);
-
-        return $results;
-    } catch (PDOException $error) {
+        if ($results = $sql->fetch(PDO::FETCH_ASSOC)) {
+            return $results;
+        }
+        throw new RuntimeException("False return from fetch row");
+    } catch (Exception $error) {
         if (DEBUG) {
+            // TODO make debug error tag stand out more
             print_r($sql->errorInfo());
             die($error->getMessage());
         }
+        error_log("get query result row exception, {$error}");
+        throw new RuntimeException(
+            "get query result row exception", ERROR_CODE_DB, $error
+        );
     }
 }
 
@@ -166,14 +180,20 @@ function getQueryResultRow(PDOStatement $sql)
 function getQueryResults(PDOStatement $sql)
 {
     try {
-        $results = $sql->fetchAll(PDO::FETCH_ASSOC);
-
-        return $results;
-    } catch (PDOException $error) {
+        if ($results = $sql->fetchAll(PDO::FETCH_ASSOC)) {
+            return $results;
+        }
+        throw new RuntimeException("False return from fetch rows");
+    } catch (Exception $error) {
         if (DEBUG) {
+            // TODO make debug error tag stand out more
             print_r($sql->errorInfo());
             die($error->getMessage());
         }
+        error_log("get query result rows exception, {$error}");
+        throw new RuntimeException(
+            "get query result rows exception", ERROR_CODE_DB, $error
+        );
     }
 }
 
@@ -195,11 +215,16 @@ function getLastInsertedID(string $name = null)
         $lastIDStr = $db->lastInsertId($name);
         $lastID = intval($lastIDStr);
         return $lastID;
-    } catch (PDOException $error) {
+    } catch (Exception $error) {
         if (DEBUG) {
+            // TODO make debug error tag stand out more
             print_r($db->errorInfo());
             die($error->getMessage());
         }
+        error_log("get last inserted id exception, {$error}");
+        throw new RuntimeException(
+            "get last inserted id exception", ERROR_CODE_DB, $error
+        );
     }
 }
 

@@ -26,6 +26,31 @@ function getExamsRegisteredForQuery(string $studentID)
 }
 
 /**
+ * Query to get the list of active exam IDs the student is registered for
+ * Active exam is one whose state is not 'archived'
+ *
+ * @param string $studentID
+ *
+ * @return array            List of query result rows, elements
+ *                          'exam_id'
+ */
+function getActiveExamsRegisteredForQuery(string $studentID)
+{
+    $query
+        = "SELECT `exam_id` "
+        . " FROM `exam_roster` `roster` JOIN `exams` "
+        . "   ON `roster`.`exam_id` = `exams`.`id`"
+        . "      AND `roster`.`student_id`=:id "
+        . "      AND `exams`.`state` != :archivedState";
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $studentID, PDO::PARAM_STR),
+            array(':archivedState', EXAM_STATE_ARCHIVED, PDO::PARAM_INT))
+    );
+    return getQueryResults($sql);
+}
+
+/**
  * Query to pull all registrations on the exam roster
  *
  * @param int $examID Exam ID

@@ -155,7 +155,7 @@ function buildUpdateAccountParamStringArr(
  *
  * @param string $accountID
  *
- * @return mixed
+ * @return bool
  */
 function accountExistsQuery(string $accountID)
 {

@@ -23,14 +23,28 @@
  */
 function getExamsRegisteredFor(string $studentID)
 {
-    //validateStudentID($studentID);
+    validateStudentID($studentID);
 
     $results = getExamsRegisteredForQuery($studentID);
-    $exams = array_map(
-        function ($row) {
-            return $row['exam_id'];
-        }, $results
-    );
+    $exams = array_column($results, 'exam_id');
+
+    return $exams;
+}
+
+/**
+ * Get list of active exams IDs student is registered for
+ * An active exam is one not in the archived state
+ *
+ * @param string $studentID
+ *
+ * @return array
+ */
+function getActiveExamsRegisteredFor(string $studentID)
+{
+    validateStudentID($studentID);
+
+    $results = getActiveExamsRegisteredForQuery($studentID);
+    $exams = array_column($results, 'exam_id');
 
     return $exams;
 }
@@ -44,7 +58,7 @@ function getExamsRegisteredFor(string $studentID)
  */
 function getExamRegistrations(int $examID)
 {
-    //validateExamID($examID);
+    validateExamID($examID);
 
     $results = getAllExamRegistrationsQuery($examID);
     $studentIDs = array_map(
@@ -72,6 +86,30 @@ function isStudentRegisteredFor(int $examID, string $studentID)
     return isStudentRegisteredForQuery($examID, $studentID);
 }
 
+
+/**
+ * Check if registration state value is valid
+ *
+ * @param int $state
+ *
+ * @return bool
+ */
+function isValidRegistrationState(int $state)
+{
+    switch ($state) {
+        case STUDENT_STATE_READY:
+        case STUDENT_STATE_REGISTERED:
+        case STUDENT_STATE_PASSED:
+        case STUDENT_STATE_BLOCKED:
+        case STUDENT_STATE_BLOCKED_BYPASSED:
+        case STUDENT_STATE_BLOCKED_IGNORED:
+            return true;
+        case STUDENT_STATE_INVALID:
+        default:
+           return false;
+    }
+}
+
 /**
  * Get registration state of a student
  *
@@ -94,8 +132,8 @@ function getRegistrationState(string $studentID)
  */
 function setRegistrationState(string $studentID, int $state)
 {
-/*    validateStudentID($studentID);
-    validateRegistrationState($state);*/
+    validateStudentID($studentID);
+    validateRegistrationState($state);
 
     setRegistrationStateQuery($studentID, $state);
 }
@@ -105,19 +143,17 @@ function setRegistrationState(string $studentID, int $state)
  *
  * @param int    $examID    Exam ID
  * @param string $studentID Student ID
- * @return boolean result
  */
 function registerStudentForExam(int $examID, string $studentID)
 {
-/*    validateStudentID($studentID);
+    validateStudentID($studentID);
     validateRegistrationStateIs($studentID, STUDENT_STATE_READY);
     validateExamAllowsRegistration($examID);
-    validateExamRoomAvailable($examID);*/
+    validateExamRoomAvailable($examID);
 
     registerStudentForExamQuery($examID, $studentID);
 
     setRegistrationState($studentID, STUDENT_STATE_REGISTERED);
-    return true;
 }
 
 /**
@@ -147,15 +183,14 @@ function registerStudentForExamForced(int $examID, string $studentID)
  */
 function deregisterStudentFromExam(int $examID, string $studentID)
 {
-/*    validateStudentID($studentID);
+    validateStudentID($studentID);
     validateRegistrationStateIs($studentID, STUDENT_STATE_REGISTERED);
     validateExamAllowsRegistration($examID);
-    validateStudentIsRegisteredFor($studentID, $examID);*/
+    validateStudentIsRegisteredFor($studentID, $examID);
 
     deregisterStudentFromExamQuery($examID, $studentID);
 
     refreshRegistrationStateFromDeregister($studentID);
-    return true;
 }
 
 /**
@@ -166,13 +201,71 @@ function deregisterStudentFromExam(int $examID, string $studentID)
  */
 function refreshRegistrationStateFromDeregister(string $studentID)
 {
-    //TODO uncomment failures and fill in the getFailedExamCount function
-    //$failures = getFailedExamCount($studentID);
-    $failures = null;
+    $failures = getExamsFailedCount($studentID);
 
     $newState = ($failures < MAX_FAILURES_BEFORE_BLOCK) ? STUDENT_STATE_READY
         : STUDENT_STATE_BLOCKED;
     setRegistrationState($studentID, $newState);
+}
+
+/**
+ * Internal function
+ * Used on exam finalization (to 'archived' state)
+ *
+ * Refreshes all students registration state that were registered for exam
+ *
+ * @param int $examID
+ */
+function refreshStudentRegistrationStates(int $examID)
+{
+    $students = getExamRegistrations($examID);
+    foreach ($students as $studentID) {
+        refreshRegistrationStateFromExamGraded($studentID);
+    }
+}
+
+/**
+ * Internal function
+ * Used for once an exam is finalized
+ *
+ * Refreshes exam state of a student.
+ * If student is registered for other active exams,
+ * will de-register them depending on if passed an exam or failed the max
+ *
+ * @param string $studentID
+ */
+function refreshRegistrationStateFromExamGraded(string $studentID)
+{
+    if (hasPassedExam($studentID)) {
+        setRegistrationState($studentID, STUDENT_STATE_PASSED);
+
+        deregisterStudentFromAllExams($studentID);
+    } else {
+        $failures = getExamsFailedCount($studentID);
+        $newState = ($failures < MAX_FAILURES_BEFORE_BLOCK)
+            ? STUDENT_STATE_READY
+            : STUDENT_STATE_BLOCKED;
+
+        if ($newState == STUDENT_STATE_BLOCKED) {
+            deregisterStudentFromAllExams($studentID);
+        }
+
+        setRegistrationState($studentID, $newState);
+    }
+}
+
+/**
+ * Internal function
+ * De-registers student from all current exam's they are registered for
+ *
+ * @param string $studentID
+ */
+function deregisterStudentFromAllExams(string $studentID)
+{
+    $activeRegisters = getActiveExamsRegisteredFor($studentID);
+    foreach ($activeRegisters as $examID) {
+        deregisterStudentFromExamQuery($examID, $studentID);
+    }
 }
 
 /**
@@ -208,14 +301,14 @@ function assignExamSeats(int $examID)
     $rooms = getLocationRooms($locationID);
 
     $seating = array();
-    foreach($rooms as $room) {
+    foreach ($rooms as $room) {
         $seatingRoom = array();
         $seatingRoom['id'] = $room['id'];
         $seatingRoom['seats'] = range(1, $room['seats']);
         array_push($seating, $seatingRoom);
     }
 
-    foreach($students as $studentID) {
+    foreach ($students as $studentID) {
         $roomKey = array_rand($seating);
         $room = &$seating[$roomKey];
         $roomID = $room['id'];
@@ -260,7 +353,6 @@ function resetExamSeats(int $examID)
 function getAssignedSeats(int $examID)
 {
     //validateExamID($examID);
-
     $registrations = getAllExamRegistrationsQuery($examID);
 
     // need to filter out seats that aren't correct
@@ -296,7 +388,7 @@ function getAssignedSeatCount(int $examID)
  *
  * @return int    Number of registrations
  */
-function getRegisteredCount(int $examID)
+function getRegisteredCount($examID)
 {
     // TODO: make query for
 

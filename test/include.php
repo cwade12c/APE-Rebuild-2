@@ -18,7 +18,9 @@ DEFINE("DOMAIN", "http://146.187.134.42/");
 
 DEFINE("HOST", "localhost");
 DEFINE("USER", "root");
-DEFINE("PASS", "bB*-7Q7p\$M4");
+// bB*-7Q7p\$M4
+// _ZmQ833k#PP$.
+DEFINE("PASS", "wrong");
 DEFINE("DB", "test_new_ape_database");
 
 try {

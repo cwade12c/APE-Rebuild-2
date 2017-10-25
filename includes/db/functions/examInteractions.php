@@ -86,6 +86,7 @@ function isStudentRegisteredFor(int $examID, string $studentID)
     return isStudentRegisteredForQuery($examID, $studentID);
 }
 
+
 /**
  * Check if registration state value is valid
  *
@@ -351,14 +352,15 @@ function resetExamSeats(int $examID)
  */
 function getAssignedSeats(int $examID)
 {
-    validateExamID($examID);
-
+    //validateExamID($examID);
     $registrations = getAllExamRegistrationsQuery($examID);
 
     // need to filter out seats that aren't correct
     foreach ($registrations as $i => $registration) {
-        if (!isSeatSet($registration['room_id'], $registration['seat'])) {
-            unset($registration[$i]);
+        if($registration['room_id'] != NULL && $registration['seat'] != NULL) {
+            if (!isSeatSet($registration['room_id'], $registration['seat'])) {
+                unset($registration[$i]);
+            }
         }
     }
 

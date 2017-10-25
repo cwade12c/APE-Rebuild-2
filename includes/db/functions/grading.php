@@ -935,7 +935,6 @@ function setStudentExamComment(int $examID, string $studentID,
     setStudentExamCommentQuery($examID, $studentID, $comment);
 }
 
-
 /**
  * Used to finalize an exam
  * Checks for

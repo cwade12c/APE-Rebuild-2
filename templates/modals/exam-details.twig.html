@@ -1,0 +1,63 @@
+<div class="modal-header">
+  <button type="button" class="btn btn-default pull-right" data-dismiss="modal">&times;</button>
+  <h3 class="modal-title">Exam Details for {{ registeredCount }} Registered Students</h3>
+</div>
+<div class="modal-body">
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Student ID</th>
+        <th>Location</th>
+        <th>Room Name</th>
+        <th>Seat Number</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for seat in assignedSeats %}
+        <tr>
+          <td>{{ seat.student_id }}</td>
+          <td>{{ locationInformation.name }}</td>
+          <td>{{ seat.room_name }}</td>
+          <td>{{ seat.seat }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="modal-footer">
+  {% if examInformation.state == constant('EXAM_STATE_INVALID') %}
+    <p class="pull-left alert alert-danger m-xs">Invalid</p>
+    <p class="pull-left">&nbsp;&nbsp;</p>
+    <p class="pull-left alert alert-warning">{{ locationInformation.limited_seats }} Available Seats</p>
+  {% elseif examInformation.state == constant('EXAM_STATE_HIDDEN') %}
+    <p class="pull-left alert alert-danger m-xs">Hidden</p>
+    <p class="pull-left">&nbsp;&nbsp;</p>
+    <p class="pull-left alert alert-warning">{{ locationInformation.limited_seats }} Available Seats</p>
+  {% elseif examInformation.state == constant('EXAM_STATE_OPEN') %}
+    <p class="pull-left alert alert-info m-xs">Open</p>
+    <p class="pull-left">&nbsp;&nbsp;</p>
+    <p class="pull-left alert alert-warning">{{ locationInformation.limited_seats }} Available Seats</p>
+  {% elseif examInformation.state == constant('EXAM_STATE_CLOSED') %}
+    <p class="pull-left alert alert-danger m-xs">Closed</p>
+    <p class="pull-left">&nbsp;&nbsp;</p>
+    <p class="pull-left alert alert-warning">{{ locationInformation.limited_seats }} Available Seats</p>
+  {% elseif examInformation.state == constant('EXAM_STATE_IN_PROGRESS') %}
+    <p class="pull-left alert alert-danger m-xs">In Progress</p>
+    <p class="pull-left">&nbsp;&nbsp;</p>
+    <p class="pull-left alert alert-warning">{{ locationInformation.limited_seats }} Available Seats</p>
+  {% elseif examInformation.state == constant('EXAM_STATE_GRADING') %}
+    <p class="pull-left alert alert-success m-xs">Grading</p>
+    <p class="pull-left">&nbsp;&nbsp;</p>
+    <p class="pull-left alert alert-warning">{{ locationInformation.limited_seats }} Available Seats</p>
+  {% elseif examInformation.state == constant('EXAM_STATE_FINALIZING') %}
+    <p class="pull-left alert alert-success m-xs">Finalizing</p>
+    <p class="pull-left">&nbsp;&nbsp;</p>
+    <p class="pull-left alert alert-warning">{{ locationInformation.limited_seats }} Available Seats</p>
+  {% else %}
+    <p class="pull-left alert alert-danger m-xs">Archived</p>
+    <p class="pull-left">&nbsp;&nbsp;</p>
+    <p class="pull-left alert alert-warning">{{ locationInformation.limited_seats }} Available Seats</p>
+  {% endif %}
+</div>

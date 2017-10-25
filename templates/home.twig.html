@@ -1,0 +1,19 @@
+{% extends "base.twig.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block head %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+    {% if params.type == constant('ACCOUNT_TYPE_STUDENT') %}
+        {{ include('home/student-home.twig.html') }}
+    {% elseif params.type == constant('ACCOUNT_TYPE_GRADER') %}
+        {{ include('home/grader-home.twig.html') }}
+    {% elseif params.type == constant('ACCOUNT_TYPE_TEACHER') %}
+        {{ include('home/teacher-home.twig.html') }}
+    {% elseif params.type == constant('ACCOUNT_TYPE_ADMIN') %}
+        {{ include('home/admin-home.twig.html') }}
+    {% endif %}
+{% endblock %}

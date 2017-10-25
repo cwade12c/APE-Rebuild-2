@@ -6,12 +6,12 @@ function redirect($path)
     exit;
 }
 
-function sanitize($input)
+function sanitize(string $input)
 {
     return htmlentities($input);
 }
 
-function logSecurityIncident(string $event, string $extendedInfo)
+function logSecurityIncident(str $event, $extendedInfo)
 {
     if (is_writable(LOG_PATH)) {
         if ( ! $handle = fopen(LOG_PATH, 'a')) {
@@ -29,6 +29,22 @@ function logSecurityIncident(string $event, string $extendedInfo)
     } else if (DEBUG) {
         die("Security incident: unable to write to the security log file");
     }
+}
+
+function renderPage(string $template, array $pageParams)
+{
+    global $params, $twig;
+    $page = $twig->load($template);
+
+    $parameters = array(
+        'params' => $params
+    );
+
+    foreach ($pageParams as $key => $value) {
+        $parameters[$key] = $value;
+    }
+
+    echo $page->render($parameters);
 }
 
 ?>

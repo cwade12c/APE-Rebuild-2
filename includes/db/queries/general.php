@@ -85,7 +85,6 @@ function executeQuery(string $query, array $params = array())
     global $db;
 
     $sql = $db->prepare($query);
-
     // bind parameters
     foreach ($params as $arr) {
         if (count($arr) == 2) {

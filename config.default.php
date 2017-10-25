@@ -2,7 +2,7 @@
 
 //Debug, include, and general flags configurations
 DEFINE("INCLUDE_ACCESS", true); //set to true in order to use includes.php
-DEFINE("DEBUG", true); //set to true to display error information
+DEFINE("DEBUG", false); //set to true to display error information and bypass permission restrictions
 
 //Paths configurations
 DEFINE(
@@ -26,7 +26,7 @@ DEFINE("DOMAIN", "http://127.0.0.1");
 DEFINE("CAS_DOMAIN", "login.ewu.edu");
 DEFINE("CAS_HOSTS", array());
 
-//Account configurations
+//Account.class configurations
 DEFINE("MINIMUM_NUMBER_OF_ADMINS", 1);
 
 //Custom site configurations

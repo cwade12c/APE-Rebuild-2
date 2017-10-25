@@ -44,7 +44,7 @@ function getExamsRegisteredFor(string $studentID)
  */
 function getExamRegistrations(int $examID)
 {
-    validateExamID($examID);
+    //validateExamID($examID);
 
     $results = getAllExamRegistrationsQuery($examID);
     $studentIDs = array_map(
@@ -259,14 +259,16 @@ function resetExamSeats(int $examID)
  */
 function getAssignedSeats(int $examID)
 {
-    validateExamID($examID);
+    //validateExamID($examID);
 
     $registrations = getAllExamRegistrationsQuery($examID);
 
     // need to filter out seats that aren't correct
     foreach ($registrations as $i => $registration) {
-        if (!isSeatSet($registration['room_id'], $registration['seat'])) {
-            unset($registration[$i]);
+        if($registration['room_id'] != NULL && $registration['seat'] != NULL) {
+            if (!isSeatSet($registration['room_id'], $registration['seat'])) {
+                unset($registration[$i]);
+            }
         }
     }
 
@@ -294,7 +296,7 @@ function getAssignedSeatCount(int $examID)
  *
  * @return int    Number of registrations
  */
-function getRegisteredCount($examID)
+function getRegisteredCount(int $examID)
 {
     // TODO: make query for
 

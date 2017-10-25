@@ -8,8 +8,13 @@ if(isset($_GET['examId'])) {
     $examId = $_GET['examId'];
     $assignedSeats = getAssignedSeats($examId);
     foreach($assignedSeats as &$value) {
-        $roomInformation = getRoomInformation($value['room_id']);
-        $value['room_name'] = $roomInformation['name'];
+        if($value['room_id'] != NULL) {
+            $roomInformation = getRoomInformation($value['room_id']);
+            $value['room_name'] = $roomInformation['name'];
+        }
+        else {
+            $value['room_name'] = 'Unassigned';
+        }
     }
     $registeredCount = getRegisteredCount($examId);
     $state = getExamState($examId);

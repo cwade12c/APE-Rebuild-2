@@ -170,7 +170,7 @@ function getExamLocationID(int $id)
  */
 function getExamState(int $id)
 {
-    validateExamID($id);
+    //validateExamID($id);
     return getExamStateQuery($id);
 }
 

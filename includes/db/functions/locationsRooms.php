@@ -492,7 +492,7 @@ function getLocationRoomsMaxSeats(int $id)
  */
 function getRoomInformation(int $id)
 {
-    //validateRoomIDExists($id);
+    validateRoomIDExists($id);
 
     return getRoomInformationQuery($id);
 }

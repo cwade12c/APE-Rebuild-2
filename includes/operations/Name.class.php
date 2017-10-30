@@ -7,8 +7,8 @@ class Name extends Operation
         parent::registerValidation("Name", "validateName");
     }
 
-    protected function execute($args) {
+    public function execute($args) {
         parent::execute($args);
-        //concrete logic
+        echo "Concrete logic";
     }
 }

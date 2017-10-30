@@ -20,6 +20,9 @@ abstract class Operation
     }
 
     protected function execute($args) {
+        if(count($args) != count($this->parameters)) {
+            throw new Exception("Invalid number of parameters!");
+        }
 
     }
 }

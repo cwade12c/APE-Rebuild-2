@@ -2,6 +2,12 @@
 require_once('../config.php');
 enforceAuthentication();
 
+$response = array(
+    "data" => array(),
+    "success" => true,
+    "message" => "OK"
+);
+
 if(!empty($_POST)) {
     processRequest($_POST);
 }
@@ -9,7 +15,7 @@ elseif(!empty($_GET)) {
     processRequest($_GET);
 }
 else {
-    echo "Invalid request!";
+    sendResponse(); //Invokes default Invalid Request error
 }
 
 function processRequest($args) {
@@ -17,18 +23,20 @@ function processRequest($args) {
     $parameters = $args["parameters"];
 
     if(empty($operation) || empty($parameters)) {
-        die("Cannot have an empty operation or parameters!");
+        sendResponse(array(), false, "Cannot have an empty operation or parameters!");
     }
     elseif(!isValidOperation($operation)) {
-        die("An invalid operation was specified!");
+        sendResponse(array(), false, "An invalid operation was specified!");
     }
     else {
         $concreteOperation = new $operation; //validations should run upon instantiation
-        $concreteOperation->execute($parameters);
+        $response = $concreteOperation->execute($parameters);
+        sendResponse($response["data"], $response["success"], $response["message"]);
     }
 }
 
 function isValidOperation($operation) {
+
     $validOperations = file("operations.txt");
     $result = false;
 
@@ -39,4 +47,13 @@ function isValidOperation($operation) {
     }
 
     return $result;
+}
+
+function sendResponse($data=array(), bool $success = null, string $resultMessage = null) {
+    $results["data"] = $data;
+    $results["success"] = $success != null ? $success : false;
+    $results["message"] = $resultMessage != null ? $resultMessage : "Invalid request!";
+
+    header('Content-type: application/json');
+    echo json_encode($results);
 }

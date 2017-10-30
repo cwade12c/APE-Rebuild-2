@@ -12,6 +12,7 @@ abstract class Operation
             "default" => $default
         ));
     }
+
     protected function registerValidation(string $input, string $fncName) {
         array_push($this->validations, array(
             "input" => $input,
@@ -21,8 +22,17 @@ abstract class Operation
 
     protected function execute($args) {
         if(count($args) != count($this->parameters)) {
-            throw new Exception("Invalid number of parameters!");
+            return $this->buildResponse(false, "Invalid number of parameters!");
         }
 
+        return $this->buildResponse(true, "OK");
+    }
+
+    private function buildResponse(bool $success, string $message) {
+        return array(
+            "data" => array(),
+            "success" => $success,
+            "message" => $message
+        );
     }
 }

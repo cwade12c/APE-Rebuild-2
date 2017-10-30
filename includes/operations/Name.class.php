@@ -8,7 +8,17 @@ class Name extends Operation
     }
 
     public function execute($args) {
-        parent::execute($args);
-        echo "Concrete logic";
+        $validationResult = parent::execute($args);
+
+        if($validationResult["success"] == false) {
+            return $validationResult;
+        }
+
+        $validationResult["data"] = array(
+            "name" => $args["name"],
+            "otherValue" => "a constant value"
+        );
+
+        return $validationResult;
     }
 }

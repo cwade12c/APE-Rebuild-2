@@ -1,4 +1,32 @@
 // <editor-fold desc="API Functions">
+function callAjax(requestType, operationName, operationParameters, callBackFunctions) {
+  var callbacks = callBackFunctions || {};
+
+  var successFnc = ('success' in callbacks) ? callbacks['success'] : function (data, status, jqXHR) {};
+  var errorFnc = ('error' in callbacks) ? callbacks['error'] : function (jqXHR, status) {};
+  var completeFnc = ('complete' in callbacks) ? callbacks['complete'] : function (jqXHR, status) {};
+
+  var fullParameters = {
+    operation: operationName,
+    parameters: operationParameters
+  };
+
+  var callParameters = {
+    type: requestType.toUpperCase(),
+    url: 'api/api.php',
+    data: fullParameters,
+    dataType: 'json',
+    success: successFnc,
+    error: errorFnc,
+    complete: completeFnc
+  };
+
+  $.ajax(callParameters);
+}
+
+// </editor-fold>
+
+// <editor-fold desc="Operation Functions">
 
 function registerStudentForExam(examId, studentId, examObj) {
   $.post("api/controllers/registerForExam.php", {examId: examId, studentId: studentId}).done(function (response) {
@@ -50,9 +78,22 @@ function name(name) {
   var params = {
     name: name
   };
-  $.post("api/post.php", {controller: 'name', json: params}).done(function (response) {
-    notification(response, 'success', 'https://google.com', false);
-  });
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification(response.data.name, 'success', 'https://google.com', false);
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'name', params, callbacks);
 }
 
 //</editor-fold>

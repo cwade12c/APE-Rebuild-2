@@ -86,13 +86,18 @@ function executeQuery(string $query, array $params = array())
 
     $sql = $db->prepare($query);
     // bind parameters
-    foreach ($params as $arr) {
+    foreach ($params as $i => $arr) {
         if (count($arr) == 2) {
             // just bind
             $sql->bindParam($arr[0], $arr[1]);
         } elseif (count($arr) == 3) {
             // bind w/ given data type
             $sql->bindParam($arr[0], $arr[1], $arr[2]);
+        } else {
+            $count = count($arr);
+            throw new InvalidArgumentException(
+                "Invalid array size for parameter({{$i}): {$count}"
+            );
         }
     }
 
@@ -104,7 +109,7 @@ function executeQuery(string $query, array $params = array())
     } catch (Exception $error) {
         if (DEBUG) {
             // TODO make debug error tag stand out more
-            echo "<div class=\"debug\">";
+            echo " < div class=\"debug\">";
             print_r($sql->errorInfo());
             $error->getMessage();
             echo "</div>";
@@ -136,7 +141,10 @@ function getQueryResult(PDOStatement $sql, int $index = 0)
             print_r($sql->errorInfo());
             die($error->getMessage());
         }
-        error_log("get query result exception, {$error}");
+        error_log(
+            "get query result exception, {
+                $error}"
+        );
         throw new RuntimeException(
             "get query result exception", ERROR_CODE_DB, $error
         );
@@ -156,14 +164,17 @@ function getQueryResultRow(PDOStatement $sql)
         if ($results = $sql->fetch(PDO::FETCH_ASSOC)) {
             return $results;
         }
-        throw new RuntimeException("False return from fetch row");
+        throw new RuntimeException("false return from fetch row");
     } catch (Exception $error) {
         if (DEBUG) {
             // TODO make debug error tag stand out more
             print_r($sql->errorInfo());
             die($error->getMessage());
         }
-        error_log("get query result row exception, {$error}");
+        error_log(
+            "get query result row exception, {
+                $error}"
+        );
         throw new RuntimeException(
             "get query result row exception", ERROR_CODE_DB, $error
         );
@@ -183,14 +194,17 @@ function getQueryResults(PDOStatement $sql)
         if ($results = $sql->fetchAll(PDO::FETCH_ASSOC)) {
             return $results;
         }
-        throw new RuntimeException("False return from fetch rows");
+        throw new RuntimeException("false return from fetch rows");
     } catch (Exception $error) {
         if (DEBUG) {
             // TODO make debug error tag stand out more
             print_r($sql->errorInfo());
             die($error->getMessage());
         }
-        error_log("get query result rows exception, {$error}");
+        error_log(
+            "get query result rows exception, {
+                $error}"
+        );
         throw new RuntimeException(
             "get query result rows exception", ERROR_CODE_DB, $error
         );
@@ -221,7 +235,10 @@ function getLastInsertedID(string $name = null)
             print_r($db->errorInfo());
             die($error->getMessage());
         }
-        error_log("get last inserted id exception, {$error}");
+        error_log(
+            "get last inserted id exception, {
+                $error}"
+        );
         throw new RuntimeException(
             "get last inserted id exception", ERROR_CODE_DB, $error
         );
@@ -249,10 +266,14 @@ function getTableAttributeDetailsQuery(string $tableName, string $attributeName)
     // https://dev.mysql.com/doc/refman/5.7/en/columns-table.html
     $query
         = "SELECT DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION "
-        . "FROM INFORMATION_SCHEMA.COLUMNS "
+        . "FROM INFORMATION_SCHEMA . COLUMNS "
         . "WHERE table_schema = :schemaName "
-        . " && table_name = :tableName "
-        . " && COLUMN_NAME = :attributeName ";
+        . "
+            && table_name
+                = :tableName "
+        . "
+            && COLUMN_NAME
+                = :attributeName ";
     $sql = executeQuery(
         $query, array(
             array(':schemaName', DB, PDO::PARAM_STR),

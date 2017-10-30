@@ -530,13 +530,14 @@ function buildUpdateExamCategoriesStringParams(int $id, array $categories)
  */
 function setExamStateQuery(int $id, int $state)
 {
-    $query = "UPDATE `exams`"
-        . "SET `state`=:state"
-        . "WHERE `id`=:id;";
+    $query
+        = "UPDATE `exams` "
+        . " SET `state`=:state "
+        . " WHERE `id`=:id; ";
     $sql = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT),
-            array(':nid', $state, PDO::PARAM_INT)
+            array(':state', $state, PDO::PARAM_INT)
         )
     );
 }

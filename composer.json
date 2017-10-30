@@ -16,6 +16,7 @@
             "includes/db/functions/grading.php",
             "includes/db/functions/locationsRooms.php",
             "includes/db/functions/reports.php",
+            "includes/db/functions/validation.php",
             "includes/db/queries/accounts.php",
             "includes/db/queries/categories.php",
             "includes/db/queries/examInteractions.php",

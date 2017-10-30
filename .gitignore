@@ -10,3 +10,4 @@ config/general.config.php
 config/host.config.php
 config/path.config.php
 cache/
+node_modules/

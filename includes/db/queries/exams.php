@@ -42,7 +42,7 @@ function getExamsQuery(int $state, int $type)
     );
     // execute
     $query = sprintf(
-        "SELECT `id` FROM `exams`"
+        "SELECT `id` FROM `exams` "
         . " WHERE (%s && %s)", $stateStr, $typeStr
     );
     $sql = executeQuery($query, $params);
@@ -239,7 +239,7 @@ function getExamStateQuery(int $id)
 function getExamCategoriesQuery(int $id)
 {
     $query = "SELECT `category_id`, `points` "
-        . "FROM `exam_categories` WHERE (`id` = :id)";
+        . " FROM `exam_categories` WHERE (`id` = :id)";
     $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
 
     return getQueryResults($sql);
@@ -275,9 +275,9 @@ function getExamTeacherQuery(int $id)
 function createExamQuery(DateTime $start, DateTime $cutoff, int $length,
     int $passingGrade, int $locationID, bool $isRegular = true
 ) {
-    $query = "INSERT INTO `exams`"
-        . "(`is_regular`, `start`, `cutoff`, `length`, `passing_grade`, `location_id`)"
-        . "VALUES (:isReg, :start, :cutoff, :len, :passingGrade, :locationID);";
+    $query = "INSERT INTO `exams` "
+        . " (`is_regular`, `start`, `cutoff`, `length`, `passing_grade`, `location_id`) "
+        . " VALUES (:isReg, :start, :cutoff, :len, :passingGrade, :locationID);";
     $sql = executeQuery(
         $query, array(
             array(':isReg', $isRegular, PDO::PARAM_BOOL),
@@ -298,8 +298,8 @@ function createExamQuery(DateTime $start, DateTime $cutoff, int $length,
  */
 function createExamInClassQuery(int $id, int $teacherID)
 {
-    $query = "INSERT INTO `in_class_exams`(`id`,`teacher_id`)"
-        . "VALUES (:id, :teacherID);";
+    $query = "INSERT INTO `in_class_exams`(`id`,`teacher_id`) "
+        . " VALUES (:id, :teacherID);";
     $sql = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT),
@@ -330,8 +330,8 @@ function createExamCategoriesQuery(int $examID, array $categories)
     );
 
     $query = sprintf(
-        "INSERT INTO `exam_categories`(`id`,`category_id`,`points`)"
-        . "VALUES %s;", $valuesStr
+        "INSERT INTO `exam_categories`(`id`,`category_id`,`points`) "
+        . " VALUES %s;", $valuesStr
     );
     $sql = executeQuery($query, $params);
 }
@@ -394,7 +394,7 @@ function removeExamCategoriesQuery(int $id, array $categories)
 
     $query = sprintf(
         "DELETE FROM `exam_categories` "
-        . "WHERE %s", $whereStr
+        . " WHERE %s", $whereStr
     );
 
     $sql = executeQuery($query, $params);
@@ -463,8 +463,8 @@ function updateExamCategoriesQuery(int $id, array $categories)
 
     $query = sprintf(
         "UPDATE `exam_categories` "
-        . "SET `points` = CASE %s ELSE `points` END "
-        . "WHERE `id` = :id", $setStr
+        . " SET `points` = CASE %s ELSE `points` END "
+        . " WHERE `id` = :id", $setStr
     );
 
     $sql = executeQuery($query, $params);
@@ -550,9 +550,9 @@ function setExamStateQuery(int $id, int $state)
  */
 function setExamLocationQuery(int $id, int $locationID)
 {
-    $query = "UPDATE `exams`"
-        . "SET `location_id`=:locID"
-        . "WHERE `id`=:id;";
+    $query = "UPDATE `exams` "
+        . " SET `location_id`=:locID "
+        . " WHERE `id`=:id;";
     $sql = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT),
@@ -575,9 +575,9 @@ function updateExamQuery(int $id, DateTime $start, DateTime $cutoff,
     int $length, int $passingGrade, int $locationID
 ) {
     $query = "UPDATE `exams` "
-        . "SET `start` = :start, `cutoff` = :cutoff, `length` = :len "
+        . " SET `start` = :start, `cutoff` = :cutoff, `length` = :len "
         . " , `passing_grade` = :passingGrade, `location_id` = :locationID "
-        . "WHERE `id` = :id";
+        . " WHERE `id` = :id";
     $sql = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT),

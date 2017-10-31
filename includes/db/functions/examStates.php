@@ -288,6 +288,16 @@ function refreshExam(int $examID)
         error_log(
             "Exception during exam({$examID}) state({$state}) refresh, {$e}"
         );
+
+        try {
+            if (inTransaction()) {
+                rollback();
+            }
+        } catch (Exception $e) {
+            error_log(
+                "exam({$examID}) state({$state}) refresh, failed to cancel active transaction, {$e}"
+            );
+        }
     }
 
 
@@ -330,7 +340,7 @@ function refreshExamStateOpen(int $examID)
 
     if (currentDatePassed($cutoff)) {
         // TODO log transitioning exam state
-        setExamState($examID,EXAM_STATE_CLOSED);
+        setExamState($examID, EXAM_STATE_CLOSED);
     }
 }
 
@@ -367,10 +377,11 @@ function refreshExamStateInProgress(int $examID)
     $interval = new DateInterval("PT{$minutes}M");
     $end = date_add($start, $interval);
 
-    if (currentDatePassed($end)) {
-        // TODO log transitioning exam state
-        transitionExamToGrading($examID);
+    if (!currentDatePassed($end)) {
+        return;
     }
+
+    transitionExamToGrading($examID);
 }
 
 /**
@@ -382,10 +393,13 @@ function refreshExamStateInProgress(int $examID)
  */
 function refreshExamStateGrading(int $examID)
 {
-    if (isExamSubmitted($examID)) {
-        // TODO log transitioning exam state
-        transitionExamToFinalization($examID);
+    if ((count(getAssignedExamGraders($examID)) == 0)
+        || !isExamSubmitted($examID)
+    ) {
+        return;
     }
+
+    transitionExamToFinalization($examID);
 }
 
 /**

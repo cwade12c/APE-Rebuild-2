@@ -71,12 +71,12 @@ function inTransactionQuery()
  * general query method
  * prepares given query string, executes
  *
- * @param $query        query string
- * @param $params       set of parameters for prepared statement
- *                      must be in format of
- *                      [ ['name', value], ... ]
- *                      each subarray can contain a 3rd index for the datatype
- *                      example: ['name', value, PDO::PARAM_STR]
+ * @param string $query  query string
+ * @param array  $params set of parameters for prepared statement
+ *                       must be in format of
+ *                       [ ['name', value], ... ]
+ *                       each subarray can contain a 3rd index for the datatype
+ *                       example: ['name', value, PDO::PARAM_STR]
  *
  * @return PDOStatement, result of executing query
  */
@@ -124,8 +124,8 @@ function executeQuery(string $query, array $params = array())
 /**
  * gets single column of row from query result
  *
- * @param $sql          pdo statement to use
- * @param $index        column number to grab (default 0)
+ * @param PDOStatement $sql   pdo statement to use
+ * @param int          $index column number to grab (default 0)
  *
  * @return mixed        single value of column
  */
@@ -142,8 +142,7 @@ function getQueryResult(PDOStatement $sql, int $index = 0)
             die($error->getMessage());
         }
         error_log(
-            "get query result exception, {
-                $error}"
+            "get query result exception, {$error}"
         );
         throw new RuntimeException(
             "get query result exception", ERROR_CODE_DB, $error
@@ -164,7 +163,8 @@ function getQueryResultRow(PDOStatement $sql)
         if ($results = $sql->fetch(PDO::FETCH_ASSOC)) {
             return $results;
         }
-        throw new RuntimeException("false return from fetch row");
+        return array();
+        //throw new RuntimeException("false return from fetch row");
     } catch (Exception $error) {
         if (DEBUG) {
             // TODO make debug error tag stand out more
@@ -184,7 +184,7 @@ function getQueryResultRow(PDOStatement $sql)
 /**
  * gets all results from a query
  *
- * @param $sql      pdo statement to use
+ * @param PDOStatement $sql pdo statement to use
  *
  * @return mixed    array with each row as an associative array
  */
@@ -194,7 +194,8 @@ function getQueryResults(PDOStatement $sql)
         if ($results = $sql->fetchAll(PDO::FETCH_ASSOC)) {
             return $results;
         }
-        throw new RuntimeException("false return from fetch rows");
+        return array();
+        //throw new RuntimeException("false return from fetch rows");
     } catch (Exception $error) {
         if (DEBUG) {
             // TODO make debug error tag stand out more
@@ -266,14 +267,10 @@ function getTableAttributeDetailsQuery(string $tableName, string $attributeName)
     // https://dev.mysql.com/doc/refman/5.7/en/columns-table.html
     $query
         = "SELECT DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION "
-        . "FROM INFORMATION_SCHEMA . COLUMNS "
-        . "WHERE table_schema = :schemaName "
-        . "
-            && table_name
-                = :tableName "
-        . "
-            && COLUMN_NAME
-                = :attributeName ";
+        . " FROM INFORMATION_SCHEMA . COLUMNS "
+        . " WHERE table_schema = :schemaName "
+        . " && table_name = :tableName "
+        . " && COLUMN_NAME = :attributeName ";
     $sql = executeQuery(
         $query, array(
             array(':schemaName', DB, PDO::PARAM_STR),

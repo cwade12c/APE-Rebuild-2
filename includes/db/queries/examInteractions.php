@@ -39,7 +39,7 @@ function getActiveExamsRegisteredForQuery(string $studentID)
     $query
         = "SELECT `exam_id` "
         . " FROM `exam_roster` `roster` JOIN `exams` "
-        . "   ON `roster`.`exam_id` = `exams`.`id`"
+        . "   ON `roster`.`exam_id` = `exams`.`id` "
         . "      AND `roster`.`student_id`=:id "
         . "      AND `exams`.`state` != :archivedState";
     $sql = executeQuery(
@@ -83,7 +83,7 @@ function getAllExamRegistrationsQuery(int $examID)
 function isStudentRegisteredForQuery(int $examID, string $studentID)
 {
     $query = "SELECT (:studentID IN ( "
-        . "SELECT `student_id` FROM `exam_roster` WHERE `exam_id` = :examID"
+        . " SELECT `student_id` FROM `exam_roster` WHERE `exam_id` = :examID "
         . " )) AS `registered_for`";
     $sql = executeQuery(
         $query, array(array(':examID', $examID, PDO::PARAM_INT),

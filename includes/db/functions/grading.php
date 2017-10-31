@@ -109,10 +109,8 @@ function unAssignGraderFull(string $graderID)
  */
 function getAssignedExamGraders(int $examID)
 {
-    // TODO: validation
-    // validate exam ID
-
     $results = getAssignedExamGradersQuery($examID);
+
     $graders = array_map(
         function ($row) {
             return $row['grader_id'];
@@ -133,8 +131,6 @@ function getAssignedExamGraders(int $examID)
  */
 function getAssignedExamGradersCategories(int $examID)
 {
-    // TODO: validation
-
     $assigned = array();
 
     $graders = getAssignedExamGraders($examID);
@@ -161,9 +157,6 @@ function getAssignedExamGradersCategories(int $examID)
  */
 function getAssignedExamCategoryGraders(int $examID, int $categoryID)
 {
-    // validate exam ID, category ID
-    // validate exam category
-
     $results = getAssignedExamCategoryGradersQuery($examID, $categoryID);
     $graders = array_map(
         function ($row) {
@@ -183,8 +176,6 @@ function getAssignedExamCategoryGraders(int $examID, int $categoryID)
  */
 function getAssignedExams(string $graderID)
 {
-    // validate grader ID
-
     $results = getAssignedExamsQuery($graderID);
     $exams = array_map(
         function ($row) {

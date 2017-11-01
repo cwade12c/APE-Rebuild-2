@@ -3,7 +3,7 @@
 class Name extends Operation
 {
     function __construct() {
-        parent::registerParameter("Name", "string", "");
+        parent::registerOptionalParameter("Name", "string", "");
         parent::registerValidation("Name", "validateName");
     }
 

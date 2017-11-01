@@ -80,8 +80,8 @@ function getReportRowsQuery(int $id)
  */
 function addNewReportQuery(string $name)
 {
-    $query = "INSERT INTO `reports`"
-        . "(`name`)"
+    $query = "INSERT INTO `reports` "
+        . " (`name`)"
         . " VALUES (:name)";
     $sql   = executeQuery(
         $query, array(
@@ -98,8 +98,8 @@ function addNewReportQuery(string $name)
  */
 function wipeReportRowsQuery(int $id)
 {
-    $query = "DELETE FROM `report_rows`"
-        . "WHERE `id` = :id";
+    $query = "DELETE FROM `report_rows` "
+        . " WHERE `id` = :id";
     $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT))
@@ -121,7 +121,7 @@ function addReportRowsQuery(int $id, array $rows)
 
     // build, execute query string
     $query = sprintf(
-        "INSERT INTO `report_rows`(`id`, `type`)"
+        "INSERT INTO `report_rows`(`id`, `type`) "
         . " VALUES %s", $setStr
     );
     $sql   = executeQuery($query, $params);

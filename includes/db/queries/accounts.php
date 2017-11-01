@@ -36,9 +36,9 @@ function getAccountTypeQuery(string $accountID)
  */
 function setAccountTypeQuery(string $accountID, int $type)
 {
-    $query = "UPDATE `accounts`"
-        . "SET `type`=:type"
-        . "WHERE `id`=:id;";
+    $query = "UPDATE `accounts` "
+        . " SET `type`=:type "
+        . " WHERE `id`=:id; ";
     $sql   = executeQuery(
         $query, array(
             array(':id', $accountID, PDO::PARAM_STR),
@@ -58,9 +58,9 @@ function setAccountTypeQuery(string $accountID, int $type)
  */
 function updateAccountIDQuery(string $accountID, string $newAccountID)
 {
-    $query = "UPDATE `accounts`"
-        . "SET `id`=:nid"
-        . "WHERE `id`=:id;";
+    $query = "UPDATE `accounts` "
+        . " SET `id`=:nid "
+        . " WHERE `id`=:id;";
     $sql   = executeQuery(
         $query, array(
             array(':id', $accountID, PDO::PARAM_STR),
@@ -93,9 +93,9 @@ function updateAccountInfoQuery(string $accountID,
 
     // build, execute query
     $query = sprintf(
-        "UPDATE `accounts`"
-        . "SET %s"
-        . "WHERE `id`=:id;", $setStr
+        "UPDATE `accounts` "
+        . " SET %s "
+        . " WHERE `id`=:id;", $setStr
     );
     $sql   = executeQuery($query, $params);
 
@@ -159,9 +159,9 @@ function buildUpdateAccountParamStringArr(
  */
 function accountExistsQuery(string $accountID)
 {
-    $query  = "SELECT EXISTS("
-        . "SELECT `id` from `accounts`"
-        . "WHERE `id`=:id);";
+    $query  = "SELECT EXISTS( "
+        . " SELECT `id` from `accounts` "
+        . " WHERE `id`=:id);";
     $sql    = executeQuery(
         $query, array(
             array(':id', $accountID, PDO::PARAM_STR))
@@ -185,9 +185,9 @@ function accountExistsQuery(string $accountID)
 function createAccountQuery(string $accountID, int $type = ACCOUNT_TYPE_NONE,
     string $firstName = null, string $lastName = null, string $email = null
 ) {
-    $query = "INSERT INTO `accounts`"
-        . "(`id`,`type`,`f_name`,`l_name`,`email`)"
-        . " VALUES (:id, :type, :fName, :lName, :email)";
+    $query = "INSERT INTO `accounts` "
+        . " (`id`,`type`,`f_name`,`l_name`,`email`) "
+        . "  VALUES (:id, :type, :fName, :lName, :email)";
 
     $sql = executeQuery(
         $query, array(

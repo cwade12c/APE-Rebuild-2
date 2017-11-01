@@ -20,11 +20,11 @@ function assignGraderQuery(int $examID, int $categoryID, string $graderID)
 {
     $query = "INSERT INTO `assigned_graders` "
         . " (`exam_id`, `category_id`, `grader_id`) "
-        . " VALUES (:examId, :categoryId, :graderId)";
+        . " VALUES (:examID, :categoryID, :graderID)";
     $sql = executeQuery(
-        $query, array(array(':examId', $examID, PDO::PARAM_INT),
-                      array(':categoryId', $categoryID, PDO::PARAM_INT),
-                      array(':graderId', $graderID, PDO::PARAM_STR))
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':categoryID', $categoryID, PDO::PARAM_INT),
+                      array(':graderID', $graderID, PDO::PARAM_STR))
     );
 }
 
@@ -84,7 +84,7 @@ function getAssignedExamGradersQuery(int $examID)
     $query = "SELECT DISTINCT `grader_id` FROM `assigned_graders` "
         . " WHERE `exam_id` = :examID ";
     $sql = executeQuery(
-        $query, array(array(':examId', $examID, PDO::PARAM_INT))
+        $query, array(array(':examID', $examID, PDO::PARAM_INT))
     );
 
     return getQueryResults($sql);
@@ -104,7 +104,7 @@ function getAssignedExamCategoryGradersQuery(int $examID, int $categoryID)
     $query = "SELECT DISTINCT `grader_id` FROM `assigned_graders` "
         . " WHERE `exam_id` = :examID && `category_id` = :categoryID ";
     $sql = executeQuery(
-        $query, array(array(':examId', $examID, PDO::PARAM_INT),
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
                       array(':categoryID', $categoryID, PDO::PARAM_INT))
     );
 
@@ -144,7 +144,7 @@ function getAssignedExamCategoriesQuery(int $examID, string $graderID)
     $query = "SELECT DISTINCT `category_id` FROM `assigned_graders` "
         . " WHERE `exam_id` = :examID && `grader_id` = :graderID ";
     $sql = executeQuery(
-        $query, array(array(':examId', $examID, PDO::PARAM_INT),
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
                       array(':graderID', $graderID, PDO::PARAM_STR))
     );
 
@@ -163,7 +163,7 @@ function getAssignedExamCategoriesQuery(int $examID, string $graderID)
 function createGraderCategoryGradesQuery(int $examID, string $graderID,
     array $categories, array $students
 ) {
-    list($values, $params) = buildReportRowsValuesString(
+    list($values, $params) = buildGraderCategoryGradesInsertParamsValues(
         $examID, $graderID, $categories, $students
     );
 

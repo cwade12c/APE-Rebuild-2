@@ -70,9 +70,9 @@ function locationIDExistsQuery(int $id)
  */
 function createLocationQuery(string $name, int $seatsReserved, int $limitedSeats
 ) {
-    $query = "INSERT INTO `locations`"
-        . "(`name`, `reserved_seats`, `limited_seats`)"
-        . "VALUES (:name, :reservedSeats, :limitedSeats);";
+    $query = "INSERT INTO `locations` "
+        . " (`name`, `reserved_seats`, `limited_seats`) "
+        . " VALUES (:name, :reservedSeats, :limitedSeats);";
     $sql = executeQuery(
         $query, array(
             array(':name', $name, PDO::PARAM_STR),
@@ -101,8 +101,8 @@ function createLocationRoomsQuery(int $id, array $rooms)
 
     // build, execute query string
     $query = sprintf(
-        "INSERT INTO `locations_rooms`"
-        . "(`location_id`, `room_id`, `seats`)"
+        "INSERT INTO `locations_rooms` "
+        . " (`location_id`, `room_id`, `seats`) "
         . " VALUES %s", $setStr
     );
     $sql = executeQuery($query, $params);
@@ -161,9 +161,9 @@ function updateLocationInfoQuery(int $id, string $name, int $seatsReserved,
     int $limitedSeats
 ) {
     $query = "UPDATE `locations` "
-        . "SET `name` = :name, `reserved_seats` = :reservedSeats, "
+        . " SET `name` = :name, `reserved_seats` = :reservedSeats, "
         . " `limited_seats`=:limitedSeats "
-        . "WHERE `id` = :id";
+        . " WHERE `id` = :id";
 
     $sql = executeQuery(
         $query, array(
@@ -195,8 +195,8 @@ function updateLocationRoomsQuery(int $id, array $rooms)
 
     $query = sprintf(
         "UPDATE `location_rooms` "
-        . "SET `seats` = CASE %s ELSE `seats` END "
-        . "WHERE `location_id` = :id", $setStr
+        . " SET `seats` = CASE %s ELSE `seats` END "
+        . " WHERE `location_id` = :id", $setStr
     );
 
     $sql = executeQuery($query, $params);
@@ -261,7 +261,7 @@ function removeLocationRoomsQuery(int $id, array $rooms)
 
     $query = sprintf(
         "DELETE FROM `location_rooms` "
-        . "WHERE %s", $whereStr
+        . " WHERE %s", $whereStr
     );
 
     $sql = executeQuery($query, $params);
@@ -371,7 +371,7 @@ function getRoomsQuery()
 function createRoomQuery(string $name, int $seats)
 {
     $query = "INSERT INTO `rooms`(`name`, `seats`) "
-        . "VALUES (:name, :seats);";
+        . " VALUES (:name, :seats);";
     $sql = executeQuery(
         $query, array(
             array(':name', $name, PDO::PARAM_STR),
@@ -390,8 +390,8 @@ function createRoomQuery(string $name, int $seats)
 function updateRoomQuery(int $id, string $name, int $seats)
 {
     $query = "UPDATE `rooms` "
-        . "SET `name` = :name, `seats` = :seats "
-        . "WHERE `id` = :id";
+        . " SET `name` = :name, `seats` = :seats "
+        . " WHERE `id` = :id";
 
     $sql = executeQuery(
         $query, array(

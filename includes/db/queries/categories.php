@@ -16,8 +16,8 @@
  */
 function createCategoryQuery(string $name, int $points)
 {
-    $query = "INSERT INTO `categories`"
-        . "(`name`, `points`)"
+    $query = "INSERT INTO `categories` "
+        . " (`name`, `points`) "
         . " VALUES (:name, :points)";
     $sql   = executeQuery(
         $query, array(
@@ -35,8 +35,8 @@ function createCategoryQuery(string $name, int $points)
  */
 function deleteCategoryQuery(int $id)
 {
-    $query = "DELETE FROM `categories`"
-        . "WHERE `id` = :id";
+    $query = "DELETE FROM `categories` "
+        . " WHERE `id` = :id";
     $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT))
@@ -52,9 +52,9 @@ function deleteCategoryQuery(int $id)
  */
 function updateCategoryQuery(int $id, string $name, int $points)
 {
-    $query = "UPDATE `categories`"
-        . "SET `name`=:name, `points`=:points"
-        . "WHERE `id`=:id;";
+    $query = "UPDATE `categories` "
+        . " SET `name`=:name, `points`=:points "
+        . " WHERE `id`=:id;";
     $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT),
@@ -72,9 +72,9 @@ function updateCategoryQuery(int $id, string $name, int $points)
  */
 function updateCategoryNameQuery(int $id, string $name)
 {
-    $query = "UPDATE `categories`"
-        . "SET `name`=:name"
-        . "WHERE `id`=:id;";
+    $query = "UPDATE `categories` "
+        . " SET `name`=:name "
+        . " WHERE `id`=:id;";
     $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT),
@@ -91,9 +91,9 @@ function updateCategoryNameQuery(int $id, string $name)
  */
 function updateCategoryPointsQuery(int $id, int $points)
 {
-    $query = "UPDATE `categories`"
-        . "SET `points`=:points"
-        . "WHERE `id`=:id;";
+    $query = "UPDATE `categories` "
+        . " SET `points`=:points "
+        . " WHERE `id`=:id;";
     $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT),
@@ -111,7 +111,7 @@ function updateCategoryPointsQuery(int $id, int $points)
  */
 function getCategoryInfoQuery(int $id)
 {
-    $query = "SELECT `name`, `points` FROM `categories`"
+    $query = "SELECT `name`, `points` FROM `categories` "
         . " WHERE `id` = :id;";
     $sql   = executeQuery(
         $query, array(
@@ -169,8 +169,8 @@ function setDefaultCategoriesQuery(array $idList)
     list($setStr, $params) = buildDefaultCategoriesStringParams($idList);
 
     $query = sprintf(
-        "INSERT INTO `default_categories`"
-        . "(`id`)"
+        "INSERT INTO `default_categories` "
+        . " (`id`) "
         . " VALUES %s", $setStr
     );
     $sql   = executeQuery($query, $params);
@@ -190,7 +190,7 @@ function buildDefaultCategoriesStringParams(array $ids)
     $params = array();
     $values = array();
 
-    foreach (ids as $i => $id) {
+    foreach ($ids as $i => $id) {
         // determine param name
         $val = sprintf(':id%d', $i);
         array_push($values, sprintf('(:%s)', $val));
@@ -211,8 +211,8 @@ function buildDefaultCategoriesStringParams(array $ids)
  */
 function addDefaultCategoryQuery(int $id)
 {
-    $query = "INSERT INTO `default_categories`"
-        . "(`id`)"
+    $query = "INSERT INTO `default_categories` "
+        . " (`id`) "
         . " VALUES (:id)";
     $sql   = executeQuery(
         $query, array(
@@ -228,8 +228,8 @@ function addDefaultCategoryQuery(int $id)
  */
 function removeDefaultCategoryQuery(int $id)
 {
-    $query = "DELETE FROM `default_categories`"
-        . "WHERE `id` = :id";
+    $query = "DELETE FROM `default_categories` "
+        . " WHERE `id` = :id";
     $sql   = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT))

@@ -13,6 +13,11 @@ abstract class Operation
 {
     private $parameters = array();
     private $validations = array();
+    private $requiredLogin = true;
+    private $allowedAccountTypes = array();
+    private $accountValidation = null;
+    private $accountValidationParameterNames = array();
+    private $actualExecute = null;
 
     /**
      * Register an optional parameter
@@ -26,10 +31,10 @@ abstract class Operation
     ) {
         array_push(
             $this->parameters, array(
-                "name"     => strtolower($name),
-                "type"     => strtolower($type),
-                "default"  => $default,
-                "optional" => true
+                'name'     => strtolower($name),
+                'type'     => strtolower($type),
+                'default'  => $default,
+                'optional' => true
             )
         );
     }
@@ -44,9 +49,9 @@ abstract class Operation
     {
         array_push(
             $this->parameters, array(
-                "name"     => strtolower($name),
-                "type"     => strtolower($type),
-                "optional" => false
+                'name'     => strtolower($name),
+                'type'     => strtolower($type),
+                'optional' => false
             )
         );
     }
@@ -106,54 +111,227 @@ abstract class Operation
         return $parameterNames;
     }
 
-    // TODO: set account type(s) allowed
-
-    // TODO: register validation function for account ID executing
-
-    // TODO: set that operation requires a login (default: true)
-
-    // TODO: transferring parameters to the hook function
-    /*
-     * In concrete execute, can use
-     *      func_get_args()
-     *      associative array as singular argument
-     *      call_user_func(), to call
-     *          but have to sync up defined parameters and method signature
-     * can look into using -
-     *  http://php.net/manual/en/reflectionmethod.invoke.php
-     *  then just register parameters automatically
+    /**
+     * If a login is required for the operation
      *
-     * can offer both, for operations that may allow lots of optional values
-     *
+     * @param bool $require
      */
+    protected function requireLogin(bool $require)
+    {
+        $this->requiredLogin = $require;
+    }
+
+    /**
+     * Require the account accessing the operation to have this type
+     *
+     * @param int $type
+     */
+    protected function requiredAccountType(int $type)
+    {
+        $this->setAllowedAccountTypes(array($type));
+    }
+
+    /**
+     * Allow the following account types to access this operation
+     *
+     * @param array $types
+     */
+    protected function setAllowedAccountTypes(array $types)
+    {
+        $this->validateTypeArray($types);
+        $this->requiredLogin = true;
+        $this->allowedAccountTypes = $types;
+    }
+
+    /**
+     * Helper method for setAllowedAccountTypes
+     * To validate the types given
+     *
+     * @param array $types
+     */
+    private function validateTypeArray(array $types)
+    {
+        foreach ($types as $i => $type) {
+            if (gettype($type) != 'integer') {
+                $typeOf = gettype($type);
+                throw new InvalidArgumentException(
+                    "Invalid type index({$i}), type: ({$typeOf})"
+                );
+            }
+            if ($type < 0) {
+                throw new InvalidArgumentException(
+                    "Invalid type value at index({$i}): {$type}"
+                );
+            }
+        }
+    }
+
+    /**
+     * Register a callable to be used against the account ID executing
+     * Note: the function will execute even if login is not required,
+     * it should accept null values in that case.
+     *
+     * @param mixed $validationCallable
+     * @param array $parameterNames names of parameters to pass
+     */
+    protected function registerAccountIDValidation(mixed $validationCallable,
+        array $parameterNames
+    ) {
+        if (!is_callable($validationCallable, false, $callableName)) {
+            throw new InvalidArgumentException('Callable given is not valid');
+        }
+
+        $registeredParameterKeys = array_column($this->parameters, 'name');
+        foreach ($parameterNames as $i => $name) {
+            if (!in_array($name, $registeredParameterKeys)) {
+                throw new InvalidArgumentException(
+                    "Parameter name({$i}) \"{$name}\""
+                );
+            }
+        }
+
+        $this->accountValidation = $callableName;
+        $this->accountValidationParameterNames = $parameterNames;
+    }
+
+    protected function registerExecution(mixed $executionCallable)
+    {
+        if (!is_callable($executionCallable, false, $callableName)) {
+            throw new InvalidArgumentException('Callable given is not valid');
+        }
+
+        $this->actualExecute = $callableName;
+    }
 
     /**
      * Public method for executing the operation
      *
-     * @param array $args associate array of inputs
+     * @param array       $args      associate array of inputs
+     * @param string|null $accountID ID of account requesting
      *
-     * @return array
+     * @return array      response of operation execution
      */
-    public function execute(array $args)
+    public function execute(array $args, string $accountID = null)
     {
-        // check login required
-        // check account type
-        // check parameter validations
-        // check account validations
+        $this->validateExecutionArguments($args);
+        $this->validateAccountID($accountID, $args);
 
-        if (count($args) != count($this->parameters)) {
-            return $this->buildResponse(false, "Invalid number of parameters!");
+        if ($this->actualExecute == null) {
+            throw new LogicException('Execution callable not set');
         }
 
-        return $this->buildResponse(true, "OK");
+        try {
+            $data = call_user_func($this->actualExecute, $args);
+        } catch (Exception $e) {
+            throw new RuntimeException('Exception during execute', $e);
+        }
+
+        $this->validateReturn($data);
+
+        return $data;
     }
 
-    private function buildResponse(bool $success, string $message)
+    /**
+     * Helper method to validate an account ID executing an operation
+     *
+     * @param string|null $accountID
+     */
+    private function validateAccountID(string $accountID, array $args)
     {
-        return array(
-            "data"    => array(),
-            "success" => $success,
-            "message" => $message
-        );
+        if (!$this->requiredLogin) {
+            return;
+        }
+
+        // standard ID check
+        if ($accountID == null) {
+            throw new InvalidArgumentException("Null account id");
+        }
+
+        validateAccountExists($accountID);
+
+        $type = getAccountType($accountID);
+        $this->validateAccountType($type);
+
+        $this->validateAccountCall($accountID, $args);
     }
+
+    /**
+     * Validate the account type passes required values
+     * Helper method for validateAccountID
+     *
+     * @param int $type
+     */
+    private function validateAccountType(int $type) {
+        foreach($this->allowedAccountTypes as $allowedType) {
+            if (typeHas($type, $allowedType)) {
+                return;
+            }
+        }
+        throw new InvalidArgumentException("Account type ({$type}) does not match any acceptable types");
+    }
+
+    /**
+     * Run the account ID and args against the set account validation
+     * Helper method for validateAccountID
+     *
+     * @param string $accountID
+     * @param array  $args
+     */
+    private function validateAccountCall(string $accountID, array $args) {
+        // run account validation function
+        if ($this->accountValidation == null) {
+            return;
+        }
+
+        $validateArgs = array();
+        foreach ($this->accountValidationParameterNames as $parameterName) {
+            array_push($validateArgs, $args[$parameterName]);
+        }
+
+        try {
+            if (!call_user_func($this->accountValidation, $validateArgs)) {
+                throw new InvalidArgumentException(
+                    'False from user validation'
+                );
+            }
+        } catch (Exception $e) {
+            throw new InvalidArgumentException(
+                "Account ID ({$accountID}) failed operation account validation"
+            );
+        }
+    }
+
+    /**
+     * Helper method to validate the arguments received to run an operation
+     *
+     * @param array $args
+     */
+    private function validateExecutionArguments(array &$args)
+    {
+        // TODO validate against parameters
+        /// validate all parameters present, no keys missing
+        /// set default values
+
+        // $parameters
+        // $validations
+    }
+
+    /**
+     * Helper method to validate the return data for an execute
+     *
+     * @param $data
+     */
+    private function validateReturn($data)
+    {
+        if ($data == null) {
+            throw new RuntimeException('Execute returned null value');
+        }
+        if (gettype($data) != 'array') {
+            $type = gettype($data);
+            throw new RuntimeException(
+                "Execute returned non array value ({$type})"
+            );
+        }
+    }
+
 }

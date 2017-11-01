@@ -96,6 +96,28 @@ function name(name) {
   callAjax('post', 'name', params, callbacks);
 }
 
+function getExamInformation(examId) {
+  var params = {
+    id: examId
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'ExamDetails', params, callbacks);
+}
+
 //</editor-fold>
 
 //<editor-fold desc="DOM Utility Functions">

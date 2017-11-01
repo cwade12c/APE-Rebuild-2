@@ -62,7 +62,7 @@ abstract class Operation
      * @param string       $fncName
      * @param array|string $input parameter name, or array of names
      */
-    protected function registerValidation(string $fncName, mixed $input)
+    protected function registerValidation(string $fncName, $input)
     {
         $parameterNames = $this->getValidationInputNames($input);
 
@@ -82,7 +82,7 @@ abstract class Operation
      *
      * @return array
      */
-    private function getValidationInputNames(mixed $input)
+    private function getValidationInputNames($input)
     {
         $valid = false;
         $inputType = gettype($input);
@@ -194,7 +194,7 @@ abstract class Operation
         $this->accountValidationParameterNames = $parameterNames;
     }
 
-    protected function registerExecution(mixed $executionCallable)
+    protected function registerExecution($executionCallable)
     {
         if (!is_callable($executionCallable, false, $callableName)) {
             throw new InvalidArgumentException('Callable given is not valid');
@@ -221,7 +221,8 @@ abstract class Operation
         }
 
         try {
-            $data = call_user_func($this->actualExecute, $args);
+            $data = gettype($args) == "array" ? call_user_func_array($this->actualExecute, $args) :
+                call_user_func($this->actualExecute, $args);
         } catch (Exception $e) {
             throw new RuntimeException('Exception during execute', $e);
         }

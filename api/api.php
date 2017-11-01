@@ -21,6 +21,7 @@ else {
 function processRequest($args) {
     $operation = $args["operation"];
     $parameters = $args["parameters"];
+    global $params;
 
     if(empty($operation) || empty($parameters)) {
         sendResponse(array(), false, "Cannot have an empty operation or parameters!");
@@ -30,7 +31,16 @@ function processRequest($args) {
     }
     else {
         $concreteOperation = new $operation; //validations should run upon instantiation
-        $response = $concreteOperation->execute($parameters);
+        $response["success"] = true;
+        $response["message"] = "OK";
+        try {
+            $response["data"] = $concreteOperation->execute($parameters, $params['id']);
+        }
+        catch(Exception $exception) {
+            $response["success"] = false;
+            $response["message"] = $exception;
+        }
+
         sendResponse($response["data"], $response["success"], $response["message"]);
     }
 }

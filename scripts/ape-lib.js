@@ -212,4 +212,37 @@ function activeLink () {
   targetUrl.parent().addClass('active').parent().parent().addClass('active');
 }
 
+function setDateTimePicker (elementId, options, selectDateCallbackFunction) {
+  selectDateCallbackFunction = selectDateCallbackFunction || function (ct, $i) {};
+
+  /*
+   * more options => https://xdsoft.net/jqplugins/datetimepicker
+   * To allow selectable dates prior to the current date, set minDate to false
+   */
+  var defaultOptions = {
+    lazyInit: true,
+    value: null,
+    lang: 'en',
+    format: 'Y/m/d H:i',
+    formatDate: 'Y/m/d',
+    formatTime: 'H:i',
+    validateOnBlur: true,
+    timepicker: true,
+    datepicker: true,
+    minDate: 0,
+    minTime: 0,
+    todayButton: true,
+    defaultSelect: true,
+    allowBlank: false,
+    onSelectDate: selectDateCallbackFunction
+  }
+  options = options || defaultOptions;
+
+  if(!_.has(options, 'onSelectDate')) {
+    options.onSelectDate = selectDateCallbackFunction;
+  }
+
+  jQuery('#' + elementId).datetimepicker(options);
+}
+
 //</editor-fold>

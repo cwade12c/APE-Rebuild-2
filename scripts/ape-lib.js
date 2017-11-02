@@ -121,6 +121,28 @@ function getExamInformation(examId) {
   callAjax('get', 'ExamDetails', params, callbacks);
 }
 
+function getStudentState(studentId) {
+  var params = {
+    studentId: studentId
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'StudentState', params, callbacks);
+}
+
 //</editor-fold>
 
 //<editor-fold desc="DOM Utility Functions">

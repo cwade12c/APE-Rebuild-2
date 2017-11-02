@@ -21,8 +21,6 @@ function processRequest($args)
     $operation = $args["operation"];
     $parameters = json_decode($args["parameters"], true);
 
-    global $params;
-
     if (empty($operation) || empty($parameters)) {
         sendResponse(
             array(), false, "Cannot have an empty operation or parameters!"
@@ -36,6 +34,7 @@ function processRequest($args)
         $response["data"] = array();
 
         try {
+            global $params;
             $response["data"] = $concreteOperation->execute(
                 $parameters, $params['id']
             );

@@ -222,6 +222,7 @@ abstract class Operation
         $this->validateExecutionArguments($args);
         $this->executeValidations($args);
         $this->validateAccountID($accountID, $args);
+
         $errorMessage = null;
 
         if ($this->actualExecute == null) {
@@ -329,7 +330,7 @@ abstract class Operation
 
         foreach ($this->parameters as $parameter) {
             foreach ($args as $name => $value) {
-                if ($name == $parameter['name']) {
+                if (strtolower($name) == $parameter['name']) {
                     $this->validateArgument($parameter, $value);
                     $finalArgs[$name] = $value;
                     break;
@@ -383,6 +384,7 @@ abstract class Operation
                     "Validation {$name} unknown error"
                 );
             }
+
         }
     }
 

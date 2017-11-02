@@ -30,10 +30,11 @@ function processRequest($args) {
         sendResponse(array(), false, "An invalid operation was specified!");
     }
     else {
+        $concreteOperation = new $operation;
         $response["success"] = true;
         $response["message"] = "OK";
         try {
-            $response["data"] = new $operation($parameters, $params["id"]);
+            $response["data"] = $concreteOperation->execute($parameters, $params['id']);
         }
         catch(Exception $exception) {
             $response["success"] = false;

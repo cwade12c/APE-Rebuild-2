@@ -215,7 +215,6 @@ abstract class Operation
     {
         $this->validateExecutionArguments($args);
         $this->validateAccountID($accountID, $args);
-        $error = false;
         $errorMessage = null;
 
         if ($this->actualExecute == null) {
@@ -225,18 +224,14 @@ abstract class Operation
         try {
             $data = gettype($args) == "array" ? call_user_func_array($this->actualExecute, $args) :
                 call_user_func($this->actualExecute, $args);
+
+            $this->validateReturn($data);
+            return $data;
         } catch (Exception $e) {
-            $error = true;
             $errorMessage = $e;
         }
 
-        if($error) {
-            throw new Exception($errorMessage);
-        }
-
-        $this->validateReturn($data);
-
-        return $data;
+        throw new Exception($errorMessage);
     }
 
     /**

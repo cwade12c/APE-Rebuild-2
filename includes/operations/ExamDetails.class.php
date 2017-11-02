@@ -9,7 +9,7 @@
  */
 class ExamDetails extends Operation
 {
-    function __construct(array $args, string $accountId = NULL) {
+    function __construct() {
         parent::requireLogin(false);
 
         parent::registerExecution('getExamInformation');
@@ -18,7 +18,5 @@ class ExamDetails extends Operation
 
         parent::registerValidation("validateExamIDExists", "id");
         parent::registerValidation("validateExamID", "id");
-
-        return parent::execute($args, $accountId);
     }
 }

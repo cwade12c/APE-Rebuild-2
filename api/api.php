@@ -19,7 +19,8 @@ if (!empty($_POST)) {
 function processRequest($args)
 {
     $operation = $args["operation"];
-    $parameters = $args["parameters"];
+    $parameters = json_decode($args["parameters"], true);
+
     global $params;
 
     if (empty($operation) || empty($parameters)) {
@@ -32,6 +33,8 @@ function processRequest($args)
         $concreteOperation = new $operation;
         $response["success"] = true;
         $response["message"] = "OK";
+        $response["data"] = array();
+
         try {
             $response["data"] = $concreteOperation->execute(
                 $parameters, $params['id']

@@ -4,6 +4,7 @@
  * Exam Details class for retrieving dates/times, location, space, state
  *
  * @author         Curran Higgins
+ * @author         Mathew McCain
  * @category       APE
  * @package        APE_includes
  * @subpackage     Operation

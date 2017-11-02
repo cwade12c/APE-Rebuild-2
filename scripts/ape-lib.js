@@ -1,10 +1,13 @@
 // <editor-fold desc="API Functions">
 function callAjax(requestType, operationName, operationParameters, callBackFunctions) {
-  var callbacks = callBackFunctions || {};
+  requestType = requestType || 'GET';
+  operationName = operationName || '';
+  callBackFunctions = callBackFunctions || {};
+  operationParameters = JSON.stringify(operationParameters);
 
-  var successFnc = ('success' in callbacks) ? callbacks['success'] : function (data, status, jqXHR) {};
-  var errorFnc = ('error' in callbacks) ? callbacks['error'] : function (jqXHR, status) {};
-  var completeFnc = ('complete' in callbacks) ? callbacks['complete'] : function (jqXHR, status) {};
+  var successFnc = ('success' in callBackFunctions) ? callBackFunctions['success'] : function (data, status, jqXHR) {};
+  var errorFnc = ('error' in callBackFunctions) ? callBackFunctions['error'] : function (jqXHR, status) {};
+  var completeFnc = ('complete' in callBackFunctions) ? callBackFunctions['complete'] : function (jqXHR, status) {};
 
   var fullParameters = {
     operation: operationName,

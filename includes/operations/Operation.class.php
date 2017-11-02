@@ -209,12 +209,14 @@ abstract class Operation
      * @param array       $args      associate array of inputs
      * @param string|null $accountID ID of account requesting
      *
-     * @return array      response of operation execution
+     * @return array|Exception      response of operation execution
      */
     public function execute(array $args, string $accountID = null)
     {
         $this->validateExecutionArguments($args);
         $this->validateAccountID($accountID, $args);
+        $error = false;
+        $errorMessage = null;
 
         if ($this->actualExecute == null) {
             throw new LogicException('Execution callable not set');
@@ -224,7 +226,12 @@ abstract class Operation
             $data = gettype($args) == "array" ? call_user_func_array($this->actualExecute, $args) :
                 call_user_func($this->actualExecute, $args);
         } catch (Exception $e) {
-            throw new RuntimeException('Exception during execute', $e);
+            $error = true;
+            $errorMessage = $e;
+        }
+
+        if($error) {
+            throw new Exception($errorMessage);
         }
 
         $this->validateReturn($data);

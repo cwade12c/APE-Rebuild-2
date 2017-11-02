@@ -30,11 +30,10 @@ function processRequest($args) {
         sendResponse(array(), false, "An invalid operation was specified!");
     }
     else {
-        $concreteOperation = new $operation; //validations should run upon instantiation
         $response["success"] = true;
         $response["message"] = "OK";
         try {
-            $response["data"] = $concreteOperation->execute($parameters, $params['id']);
+            $response["data"] = new $operation($parameters, $params["id"]);
         }
         catch(Exception $exception) {
             $response["success"] = false;

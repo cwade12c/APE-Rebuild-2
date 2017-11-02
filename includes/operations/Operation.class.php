@@ -59,17 +59,23 @@ abstract class Operation
     /**
      * Register a validation necessary
      *
-     * @param string       $fncName
+     * @param array|string $fncName
      * @param array|string $input parameter name, or array of names
      */
-    protected function registerValidation(string $fncName, $input)
+    protected function registerValidation($fncCallable, $input)
     {
+        if (!is_callable($fncCallable, false, $callableName)) {
+            throw new InvalidArgumentException(
+                'Validation callable given is not valid'
+            );
+        }
+
         $parameterNames = $this->getValidationInputNames($input);
 
         array_push(
             $this->validations, array(
-                "input"   => $parameterNames,
-                "fncName" => $fncName
+                "input" => $parameterNames,
+                "fnc"   => $callableName
             )
         );
     }
@@ -174,7 +180,7 @@ abstract class Operation
      * @param mixed $validationCallable
      * @param array $parameterNames names of parameters to pass
      */
-    protected function registerAccountIDValidation(mixed $validationCallable,
+    protected function registerAccountIDValidation($validationCallable,
         array $parameterNames
     ) {
         if (!is_callable($validationCallable, false, $callableName)) {
@@ -214,6 +220,7 @@ abstract class Operation
     public function execute(array $args, string $accountID = null)
     {
         $this->validateExecutionArguments($args);
+        $this->executeValidations($args);
         $this->validateAccountID($accountID, $args);
         $errorMessage = null;
 
@@ -222,10 +229,13 @@ abstract class Operation
         }
 
         try {
-            $data = gettype($args) == "array" ? call_user_func_array($this->actualExecute, $args) :
+            $data = gettype($args) == "array"
+                ? call_user_func_array($this->actualExecute, $args)
+                :
                 call_user_func($this->actualExecute, $args);
 
             $this->validateReturn($data);
+
             return $data;
         } catch (Exception $e) {
             $errorMessage = $e;
@@ -264,13 +274,16 @@ abstract class Operation
      *
      * @param int $type
      */
-    private function validateAccountType(int $type) {
-        foreach($this->allowedAccountTypes as $allowedType) {
+    private function validateAccountType(int $type)
+    {
+        foreach ($this->allowedAccountTypes as $allowedType) {
             if (typeHas($type, $allowedType)) {
                 return;
             }
         }
-        throw new InvalidArgumentException("Account type ({$type}) does not match any acceptable types");
+        throw new InvalidArgumentException(
+            "Account type ({$type}) does not match any acceptable types"
+        );
     }
 
     /**
@@ -280,7 +293,8 @@ abstract class Operation
      * @param string $accountID
      * @param array  $args
      */
-    private function validateAccountCall(string $accountID, array $args) {
+    private function validateAccountCall(string $accountID, array $args)
+    {
         // run account validation function
         if ($this->accountValidation == null) {
             return;
@@ -311,12 +325,65 @@ abstract class Operation
      */
     private function validateExecutionArguments(array &$args)
     {
-        // TODO validate against parameters
-        /// validate all parameters present, no keys missing
-        /// set default values
+        $finalArgs = array();
 
-        // $parameters
-        // $validations
+        foreach ($this->parameters as $parameter) {
+            foreach ($args as $name => $value) {
+                if ($name == $parameter['name']) {
+                    $this->validateArgument($parameter, $value);
+                    $finalArgs[$name] = $value;
+                    break;
+                }
+            }
+        }
+
+        $args = $finalArgs;
+    }
+
+    /**
+     * Helper method for validateExecutionArguments()
+     * to validate an argument value against a parameter
+     *
+     * @param array $parameter
+     * @param       $value
+     */
+    private function validateArgument(array $parameter, &$value)
+    {
+        $name = $parameter['name'];
+
+        if (gettype($value) != $parameter['type']) {
+            $type = gettype($value);
+            $expectedType = $parameter['type'];
+            throw new InvalidArgumentException(
+                "Argument ({$name}) does not match expected type {$type}, got {$expectedType}"
+            );
+        }
+
+        if ($parameter['optional']) {
+            $value = $parameter['default'];
+        }
+    }
+
+    /**
+     * Helper method to run the validations set
+     *
+     * @param array $args
+     */
+    private function executeValidations(array $args)
+    {
+        foreach ($this->validations as $validation) {
+            $validationArgs = array();
+            foreach ($validation['input'] as $argName) {
+                array_push($validationArgs, $args[$argName]);
+            }
+
+            $name = $validation['fnc'];
+            if (!call_user_func_array($name, $validationArgs)) {
+                throw new InvalidArgumentException(
+                    "Validation {$name} unknown error"
+                );
+            }
+        }
     }
 
     /**

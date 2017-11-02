@@ -712,7 +712,7 @@ function validateExamRoomSeat(int $examID, int $roomID, int $seat)
 {
     // get location, rooms
     $info = getExamInformation($examID);
-    $rooms = getLocationRooms($info['location_id']);
+    $rooms = getLocationRooms($info['locationID']);
     foreach ($rooms as $room) {
         if ($room['id'] == $roomID) {
             if ($seat < $room['seats']) {
@@ -771,7 +771,7 @@ function validateExamHasRoom(int $examID, int $roomID)
 function validateExamLocationAvailable(int $examID)
 {
     $info = getExamInformation($examID);
-    if (is_null($info['location_id'])) {
+    if (is_null($info['locationID'])) {
         throw new InvalidArgumentException(
             sprintf("Exam(%d) has no location available", $examID)
         );
@@ -826,6 +826,8 @@ function validateExamIDExists(int $id)
             sprintf("Exam(%d) does not exist", $id)
         );
     }
+
+    return true;
 }
 
 /**

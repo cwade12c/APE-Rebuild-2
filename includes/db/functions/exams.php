@@ -139,11 +139,16 @@ function getExamsExtended(int $state, int $type)
  */
 function getExamInformation(int $id)
 {
-    // TODO: validate id exists
-    // TODO: convert information from query results
-    // get exam row
     $info = getExamInformationQuery($id);
-    // TODO: check that row returned (or exam id existed)
+
+    $info['passingGrade'] = $info['passing_grade'];
+    unset($info['passing_grade']);
+
+    $info['isRegular'] = $info['is_regular'];
+    unset($info['is_regular']);
+
+    $info['locationID'] = $info['location_id'];
+    unset($info['location_id']);
 
     return $info;
 }

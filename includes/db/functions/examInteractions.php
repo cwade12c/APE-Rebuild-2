@@ -410,7 +410,7 @@ function checkForInvalidSeating(int $examID)
     validateExamLocationAvailable($examID);
 
     $info = getExamInformation($examID);
-    $locationID = $info['location_id'];
+    $locationID = $info['locationID'];
 
     $roster = getAllExamRegistrationsQuery($examID);
     $students = array();
@@ -514,7 +514,7 @@ function getMaxExamSpace(int $examID)
 function examRegistrationSpaceAvailable(int $examID)
 {
     $info = getLocationInformation($examID);
-    $maxSeats = getLocationRoomsMaxSeats($info['location_id']);
+    $maxSeats = getLocationRoomsMaxSeats($info['locationID']);
     $reservedSeats = $info['reserved_seats'];
 
     $maxSeats -= $reservedSeats;

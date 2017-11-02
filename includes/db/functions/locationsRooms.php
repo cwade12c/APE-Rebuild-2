@@ -414,10 +414,6 @@ function deleteRoom(int $id)
  */
 function getLocationInformation(int $id)
 {
-    // TODO: validating ID may not be necessary
-    /// could incorporate into query
-    validateLocationIDExists($id);
-
     return getLocationInformationQuery($id);
 }
 
@@ -463,8 +459,6 @@ function getLocationRooms(int $id)
  */
 function getLocationRoomsMaxSeats(int $id)
 {
-    validateLocationID($id);
-
     // count max for rooms
     $rooms = getLocationRooms($id);
     $roomsMax = 0;

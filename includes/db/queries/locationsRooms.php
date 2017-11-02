@@ -445,7 +445,7 @@ function getLocationRoomsQuery(int $id)
     $query = "SELECT `room_id`, `seats` "
         . " FROM `location_rooms` WHERE `location_id` = :id";
     $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
-    return getQueryResults($id);
+    return getQueryResults($sql);
 }
 
 /**

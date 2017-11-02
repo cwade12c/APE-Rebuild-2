@@ -652,7 +652,7 @@ function getConflicts(int $examID)
 function createStudentExamGrades(int $examID)
 {
     $examInfo = getExamInformation($examID);
-    $passingGrade = $examInfo['passing_grade'];
+    $passingGrade = $examInfo['passingGrade'];
 
     $students = getExamRegistrations($examID);
     foreach ($students as $studentID) {

@@ -2,20 +2,24 @@
 
 class Name extends Operation
 {
-    function __construct() {
+    function __construct()
+    {
+
+        parent::registerExecution(array($this, "name"));
+
         parent::registerOptionalParameter("Name", "string", "");
         parent::registerValidation("Name", "validateName");
     }
 
-    public function execute($args) {
-        $validationResult = parent::execute($args);
+    public function execute(array $args, string $accountID = null)
+    {
+        parent::execute($args, $accountID);
+    }
 
-        if($validationResult["success"] == false) {
-            return $validationResult;
-        }
-
+    private static function name(string $name)
+    {
         $validationResult["data"] = array(
-            "name" => $args["name"],
+            "name"       => $name,
             "otherValue" => "a constant value"
         );
 

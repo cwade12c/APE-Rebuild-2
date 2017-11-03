@@ -92,7 +92,7 @@ define('REGEX_ACCOUNT_ID', '/^00\d{6}$/');
 /* regex string for a temp ID */
 define(
     'REGEX_TEMP_ID',
-    '/^' . TEMP_ID_PREFIX . '[a-zA-Z0-9+/=]{' . TEMP_ID_BYTES_GENERATED . '}$/'
+    '/^' . TEMP_ID_PREFIX . '[a-zA-Z0-9+\/=]{' . TEMP_ID_BYTES_GENERATED . '}$/'
 );
 
 /* Error codes for exceptions */

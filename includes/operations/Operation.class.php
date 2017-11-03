@@ -178,13 +178,22 @@ abstract class Operation
      * it should accept null values in that case.
      *
      * @param mixed $validationCallable
-     * @param array $parameterNames names of parameters to pass
+     * @param array|string $parameterNames names of parameters to pass
      */
     protected function registerAccountIDValidation($validationCallable,
-        array $parameterNames
+        $parameterNames
     ) {
         if (!is_callable($validationCallable, false, $callableName)) {
             throw new InvalidArgumentException('Callable given is not valid');
+        }
+
+        if (gettype($parameterNames) == 'string'){
+            $temp = array(strtolower($parameterNames));
+            $parameterNames = $temp;
+        }else if (gettype($parameterNames) == 'array') {
+            $parameterNames = array_map('strtolower', $parameterNames);
+        }else{
+            throw new InvalidArgumentException('Invalid parameter names given');
         }
 
         $registeredParameterKeys = array_column($this->parameters, 'name');
@@ -230,10 +239,7 @@ abstract class Operation
         }
 
         try {
-            $data = gettype($args) == "array"
-                ? call_user_func_array($this->actualExecute, $args)
-                :
-                call_user_func($this->actualExecute, $args);
+            $data = call_user_func_array($this->actualExecute, $args);
 
             $this->validateReturn($data);
 
@@ -330,7 +336,8 @@ abstract class Operation
 
         foreach ($this->parameters as $parameter) {
             foreach ($args as $name => $value) {
-                if (strtolower($name) == $parameter['name']) {
+                $name = strtolower($name);
+                if ($name == $parameter['name']) {
                     $this->validateArgument($parameter, $value);
                     $finalArgs[$name] = $value;
                     break;
@@ -350,19 +357,22 @@ abstract class Operation
      */
     private function validateArgument(array $parameter, &$value)
     {
+        if ($value == null && $parameter['optional']) {
+            $value = $parameter['default'];
+            return;
+        }
+
         $name = $parameter['name'];
 
         if (gettype($value) != $parameter['type']) {
             $type = gettype($value);
             $expectedType = $parameter['type'];
             throw new InvalidArgumentException(
-                "Argument ({$name}) does not match expected type {$type}, got {$expectedType}"
+                "Argument ({$name}) does not match expected type {$expectedType}, got {$type}"
             );
         }
 
-        if ($parameter['optional']) {
-            $value = $parameter['default'];
-        }
+
     }
 
     /**

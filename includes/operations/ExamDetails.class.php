@@ -17,7 +17,7 @@ class ExamDetails extends Operation
 
         parent::registerExecution(array($this, 'getExamInformation'));
 
-        parent::registerParameter("id", 'integer');
+        parent::registerParameter('id', 'integer');
         parent::registerValidation('validateExamIDExists', 'id');
     }
 

@@ -211,6 +211,57 @@ function doesExamStateAllowGraderRemovals(int $state)
 }
 
 /**
+ * Get string for student state
+ *
+ * @param int $state
+ *
+ * @return string
+ */
+function studentStateToString(int $state)
+{
+    switch($state) {
+        case STUDENT_STATE_READY:
+            return "Ready";
+        case STUDENT_STATE_REGISTERED:
+            return "Registered";
+        case STUDENT_STATE_PASSED:
+            return "Passed";
+        case STUDENT_STATE_BLOCKED:
+            return "Blocked";
+        case STUDENT_STATE_BLOCKED_BYPASSED:
+            return "Block Bypassed";
+        case STUDENT_STATE_BLOCKED_IGNORED:
+            return "Block Ignored";
+        case STUDENT_STATE_INVALID:
+        default:
+            return "Invalid";
+    }
+}
+
+/**
+ * Check if given student state can register for an exam
+ *
+ * @param int $state
+ *
+ * @return bool
+ */
+function canStudentStateRegister(int $state)
+{
+    switch($state) {
+        case STUDENT_STATE_READY:
+        case STUDENT_STATE_BLOCKED_BYPASSED:
+            return true;
+        case STUDENT_STATE_REGISTERED:
+        case STUDENT_STATE_PASSED:
+        case STUDENT_STATE_BLOCKED:
+        case STUDENT_STATE_BLOCKED_IGNORED:
+        case STUDENT_STATE_INVALID:
+        default:
+            return false;
+    }
+}
+
+/**
  * Check if given exam state is valid (recognized in 'db/constants.php')
  *
  * @param int $state

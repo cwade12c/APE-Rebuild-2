@@ -121,7 +121,12 @@ function getRegistrationState(string $studentID)
 {
     validateStudentID($studentID);
 
-    return getRegistrationStateQuery($studentID);
+    $result = getRegistrationStateQuery($studentID);
+    if (!$result) {
+        $result = STUDENT_STATE_INVALID;
+    }
+
+    return $result;
 }
 
 /**

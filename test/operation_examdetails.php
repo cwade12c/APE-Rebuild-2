@@ -10,17 +10,17 @@
 
 require_once '../config.php';
 
-echo "testing operations...</br></br>";
+echo "testing operation exam details</br></br>";
 
-function testExamDetails($examID) {
-    echo "testing exam details($examID):</br>";
+function testExamDetails(int $examID) {
+    echo "</br>testing exam details($examID):</br>";
 
     try {
         $opExamDetails = new ExamDetails();
 
         $id = $examID;
         $result = $opExamDetails->execute(
-            array('id' => $id), 'TGqj6WXMKKIo3dR+UQ3M'
+            array('id' => $id), "TGqj6WXMKKIo3dR+UQ3M"
         );
 
         echo "results: </br>";
@@ -29,6 +29,7 @@ function testExamDetails($examID) {
     } catch (Exception $e) {
         echo "exception - $e</br>";
     }
+    echo "</br>";
 }
 
 testExamDetails(14);

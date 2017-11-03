@@ -14,6 +14,8 @@ function callAjax(requestType, operationName, operationParameters, callBackFunct
     parameters: operationParameters
   };
 
+  //fullParameters = _.extend(fullParameters, getAccountProperties());
+
   var callParameters = {
     type: requestType.toUpperCase(),
     url: 'api/api.php',
@@ -27,6 +29,24 @@ function callAjax(requestType, operationName, operationParameters, callBackFunct
   $.ajax(callParameters);
 }
 
+function getAccountProperties() {
+  var comments = $('head').getComments();
+  var properties = {};
+  _.each(comments, function(currentComment) {
+    currentComment = currentComment.trim();
+    if(currentComment.length) {
+      var keyVal = currentComment.split(':');
+      properties[keyVal[0].trim()] = keyVal[1].trim();
+    }
+  })
+  return properties;
+}
+
+function getAccountProperty(propertyName) {
+  var properties = getAccountProperties();
+  if(_.has(properties, propertyName)) { return properties[propertyName] };
+  return null;
+}
 // </editor-fold>
 
 // <editor-fold desc="Operation Functions">
@@ -143,6 +163,29 @@ function getStudentState(studentId) {
   callAjax('get', 'StudentState', params, callbacks);
 }
 
+function registerForExam(examId) {
+  var params = {
+    "examID": examId,
+    "studentID": getAccountProperty('accountID')
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'RegisterForExam', params, callbacks);
+}
+
 //</editor-fold>
 
 //<editor-fold desc="DOM Utility Functions">
@@ -257,6 +300,13 @@ function activeLink () {
   }).first();
 
   targetUrl.parent().addClass('active').parent().parent().addClass('active');
+}
+
+$.fn.getComments = function () {
+  // https://stackoverflow.com/questions/22562113/read-html-comments-with-js-or-jquery
+  return this.contents().map(function () {
+    if (this.nodeType === 8) return this.nodeValue;
+  }).get();
 }
 
 function setDateTimePicker (elementId, options, selectDateCallbackFunction) {

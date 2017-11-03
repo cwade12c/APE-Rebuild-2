@@ -45,6 +45,7 @@ function getExamsQuery(int $state, int $type)
         "SELECT `id` FROM `exams` "
         . " WHERE (%s && %s)", $stateStr, $typeStr
     );
+
     $sql = executeQuery($query, $params);
 
     return getQueryResults($sql);
@@ -89,10 +90,10 @@ function buildFindExamStateString(int $state)
     } elseif ($state == GET_EXAMS_OPEN) {
         // states: hidden, open, closed, in progress
         // push comparisons
-        array_push($stateCompares, "`state` == :state_hidden");
-        array_push($stateCompares, "`state` == :state_open");
-        array_push($stateCompares, "`state` == :state_closed");
-        array_push($stateCompares, "`state` == :state_in_progress");
+        array_push($stateCompares, "`state` = :state_hidden");
+        array_push($stateCompares, "`state` = :state_open");
+        array_push($stateCompares, "`state` = :state_closed");
+        array_push($stateCompares, "`state` = :state_in_progress");
         // push params for states
         array_push(
             $params, array(':state_hidden', EXAM_STATE_HIDDEN, PDO::PARAM_INT)
@@ -107,10 +108,27 @@ function buildFindExamStateString(int $state)
             $params,
             array(':state_in_progress', EXAM_STATE_IN_PROGRESS, PDO::PARAM_INT)
         );
+    } elseif ($state == GET_EXAMS_UPCOMING) {
+        // states: open, closed, in progress
+        // push comparisons
+        array_push($stateCompares, "`state` = :state_open");
+        array_push($stateCompares, "`state` = :state_closed");
+        array_push($stateCompares, "`state` = :state_in_progress");
+        // push params for states
+        array_push(
+            $params, array(':state_open', EXAM_STATE_OPEN, PDO::PARAM_INT)
+        );
+        array_push(
+            $params, array(':state_closed', EXAM_STATE_CLOSED, PDO::PARAM_INT)
+        );
+        array_push(
+            $params,
+            array(':state_in_progress', EXAM_STATE_IN_PROGRESS, PDO::PARAM_INT)
+        );
     } elseif ($state == GET_EXAMS_GRADING) {
         // grading state
         // comparison
-        array_push($stateCompares, "`state` == :state_grading");
+        array_push($stateCompares, "`state` = :state_grading");
         // params
         array_push(
             $params,
@@ -119,7 +137,7 @@ function buildFindExamStateString(int $state)
     } elseif ($state == GET_EXAMS_FINALIZING) {
         // finalizing state
         // comparison
-        array_push($stateCompares, "`state` == :state_finalizing");
+        array_push($stateCompares, "`state` = :state_finalizing");
         // params
         array_push(
             $params,

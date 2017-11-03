@@ -230,7 +230,7 @@ abstract class Operation
     {
         $this->validateExecutionArguments($args);
         $this->executeValidations($args);
-        $this->validateAccountID($accountID, $args);
+        $this->validateAccountID($args, $accountID);
 
         $errorMessage = null;
 
@@ -256,7 +256,7 @@ abstract class Operation
      *
      * @param string|null $accountID
      */
-    private function validateAccountID(string $accountID, array $args)
+    private function validateAccountID(array $args, string $accountID = null )
     {
         if (!$this->requiredLogin) {
             return;

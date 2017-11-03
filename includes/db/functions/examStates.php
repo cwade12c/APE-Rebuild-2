@@ -210,6 +210,64 @@ function doesExamStateAllowGraderRemovals(int $state)
     }
 }
 
+
+/**
+ * Check if given exam state is valid (recognized in 'db/constants.php')
+ *
+ * @param int $state
+ *
+ * @return bool
+ */
+function isExamStateValid(int $state)
+{
+    switch ($state) {
+        // valid states
+        case EXAM_STATE_HIDDEN:
+        case EXAM_STATE_OPEN:
+        case EXAM_STATE_CLOSED:
+        case EXAM_STATE_IN_PROGRESS:
+        case EXAM_STATE_GRADING:
+        case EXAM_STATE_FINALIZING:
+        case EXAM_STATE_ARCHIVED:
+            return true;
+        // invalid states
+        case EXAM_STATE_INVALID:
+        default:
+            return false;
+    }
+}
+
+/**
+ * Get string representation of exam state
+ *
+ * @param int $state
+ *
+ * @return string
+ */
+function examStateToString(int $state)
+{
+    switch ($state) {
+        // valid states
+        case EXAM_STATE_HIDDEN:
+            return 'hidden';
+        case EXAM_STATE_OPEN:
+            return 'open';
+        case EXAM_STATE_CLOSED:
+            return 'closed';
+        case EXAM_STATE_IN_PROGRESS:
+            return 'in progress';
+        case EXAM_STATE_GRADING:
+            return 'grading';
+        case EXAM_STATE_FINALIZING:
+            return 'finalizing';
+        case EXAM_STATE_ARCHIVED:
+            return 'archived';
+        case EXAM_STATE_INVALID:
+        default:
+            return 'invalid';
+    }
+}
+
 /**
  * Get string for student state
  *
@@ -261,31 +319,6 @@ function canStudentStateRegister(int $state)
     }
 }
 
-/**
- * Check if given exam state is valid (recognized in 'db/constants.php')
- *
- * @param int $state
- *
- * @return bool
- */
-function isExamStateValid(int $state)
-{
-    switch ($state) {
-        // valid states
-        case EXAM_STATE_HIDDEN:
-        case EXAM_STATE_OPEN:
-        case EXAM_STATE_CLOSED:
-        case EXAM_STATE_IN_PROGRESS:
-        case EXAM_STATE_GRADING:
-        case EXAM_STATE_FINALIZING:
-        case EXAM_STATE_ARCHIVED:
-            return true;
-        // invalid states
-        case EXAM_STATE_INVALID:
-        default:
-            return false;
-    }
-}
 
 /**
  * Refresh all exams

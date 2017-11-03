@@ -44,10 +44,11 @@ define('MAX_FAILURES_BEFORE_BLOCK', 3);
 /* for get exams functions */
 define('GET_EXAMS_ALL', 0);
 define('GET_EXAMS_OPEN', 1);
-define('GET_EXAMS_GRADING', 2);
-define('GET_EXAMS_FINALIZING', 3);
-define('GET_EXAMS_NON_ARCHIVED', 4);
-define('GET_EXAMS_ARCHIVED', 5);
+define('GET_EXAMS_UPCOMING', 2);
+define('GET_EXAMS_GRADING', 3);
+define('GET_EXAMS_FINALIZING', 4);
+define('GET_EXAMS_NON_ARCHIVED', 5);
+define('GET_EXAMS_ARCHIVED', 6);
 
 /* for type of exams to grab */
 define('GET_EXAMS_TYPE_BOTH', 0);

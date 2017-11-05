@@ -12,6 +12,8 @@ class IsGraderAssigned extends Operation
 {
     function __construct()
     {
+        parent::setAllowedAccountTypes(array(ACCOUNT_TYPE_GRADER));
+
         parent::registerExecution(array($this, 'isGraderAssigned'));
 
         parent::registerParameter('graderID', 'string');

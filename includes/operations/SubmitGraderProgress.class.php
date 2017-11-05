@@ -8,13 +8,13 @@
  * @package        APE_includes
  * @subpackage     Operation
  */
-class GraderProgress extends Operation
+class SubmitGraderProgress extends Operation
 {
     function __construct()
     {
         parent::setAllowedAccountTypes(array(ACCOUNT_TYPE_GRADER));
 
-        parent::registerExecution(array($this, 'getGraderProgress'));
+        parent::registerExecution(array($this, 'submit'));
 
         parent::registerParameter('graderID', 'string');
         parent::registerParameter('examID', 'integer');
@@ -37,6 +37,14 @@ class GraderProgress extends Operation
             'validateGraderAssignedToExamCategory',
             array('graderID', 'examID', 'categoryID')
         );
+        parent::registerValidation(
+            'validateGraderNotSubmitted',
+            array('graderID', 'examID', 'categoryID')
+        );
+        parent::registerValidation(
+            'validateGraderCategorySet',
+            array('graderID', 'examID', 'categoryID')
+        );
     }
 
     public function execute(array $args, string $accountID = null)
@@ -44,20 +52,11 @@ class GraderProgress extends Operation
         return parent::execute($args, $accountID);
     }
 
-    public static function getGraderProgress(string $graderID, int $examID,
+    public static function submit(string $graderID, int $examID,
         int $categoryID
     ) {
-        $grades = getGraderCategoryGrades($examID, $categoryID, $graderID);
-        $grades = array_map(
-            function ($row) {
-                $row['studentID'] = hashAccountID($row['studentID']);
-                if ($row['points'] == null) {
-                    $row['points'] = -1;
-                }
-                return $row;
-            }, $grades
-        );
+        setGraderCategorySubmitted($examID, $categoryID, $graderID, true);
 
-        return array('grades' => $grades);
+        return array('success' => true);
     }
 }

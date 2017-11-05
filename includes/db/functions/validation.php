@@ -676,6 +676,84 @@ function validateCategoryID(int $id)
 }
 
 /**
+ * Validate the grader is assigned to the exam
+ *
+ * @param string $graderID
+ * @param int    $examID
+ *
+ * @return bool
+ */
+function validateGraderAssignedToExam(string $graderID, int $examID)
+{
+    if (!isGraderAssignedExam($graderID, $examID)) {
+        throw new InvalidArgumentException(
+            "Grader($graderID) not assigned to exam($examID)"
+        );
+    }
+    return true;
+}
+
+/**
+ * Validate the grader is assigned to the exam category
+ *
+ * @param string $graderID
+ * @param int    $examID
+ * @param int    $categoryID
+ *
+ * @return bool
+ */
+function validateGraderAssignedToExamCategory(string $graderID, int $examID,
+    int $categoryID
+) {
+    if (!isGraderAssignedExamCategory($graderID, $examID, $categoryID)) {
+        throw new InvalidArgumentException(
+            "Grader($graderID) not assigned to exam($examID) category($categoryID)"
+        );
+    }
+    return true;
+}
+
+/**
+ * Validate the grader has not submitted for exam category
+ *
+ * @param string $graderID
+ * @param int    $examID
+ * @param int    $categoryID
+ *
+ * @return bool
+ */
+function validateGraderNotSubmitted(string $graderID, int $examID,
+    int $categoryID
+) {
+    if (isGraderCategorySubmitted($examID, $categoryID, $graderID)) {
+        throw new InvalidArgumentException(
+            "Grader($graderID) has submitted grades for exam($examID) category($categoryID)"
+        );
+    }
+    return true;
+}
+
+/**
+ * Validate grader has set grades for exam category
+ *
+ * @param string $graderID
+ * @param int    $examID
+ * @param int    $categoryID
+ *
+ * @return bool
+ */
+function validateGraderCategorySet(string $graderID, int $examID,
+    int $categoryID
+) {
+    if (!allGraderCategoryPointsSet($examID, $categoryID, $graderID)) {
+        throw new InvalidArgumentException(
+            "Grader($graderID) has not set all student grades for exam($examID) category($categoryID)"
+        );
+    }
+    return true;
+}
+
+/**
  * Validate the value is valid registration state
  *
  * @param int $state Registration state
@@ -1196,6 +1274,17 @@ function validateIsString($value, string $msg)
 function validateIsInt($value, string $msg)
 {
     validateIsType($value, 'integer', $msg);
+}
+
+/**
+ * Validate the value is type of array
+ *
+ * @param        $value
+ * @param string $msg
+ */
+function validateIsArray($value, string $msg)
+{
+    validateIsType($value, 'array', $msg);
 }
 
 /**

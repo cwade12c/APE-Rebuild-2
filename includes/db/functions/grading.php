@@ -386,6 +386,8 @@ function getGraderCategoryGrades(int $examID, int $categoryID, string $graderID)
 function setGraderCategoryGrades(int $examID, int $categoryID, string $graderID,
     array $points
 ) {
+    startTransaction();
+
     foreach ($points as $studentPoints) {
         $studentID = $studentPoints['studentID'];
         $pointsSet = $studentPoints['points'];
@@ -397,6 +399,8 @@ function setGraderCategoryGrades(int $examID, int $categoryID, string $graderID,
             $examID, $categoryID, $graderID, $studentID, $pointsSet
         );
     }
+
+    commit();
 }
 
 /**

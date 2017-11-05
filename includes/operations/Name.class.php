@@ -13,7 +13,7 @@ class Name extends Operation
 
     public function execute(array $args, string $accountID = null)
     {
-        parent::execute($args, $accountID);
+        return parent::execute($args, $accountID);
     }
 
     private static function name(string $name)

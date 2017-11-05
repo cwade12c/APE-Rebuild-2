@@ -30,6 +30,7 @@ class UpcomingExams extends Operation
 
         foreach($upcomingIDs as $examID) {
             $info = ExamDetails::getExamInformation($examID);
+            $info['id'] = $examID;
             array_push($exams, $info);
         }
 

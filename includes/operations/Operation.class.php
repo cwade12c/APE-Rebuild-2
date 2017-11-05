@@ -181,15 +181,16 @@ abstract class Operation
      * @param array|string $parameterNames names of parameters to pass
      */
     protected function registerAccountIDValidation($validationCallable,
-        $parameterNames
+        $parameterNames = null
     ) {
         if (!is_callable($validationCallable, false, $callableName)) {
             throw new InvalidArgumentException('Callable given is not valid');
         }
 
-        if (gettype($parameterNames) == 'string'){
-            $temp = array(strtolower($parameterNames));
-            $parameterNames = $temp;
+        if ($parameterNames == null) {
+            $parameterNames = array();
+        }else if (gettype($parameterNames) == 'string'){
+            $parameterNames = array(strtolower($parameterNames));
         }else if (gettype($parameterNames) == 'array') {
             $parameterNames = array_map('strtolower', $parameterNames);
         }else{
@@ -209,6 +210,12 @@ abstract class Operation
         $this->accountValidationParameterNames = $parameterNames;
     }
 
+    /**
+     * Register the function to execute
+     * can be a function name or array(object, name) for a method (static)
+     *
+     * @param $executionCallable
+     */
     protected function registerExecution($executionCallable)
     {
         if (!is_callable($executionCallable, false, $callableName)) {
@@ -307,7 +314,7 @@ abstract class Operation
             return;
         }
 
-        $validateArgs = array();
+        $validateArgs = array($accountID);
         foreach ($this->accountValidationParameterNames as $parameterName) {
             array_push($validateArgs, $args[$parameterName]);
         }

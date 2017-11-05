@@ -113,8 +113,6 @@ function updateCategoryPoints(int $id, int $points)
  */
 function getCategoryInfo(int $id)
 {
-    // TODO: check if id exists?
-    // return (name, points)
     return getCategoryInfoQuery($id);
 }
 

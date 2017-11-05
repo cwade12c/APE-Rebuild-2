@@ -19,10 +19,16 @@ class RegisterForExam extends Operation
         parent::registerParameter("examID", "integer");
         parent::registerParameter("studentID", "string");
 
+        parent::registerAccountIDValidation(
+            'validateAccountsMatch', 'studentID'
+        );
+
         parent::registerValidation("validateExamIDExists", "examID");
         parent::registerValidation("validateExamAllowsRegistration", "examID");
         parent::registerValidation("validateExamRoomAvailable", "examID");
-        parent::registerValidation("validateRegistrationStateIs", array("studentID", "state"));
+        parent::registerValidation(
+            "validateRegistrationStateIs", array("studentID", "state")
+        );
     }
 
     public function execute(array $args, string $accountID = null)
@@ -32,15 +38,6 @@ class RegisterForExam extends Operation
 
     public static function registerForExam(int $examID, string $studentID)
     {
-        global $params;
-        if($studentID != $params['id']) {
-            throw new Exception("The account you are trying to register does not belong to you!");
-        }
-
-        $result = getQueryResult(registerStudentForExam($examID, $studentID));
-
-        return array(
-            'registrationSuccess' => $result
-        );
+        registerStudentForExam($examID, $studentID);
     }
 }

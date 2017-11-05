@@ -9,4 +9,5 @@ require_once INCLUDES_PATH . 'operations/RegisterStudentForExam.class.php';
 require_once INCLUDES_PATH . 'operations/UpcomingExams.class.php';
 require_once INCLUDES_PATH . 'operations/StudentUpcomingExams.class.php';
 require_once INCLUDES_PATH . 'operations/GraderAssignedExams.class.php';
+require_once INCLUDES_PATH . 'operations/GraderAssignedExamDetails.class.php';
 require_once INCLUDES_PATH . 'operations/MyExams.class.php';

@@ -4,3 +4,5 @@ StudentState
 RegisterForExam
 RegisterStudentForExam
 MyExams
+GraderAssignedExams
+GraderAssignedExamDetails

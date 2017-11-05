@@ -17,7 +17,7 @@ class ExamDetails extends Operation
 
         parent::registerExecution(array($this, 'getExamInformation'));
 
-        parent::registerParameter("id", 'integer');
+        parent::registerParameter('id', 'integer');
         parent::registerValidation('validateExamIDExists', 'id');
     }
 
@@ -52,7 +52,8 @@ class ExamDetails extends Operation
             'locationName' => $locationName,
             'totalSeats' => $totalSeats,
             'takenSeats' => $seatsTaken,
-            'state' => $info['state']
+            'state' => $info['state'],
+            'stateStr' => examStateToString($info['state'])
         );
     }
 }

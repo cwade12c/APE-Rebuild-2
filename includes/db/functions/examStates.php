@@ -210,6 +210,7 @@ function doesExamStateAllowGraderRemovals(int $state)
     }
 }
 
+
 /**
  * Check if given exam state is valid (recognized in 'db/constants.php')
  *
@@ -235,6 +236,89 @@ function isExamStateValid(int $state)
             return false;
     }
 }
+
+/**
+ * Get string representation of exam state
+ *
+ * @param int $state
+ *
+ * @return string
+ */
+function examStateToString(int $state)
+{
+    switch ($state) {
+        // valid states
+        case EXAM_STATE_HIDDEN:
+            return 'hidden';
+        case EXAM_STATE_OPEN:
+            return 'open';
+        case EXAM_STATE_CLOSED:
+            return 'closed';
+        case EXAM_STATE_IN_PROGRESS:
+            return 'in progress';
+        case EXAM_STATE_GRADING:
+            return 'grading';
+        case EXAM_STATE_FINALIZING:
+            return 'finalizing';
+        case EXAM_STATE_ARCHIVED:
+            return 'archived';
+        case EXAM_STATE_INVALID:
+        default:
+            return 'invalid';
+    }
+}
+
+/**
+ * Get string for student state
+ *
+ * @param int $state
+ *
+ * @return string
+ */
+function studentStateToString(int $state)
+{
+    switch($state) {
+        case STUDENT_STATE_READY:
+            return "Ready";
+        case STUDENT_STATE_REGISTERED:
+            return "Registered";
+        case STUDENT_STATE_PASSED:
+            return "Passed";
+        case STUDENT_STATE_BLOCKED:
+            return "Blocked";
+        case STUDENT_STATE_BLOCKED_BYPASSED:
+            return "Block Bypassed";
+        case STUDENT_STATE_BLOCKED_IGNORED:
+            return "Block Ignored";
+        case STUDENT_STATE_INVALID:
+        default:
+            return "Invalid";
+    }
+}
+
+/**
+ * Check if given student state can register for an exam
+ *
+ * @param int $state
+ *
+ * @return bool
+ */
+function canStudentStateRegister(int $state)
+{
+    switch($state) {
+        case STUDENT_STATE_READY:
+        case STUDENT_STATE_BLOCKED_BYPASSED:
+            return true;
+        case STUDENT_STATE_REGISTERED:
+        case STUDENT_STATE_PASSED:
+        case STUDENT_STATE_BLOCKED:
+        case STUDENT_STATE_BLOCKED_IGNORED:
+        case STUDENT_STATE_INVALID:
+        default:
+            return false;
+    }
+}
+
 
 /**
  * Refresh all exams

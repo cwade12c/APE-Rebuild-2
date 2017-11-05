@@ -86,7 +86,7 @@ function getExamsGrading(int $type = GET_EXAMS_TYPE_BOTH)
 }
 
 /**
- * Get list of IDs for upcoming exams (states hidden, open, closed, in progress)
+ * Get list of IDs for upcoming exams (states open, closed, in progress)
  *
  * @param int $type for the type of exam (both, regular, in class)
  *                  use get exam type values defined in db 'constants.php'
@@ -94,6 +94,19 @@ function getExamsGrading(int $type = GET_EXAMS_TYPE_BOTH)
  * @return mixed
  */
 function getExamsUpcoming(int $type = GET_EXAMS_TYPE_BOTH)
+{
+    return getExamsExtended(GET_EXAMS_UPCOMING, $type);
+}
+
+/**
+ * Get list of IDs for open exams (states hidden, open, closed, in progress)
+ *
+ * @param int $type for the type of exam (both, regular, in class)
+ *                  use get exam type values defined in db 'constants.php'
+ *
+ * @return mixed
+ */
+function getExamsOpen(int $type = GET_EXAMS_TYPE_BOTH)
 {
     return getExamsExtended(GET_EXAMS_OPEN, $type);
 }
@@ -111,14 +124,9 @@ function getExamsUpcoming(int $type = GET_EXAMS_TYPE_BOTH)
  */
 function getExamsExtended(int $state, int $type)
 {
-    // TODO: validate state and type valid
     $exams = getExamsQuery($state, $type);
 
-    // build array as only a list of IDs
-    $fncGetExamID = function (array $exam) {
-        return $exam['id'];
-    };
-    $ids = array_map($fncGetExamID, $exams);
+    $ids = array_column($exams, 'id');
 
     return $ids;
 }

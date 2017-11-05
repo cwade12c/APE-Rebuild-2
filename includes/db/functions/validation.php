@@ -459,6 +459,19 @@ function validateAccountIDAndType(string $accountID, int $type)
 }
 
 /**
+ * Check if given student ID can register for an exam
+ *
+ * @param string $studentID
+ */
+function validateStudentIDCanRegister(string $studentID)
+{
+    $state = getRegistrationState($studentID);
+    if (!canStudentStateRegister($state)) {
+        throw new InvalidArgumentException('Student state cannot register');
+    }
+}
+
+/**
  * Check if student ID is valid
  *
  * @param string $studentID Student ID
@@ -469,6 +482,7 @@ function validateStudentID(string $studentID)
 {
     validateAccountExists($studentID);
     validateAccountHasType($studentID, ACCOUNT_TYPE_STUDENT);
+    return true;
 }
 
 /**

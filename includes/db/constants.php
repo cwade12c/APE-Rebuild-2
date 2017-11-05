@@ -44,10 +44,11 @@ define('MAX_FAILURES_BEFORE_BLOCK', 3);
 /* for get exams functions */
 define('GET_EXAMS_ALL', 0);
 define('GET_EXAMS_OPEN', 1);
-define('GET_EXAMS_GRADING', 2);
-define('GET_EXAMS_FINALIZING', 3);
-define('GET_EXAMS_NON_ARCHIVED', 4);
-define('GET_EXAMS_ARCHIVED', 5);
+define('GET_EXAMS_UPCOMING', 2);
+define('GET_EXAMS_GRADING', 3);
+define('GET_EXAMS_FINALIZING', 4);
+define('GET_EXAMS_NON_ARCHIVED', 5);
+define('GET_EXAMS_ARCHIVED', 6);
 
 /* for type of exams to grab */
 define('GET_EXAMS_TYPE_BOTH', 0);
@@ -92,7 +93,7 @@ define('REGEX_ACCOUNT_ID', '/^00\d{6}$/');
 /* regex string for a temp ID */
 define(
     'REGEX_TEMP_ID',
-    '/^' . TEMP_ID_PREFIX . '[a-zA-Z0-9+/=]{' . TEMP_ID_BYTES_GENERATED . '}$/'
+    '/^' . TEMP_ID_PREFIX . '[a-zA-Z0-9+\/=]{' . TEMP_ID_BYTES_GENERATED . '}$/'
 );
 
 /* Error codes for exceptions */

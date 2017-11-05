@@ -18,6 +18,10 @@ class MyExams extends Operation
 
         parent::registerParameter("studentID", "string");
 
+        parent::registerAccountIDValidation(
+            'validateAccountsMatch', 'studentID'
+        );
+
         parent::registerValidation("validateStudentID", "studentID");
     }
 
@@ -28,11 +32,6 @@ class MyExams extends Operation
 
     public static function getMyExams(string $studentID)
     {
-        global $params;
-        if($studentID != $params['id']) {
-            throw new Exception("The account you are trying to get exams for does not belong to you!");
-        }
-
         $myExams = getExamsRegisteredFor($studentID);
         $registered = array();
         $grading = array();

@@ -304,6 +304,10 @@ abstract class Operation
      */
     private function validateAccountType(int $type)
     {
+        if (empty($this->allowedAccountTypes)) {
+            return;
+        }
+
         foreach ($this->allowedAccountTypes as $allowedType) {
             if (typeHas($type, $allowedType)) {
                 return;
@@ -340,21 +344,10 @@ abstract class Operation
         }
 
         try {
-            $exceptionMessage = "False from user validation";
-
-            if (gettype($validateArgs) == "string") {
-                if (!call_user_func($this->accountValidation, $validateArgs)) {
-                    throw new InvalidArgumentException(
-                        $exceptionMessage
-                    );
-                }
-            }
-            else { //the type is an array
-                if (!call_user_func_array($this->accountValidation, $validateArgs)) {
-                    throw new InvalidArgumentException(
-                        $exceptionMessage
-                    );
-                }
+            if (!call_user_func($this->accountValidation, $validateArgs)) {
+                throw new InvalidArgumentException(
+                    'False from user validation'
+                );
             }
         } catch (Exception $e) {
             throw new InvalidArgumentException(

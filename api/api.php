@@ -40,7 +40,7 @@ function processRequest($args)
             );
         } catch (Exception $exception) {
             $response["success"] = false;
-            $response["message"] = $exception;
+            $response["message"] = convertToError($exception);
         }
 
         sendResponse(
@@ -62,6 +62,14 @@ function isValidOperation($operation)
     }
 
     return $result;
+}
+
+function convertToError(string $message) {
+    $message = str_replace("Exception:", "", $message);
+    if(strpos($message, "in /var")) {
+        $message = substr($message, 0, strpos($message, "in /var"));
+    }
+    return trim($message);
 }
 
 function sendResponse($data = array(), bool $success = null,

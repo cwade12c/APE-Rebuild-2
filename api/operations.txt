@@ -2,3 +2,4 @@ name
 ExamDetails
 StudentState
 RegisterForExam
+RegisterStudentForExam

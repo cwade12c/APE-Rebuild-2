@@ -51,7 +51,7 @@ function getAccountProperty(propertyName) {
 
 // <editor-fold desc="Operation Functions">
 
-function registerStudentForExam(examId, studentId, examObj) {
+/*function registerStudentForExam(examId, studentId, examObj) {
   $.post("api/controllers/registerForExam.php", {examId: examId, studentId: studentId}).done(function (response) {
     if(response === '1') {
       notification('Successfully registered for the exam', 'success');
@@ -69,7 +69,7 @@ function registerStudentForExam(examId, studentId, examObj) {
       notification('Unable to register for the exam');
     }
   });
-}
+}*/
 
 function deregisterStudentForExam(examId, studentId, examObj) {
   $.post("api/controllers/deregisterForExam.php", {examId: examId, studentId: studentId}).done(function (response) {
@@ -184,6 +184,29 @@ function registerForExam(examId) {
   };
 
   callAjax('post', 'RegisterForExam', params, callbacks);
+}
+
+function registerStudentForExam(examId, studentId) {
+  var params = {
+    "examID": examId,
+    "studentID": studentId
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'RegisterStudentForExam', params, callbacks);
 }
 
 //</editor-fold>

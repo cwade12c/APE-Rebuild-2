@@ -67,8 +67,6 @@ class MyExams extends Operation
                 foreach($categoryGradesResult as $categoryGradeInformation) {
                     $fullInformation = getCategoryInfo($categoryGradeInformation['categoryID']);
                     $fullInformation['grade'] = $categoryGradeInformation['grade'];
-                    $fullInformation['comment'] = getStudentCommentGrade($currentExamId,
-                        $categoryGradeInformation['categoryID'], $studentID);
 
                     array_push($categoryGrades, $fullInformation);
                 }

@@ -12,6 +12,7 @@
 abstract class Operation
 {
     private $parameters = array();
+    private $staticParameters = array();
     private $validations = array();
     private $requiredLogin = true;
     private $allowedAccountTypes = array();
@@ -57,10 +58,23 @@ abstract class Operation
     }
 
     /**
+     * Register a static parameter
+     *
+     * @param string $name
+     * @param        $value
+     */
+    protected function registerStaticParameter(string $name, $value)
+    {
+        $this->staticParameters[strtolower($name)] = $value;
+    }
+
+    /**
      * Register a validation necessary
      *
-     * @param array|string $fncName
+     * @param              $fncCallable
      * @param array|string $input parameter name, or array of names
+     *
+     * @internal param array|string $fncName
      */
     protected function registerValidation($fncCallable, $input)
     {
@@ -177,7 +191,7 @@ abstract class Operation
      * Note: the function will execute even if login is not required,
      * it should accept null values in that case.
      *
-     * @param mixed $validationCallable
+     * @param mixed        $validationCallable
      * @param array|string $parameterNames names of parameters to pass
      */
     protected function registerAccountIDValidation($validationCallable,
@@ -189,15 +203,19 @@ abstract class Operation
 
         if ($parameterNames == null) {
             $parameterNames = array();
-        }else if (gettype($parameterNames) == 'string'){
+        } elseif (gettype($parameterNames) == 'string') {
             $parameterNames = array(strtolower($parameterNames));
-        }else if (gettype($parameterNames) == 'array') {
+        } elseif (gettype($parameterNames) == 'array') {
             $parameterNames = array_map('strtolower', $parameterNames);
-        }else{
+        } else {
             throw new InvalidArgumentException('Invalid parameter names given');
         }
 
         $registeredParameterKeys = array_column($this->parameters, 'name');
+        $staticParameterKeys = array_keys($this->staticParameters);
+        $registeredParameterKeys = array_merge(
+            $registeredParameterKeys, $staticParameterKeys
+        );
         foreach ($parameterNames as $i => $name) {
             if (!in_array($name, $registeredParameterKeys)) {
                 throw new InvalidArgumentException(
@@ -231,7 +249,8 @@ abstract class Operation
      * @param array       $args      associate array of inputs
      * @param string|null $accountID ID of account requesting
      *
-     * @return array|Exception      response of operation execution
+     * @return array|Exception response of operation execution
+     * @throws Exception
      */
     public function execute(array $args, string $accountID = null)
     {
@@ -261,9 +280,10 @@ abstract class Operation
     /**
      * Helper method to validate an account ID executing an operation
      *
+     * @param array       $args
      * @param string|null $accountID
      */
-    private function validateAccountID(array $args, string $accountID = null )
+    private function validateAccountID(array $args, string $accountID = null)
     {
         if (!$this->requiredLogin) {
             return;
@@ -290,6 +310,10 @@ abstract class Operation
      */
     private function validateAccountType(int $type)
     {
+        if (empty($this->allowedAccountTypes)) {
+            return;
+        }
+
         foreach ($this->allowedAccountTypes as $allowedType) {
             if (typeHas($type, $allowedType)) {
                 return;
@@ -316,25 +340,24 @@ abstract class Operation
 
         $validateArgs = array($accountID);
         foreach ($this->accountValidationParameterNames as $parameterName) {
-            array_push($validateArgs, $args[$parameterName]);
+            if (isset($args[$parameterName])) {
+                array_push($validationArgs, $args[$parameterName]);
+            } elseif (isset($this->staticParameters[$parameterName])) {
+                array_push(
+                    $validationArgs, $this->staticParameters[$parameterName]
+                );
+            } else {
+                throw new LogicException(
+                    "Missing argument \"$parameterName\" for validation"
+                );
+            }
         }
 
         try {
-            $exceptionMessage = "False from user validation";
-
-            if (gettype($validateArgs) == "string") {
-                if (!call_user_func($this->accountValidation, $validateArgs)) {
-                    throw new InvalidArgumentException(
-                        $exceptionMessage
-                    );
-                }
-            }
-            else { //the type is an array
-                if (!call_user_func_array($this->accountValidation, $validateArgs)) {
-                    throw new InvalidArgumentException(
-                        $exceptionMessage
-                    );
-                }
+            if (!call_user_func($this->accountValidation, $validateArgs)) {
+                throw new InvalidArgumentException(
+                    'False from user validation'
+                );
             }
         } catch (Exception $e) {
             throw new InvalidArgumentException(
@@ -403,7 +426,17 @@ abstract class Operation
         foreach ($this->validations as $validation) {
             $validationArgs = array();
             foreach ($validation['input'] as $argName) {
-                array_push($validationArgs, $args[$argName]);
+                if (isset($args[$argName])) {
+                    array_push($validationArgs, $args[$argName]);
+                } elseif (isset($this->staticParameters[$argName])) {
+                    array_push(
+                        $validationArgs, $this->staticParameters[$argName]
+                    );
+                } else {
+                    throw new LogicException(
+                        "Missing argument \"$argName\" for validation"
+                    );
+                }
             }
 
             $name = $validation['fnc'];

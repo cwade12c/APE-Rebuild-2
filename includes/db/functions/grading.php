@@ -10,6 +10,33 @@
  */
 
 /**
+ * Check if grader assigned to exam
+ *
+ * @param string $graderID
+ * @param int    $examID
+ *
+ * @return bool
+ */
+function isGraderAssignedExam(string $graderID, int $examID)
+{
+    return isGraderAssignedExamQuery($graderID, $examID);
+}
+
+/**
+ * Check if grader assigned to exam category
+ *
+ * @param string $graderID
+ * @param int    $examID
+ * @param int    $categoryID
+ *
+ * @return bool
+ */
+function isGraderAssignedExamCategory(string $graderID, int $examID, int $categoryID)
+{
+    return isGraderAssignedExamCategoryQuery($graderID, $examID, $categoryID);
+}
+
+/**
  * Assign grader to exam/category
  *
  * @param int    $examID
@@ -18,11 +45,6 @@
  */
 function assignGrader(int $examID, int $categoryID, string $graderID)
 {
-    // TODO: validations
-    // validate exam ID, category ID
-    // validate exam state allows
-    // validate grader ID
-
     assignGraderQuery($examID, $categoryID, $graderID);
 
     $state = getExamState($examID);
@@ -40,13 +62,6 @@ function assignGrader(int $examID, int $categoryID, string $graderID)
  */
 function unAssignGrader(int $examID, int $categoryID, string $graderID)
 {
-    // TODO: validations
-    // validate exam ID, category ID
-    // validate grader ID
-    // validate assigned as grader to exam/category
-    // validate exam state allows
-    // validate exam grader limits ?
-
     deleteAssignedGraderExamCategoryQuery($examID, $categoryID, $graderID);
 
     $state = getExamState($examID);
@@ -63,13 +78,6 @@ function unAssignGrader(int $examID, int $categoryID, string $graderID)
  */
 function unAssignGraderFromExam(int $examID, string $graderID)
 {
-    // TODO: validations
-    // validate exam ID
-    // validate grader ID
-    // validate assigned as grader to exam
-    // validate exam state allows
-    // validate exam grader limits ?
-
     deleteAssignedGraderExamQuery($examID, $graderID);
 
     $state = getExamState($examID);
@@ -196,9 +204,6 @@ function getAssignedExams(string $graderID)
  */
 function getAssignedExamCategories(string $graderID, int $examID)
 {
-    // validate grader ID
-    // validate grader assigned to exam
-
     $results = getAssignedExamCategoriesQuery($examID, $graderID);
     $categories = array_map(
         function ($row) {
@@ -282,11 +287,6 @@ function insertGraderDuringGrading(int $examID, int $categoryID,
  */
 function insertStudentForGrading(int $examID, string $studentID)
 {
-    // TODO: validation
-    // validate exam id
-    // validate student ID
-    // validate student registered for exam
-
     $gradersCategories = getAssignedExamGradersCategories($examID);
     insertStudentToGraderCategoryGradesQuery(
         $examID, $studentID, $gradersCategories
@@ -304,8 +304,6 @@ function insertStudentForGrading(int $examID, string $studentID)
  */
 function resetAllSubmitted(int $examID)
 {
-    // TODO: validation
-
     resetAllSubmittedQuery($examID);
 }
 
@@ -321,11 +319,6 @@ function resetAllSubmitted(int $examID)
 function isGraderCategorySubmitted(int $examID, int $categoryID,
     string $graderID
 ) {
-    // TODO: validation
-    // validate exam id, category id
-    // validate grader id
-    // validate grader assigned
-
     return isGraderCategorySubmittedQuery($examID, $categoryID, $graderID);
 }
 
@@ -339,11 +332,6 @@ function isGraderCategorySubmitted(int $examID, int $categoryID,
  */
 function isGraderExamSubmitted(int $examID, string $graderID)
 {
-    // TODO: validation
-    // validate exam ID
-    // validate grader ID
-    // validate grader assigned
-
     return isGraderExamSubmittedQuery($examID, $graderID);
 }
 
@@ -712,6 +700,22 @@ function getStudentCategoryGrade(int $examID, int $categoryID, string $studentID
     // TODO: validations
 
     return getStudentCategoryGradeQuery($examID, $categoryID, $studentID);
+}
+
+/**
+ * Get comment for a student/category
+ *
+ * @param int    $examID
+ * @param int    $categoryID
+ * @param string $studentID
+ *
+ * @return string
+ */
+function getStudentCommentGrade(int $examID, int $categoryID, string $studentID
+) {
+    // TODO: validations
+
+    return getStudentCategoryCommentQuery($examID, $categoryID, $studentID);
 }
 
 /**

@@ -668,8 +668,9 @@ function validateAdminID(string $adminID)
  */
 function validateCategoryID(int $id)
 {
-    // TODO: validate category id, exists
-    /// throw exception if not valid
+    if (!categoryExists($id)) {
+        throw new InvalidArgumentException("Category ID($id) does not exist");
+    }
 
     return true;
 }
@@ -1057,6 +1058,68 @@ function validateExamCategories(int $passingGrade, array $categories)
 }
 
 /**
+ * Validate an exam has the following category assigned
+ *
+ * @param int $examID
+ * @param int $categoryID
+ *
+ * @return bool
+ */
+function validateExamCategory(int $examID, int $categoryID)
+{
+    $categories = getExamCategories($examID);
+    $categoryIDs = array_column($categories, 'id');
+
+    if (!in_array($categoryID, $categoryIDs)) {
+        throw new InvalidArgumentException(
+            "Exam($examID) does not have the category($categoryID) assigned"
+        );
+    }
+
+    return true;
+}
+
+/**
+ * Validate the state of an exam is an allowed value
+ *
+ * @param int       $examID
+ * @param int|array $stateExpected can be an exam state or list of states
+ *
+ * @return bool
+ */
+function validateExamStateIs(int $examID, $stateExpected)
+{
+    $statesAllowed = null;
+    $type = gettype($stateExpected);
+    if ($type == 'integer') {
+        $statesAllowed = array($stateExpected);
+    } else {
+        if ($type == 'array') {
+            $statesAllowed = $stateExpected;
+        } else {
+            throw new InvalidArgumentException(
+                "Type of states expected not valid ($type)"
+            );
+        }
+    }
+
+    foreach ($stateExpected as $state) {
+        if (!isExamStateValid($state)) {
+            throw new InvalidArgumentException(
+                'state given to expect is not valid'
+            );
+        }
+    }
+
+    $state = getExamState($examID);
+    if (!in_array($state, $statesAllowed)) {
+        throw new InvalidArgumentException("Exam state not allowed ($state)");
+    }
+
+    return true;
+}
+
+/**
  * Validate that the following account ID matches the current exam
  *
  * @param string $accountIDA
@@ -1064,14 +1127,13 @@ function validateExamCategories(int $passingGrade, array $categories)
  *
  * @return bool
  */
-function validateAccountsMatch(string $accountIDA, string $accountIDB) {
+function validateAccountsMatch(string $accountIDA, string $accountIDB)
+{
     if ($accountIDA != $accountIDB) {
         throw new InvalidArgumentException('Accounts do not match');
     }
     return true;
 }
-
-
 
 /**
  * Validate that no transaction is active

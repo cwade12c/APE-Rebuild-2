@@ -1,6 +1,10 @@
 <?php
 
 require_once INCLUDES_PATH . 'operations/Operation.class.php';
+require_once INCLUDES_PATH . 'operations/IsStudent.class.php';
+require_once INCLUDES_PATH . 'operations/IsGrader.class.php';
+require_once INCLUDES_PATH . 'operations/IsTeacher.class.php';
+require_once INCLUDES_PATH . 'operations/IsAdmin.class.php';
 require_once INCLUDES_PATH . 'operations/Name.class.php';
 require_once INCLUDES_PATH . 'operations/ExamDetails.class.php';
 require_once INCLUDES_PATH . 'operations/StudentState.class.php';

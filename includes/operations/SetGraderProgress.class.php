@@ -8,13 +8,13 @@
  * @package        APE_includes
  * @subpackage     Operation
  */
-class GraderProgress extends Operation
+class SetGraderProgress extends Operation
 {
     function __construct()
     {
         parent::setAllowedAccountTypes(array(ACCOUNT_TYPE_GRADER));
 
-        parent::registerExecution(array($this, 'getGraderProgress'));
+        parent::registerExecution(array($this, 'setGraderProgress'));
 
         parent::registerParameter('graderID', 'string');
         parent::registerParameter('examID', 'integer');
@@ -52,7 +52,7 @@ class GraderProgress extends Operation
         return parent::execute($args, $accountID);
     }
 
-    public static function getGraderProgress(string $graderID, int $examID,
+    public static function setGraderProgress(string $graderID, int $examID,
         int $categoryID, array $grades
     ) {
         $studentMap = self::buildStudentIDMap($examID);

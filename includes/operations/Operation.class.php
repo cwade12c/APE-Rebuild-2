@@ -320,10 +320,21 @@ abstract class Operation
         }
 
         try {
-            if (!call_user_func($this->accountValidation, $validateArgs)) {
-                throw new InvalidArgumentException(
-                    'False from user validation'
-                );
+            $exceptionMessage = "False from user validation";
+
+            if (gettype($validateArgs) == "string") {
+                if (!call_user_func($this->accountValidation, $validateArgs)) {
+                    throw new InvalidArgumentException(
+                        $exceptionMessage
+                    );
+                }
+            }
+            else { //the type is an array
+                if (!call_user_func_array($this->accountValidation, $validateArgs)) {
+                    throw new InvalidArgumentException(
+                        $exceptionMessage
+                    );
+                }
             }
         } catch (Exception $e) {
             throw new InvalidArgumentException(

@@ -10,6 +10,56 @@
  */
 
 /**
+ * Query to check if grader assigned to exam
+ *
+ * @param string $graderID
+ * @param int    $examID
+ *
+ * @return mixed
+ */
+function isGraderAssignedExamQuery(string $graderID, int $examID)
+{
+    $query
+        = "SELECT EXISTS ("
+        . "SELECT `grader_id` FROM `assigned_graders` WHERE "
+        . " `grader_id`=:graderID AND `exam_id`=:examID "
+        . ")";
+    $sql = executeQuery(
+        $query, array(array(':graderID', $graderID, PDO::PARAM_STR),
+                      array(':examID', $examID, PDO::PARAM_INT))
+    );
+
+    return getQueryResult($sql);
+}
+
+/**
+ * Query to check if grader assigned to exam/category
+ *
+ * @param string $graderID
+ * @param int    $examID
+ * @param int    $categoryID
+ *
+ * @return mixed
+ */
+function isGraderAssignedExamCategoryQuery(string $graderID, int $examID,
+    int $categoryID
+) {
+    $query
+        = "SELECT EXISTS ("
+        . "SELECT `grader_id` FROM `assigned_graders` WHERE "
+        . " `grader_id`=:graderID AND `exam_id`=:examID "
+        . " AND `category_id`=:categoryID"
+        . ")";
+    $sql = executeQuery(
+        $query, array(array(':graderID', $graderID, PDO::PARAM_STR),
+                      array(':examID', $examID, PDO::PARAM_INT),
+                      array(':categoryID', $categoryID, PDO::PARAM_INT))
+    );
+
+    return getQueryResult($sql);
+}
+
+/**
  * Query to assign a grader to exam/category
  *
  * @param int    $examID
@@ -735,6 +785,32 @@ function getStudentCategoryGradeQuery(int $examID, int $categoryID,
 ) {
     $query
         = "SELECT `points` "
+        . " FROM `student_category_grades` "
+        . " WHERE `exam_id` = :examID AND `category_id` = :categoryID "
+        . " AND `student_id` = :studentID";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':categoryID', $categoryID, PDO::PARAM_INT),
+                      array(':studentID', $studentID, PDO::PARAM_STR))
+    );
+
+    return getQueryResult($sql);
+}
+
+/**
+ * Query to get the comment for a student/category
+ *
+ * @param int    $examID
+ * @param int    $categoryID
+ * @param string $studentID
+ *
+ * @return string
+ */
+function getStudentCategoryCommentQuery(int $examID, int $categoryID,
+    string $studentID
+) {
+    $query
+        = "SELECT `comment` "
         . " FROM `student_category_grades` "
         . " WHERE `exam_id` = :examID AND `category_id` = :categoryID "
         . " AND `student_id` = :studentID";

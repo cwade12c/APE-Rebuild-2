@@ -3,3 +3,4 @@ ExamDetails
 StudentState
 RegisterForExam
 RegisterStudentForExam
+MyExams

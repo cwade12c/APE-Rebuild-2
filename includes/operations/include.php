@@ -7,3 +7,4 @@ require_once INCLUDES_PATH . 'operations/StudentState.class.php';
 require_once INCLUDES_PATH . 'operations/RegisterForExam.class.php';
 require_once INCLUDES_PATH . 'operations/RegisterStudentForExam.class.php';
 require_once INCLUDES_PATH . 'operations/UpcomingExams.class.php';
+require_once INCLUDES_PATH . 'operations/MyExams.class.php';

@@ -12,6 +12,7 @@
 abstract class Operation
 {
     private $parameters = array();
+    private $staticParameters = array();
     private $validations = array();
     private $requiredLogin = true;
     private $allowedAccountTypes = array();
@@ -54,6 +55,17 @@ abstract class Operation
                 'optional' => false
             )
         );
+    }
+
+    /**
+     * Register a static parameter
+     *
+     * @param string $name
+     * @param        $value
+     */
+    protected function registerStaticParameter(string $name, $value)
+    {
+        $this->staticParameters[strtolower($name)] = $value;
     }
 
     /**
@@ -198,6 +210,8 @@ abstract class Operation
         }
 
         $registeredParameterKeys = array_column($this->parameters, 'name');
+        $staticParameterKeys = array_keys($this->staticParameters);
+        $registeredParameterKeys = array_merge($registeredParameterKeys, $staticParameterKeys);
         foreach ($parameterNames as $i => $name) {
             if (!in_array($name, $registeredParameterKeys)) {
                 throw new InvalidArgumentException(
@@ -316,7 +330,13 @@ abstract class Operation
 
         $validateArgs = array($accountID);
         foreach ($this->accountValidationParameterNames as $parameterName) {
-            array_push($validateArgs, $args[$parameterName]);
+            if (isset($args[$parameterName])) {
+                array_push($validationArgs, $args[$parameterName]);
+            }else if(isset($this->staticParameters[$parameterName])){
+                array_push($validationArgs, $this->staticParameters[$parameterName]);
+            }else{
+                throw new LogicException("Missing argument \"$parameterName\" for validation");
+            }
         }
 
         try {
@@ -392,7 +412,13 @@ abstract class Operation
         foreach ($this->validations as $validation) {
             $validationArgs = array();
             foreach ($validation['input'] as $argName) {
-                array_push($validationArgs, $args[$argName]);
+                if (isset($args[$argName])) {
+                    array_push($validationArgs, $args[$argName]);
+                }else if(isset($this->staticParameters[$argName])){
+                    array_push($validationArgs, $this->staticParameters[$argName]);
+                }else{
+                    throw new LogicException("Missing argument \"$argName\" for validation");
+                }
             }
 
             $name = $validation['fnc'];

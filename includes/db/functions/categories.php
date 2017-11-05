@@ -18,8 +18,7 @@
  */
 function categoryNameExists(string $name)
 {
-    // TODO: populate
-    return false;
+    return categoryNameExistsQuery($name);
 }
 
 /**
@@ -31,8 +30,7 @@ function categoryNameExists(string $name)
  */
 function categoryExists(int $id)
 {
-    // TODO: populate
-    return false;
+    return categoryExistsQuery($id);
 }
 
 /**
@@ -43,11 +41,7 @@ function categoryExists(int $id)
  */
 function createCategory(string $name, int $points)
 {
-    // TODO: check if name exists
-    // TODO: check that name is valid (size, regex)
-    // TODO: check for success?
     createCategoryQuery($name, $points);
-    // TODO: return id, PDO->lastInsertID() ?
 }
 
 /**
@@ -57,8 +51,6 @@ function createCategory(string $name, int $points)
  */
 function deleteCategory(int $id)
 {
-    // TODO: check if id exists
-    // TODO: check for success?
     deleteCategoryQuery($id);
 }
 

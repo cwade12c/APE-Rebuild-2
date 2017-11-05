@@ -500,3 +500,15 @@ function doesMinimumNumberOfAdminsExist()
     return getNumberOfAccountsByTypeQuery(ACCOUNT_TYPE_ADMIN)
         == MINIMUM_NUMBER_OF_ADMINS;
 }
+
+/**
+ * Hash a given account ID according to the set algorithm
+ *
+ * @param string $accountID
+ *
+ * @return string
+ */
+function hashAccountID(string $accountID)
+{
+    return hash(ACCOUNT_HASH_ALG, $accountID);
+}

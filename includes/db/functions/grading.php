@@ -715,22 +715,6 @@ function getStudentCategoryGrade(int $examID, int $categoryID, string $studentID
 }
 
 /**
- * Get comment for a student/category
- *
- * @param int    $examID
- * @param int    $categoryID
- * @param string $studentID
- *
- * @return string
- */
-function getStudentCommentGrade(int $examID, int $categoryID, string $studentID
-) {
-    // TODO: validations
-
-    return getStudentCategoryCommentQuery($examID, $categoryID, $studentID);
-}
-
-/**
  * Get student exam grade
  *
  * @param int    $examID

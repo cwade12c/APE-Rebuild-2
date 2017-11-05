@@ -748,32 +748,6 @@ function getStudentCategoryGradeQuery(int $examID, int $categoryID,
 }
 
 /**
- * Query to get the comment for a student/category
- *
- * @param int    $examID
- * @param int    $categoryID
- * @param string $studentID
- *
- * @return string
- */
-function getStudentCategoryCommentQuery(int $examID, int $categoryID,
-                                      string $studentID
-) {
-    $query
-        = "SELECT `comment` "
-        . " FROM `student_category_grades` "
-        . " WHERE `exam_id` = :examID AND `category_id` = :categoryID "
-        . " AND `student_id` = :studentID";
-    $sql = executeQuery(
-        $query, array(array(':examID', $examID, PDO::PARAM_INT),
-            array(':categoryID', $categoryID, PDO::PARAM_INT),
-            array(':studentID', $studentID, PDO::PARAM_STR))
-    );
-
-    return getQueryResult($sql);
-}
-
-/**
  * Query to get exam grade for a student/exam
  *
  * @param int    $examID

@@ -220,8 +220,6 @@ function getAssignedExamCategories(string $graderID, int $examID)
  */
 function getAssignedExamsCategories(string $graderID)
 {
-    // validate grader ID
-
     $assigned = array();
 
     $exams = getAssignedExams($graderID);
@@ -358,8 +356,6 @@ function isGraderExamSubmitted(int $examID, string $graderID)
  */
 function isExamSubmitted(int $examID)
 {
-    // TODO: validation
-
     return isExamSubmittedQuery($examID);
 }
 
@@ -376,11 +372,6 @@ function isExamSubmitted(int $examID)
  */
 function getGraderCategoryGrades(int $examID, int $categoryID, string $graderID)
 {
-    // TODO: validation
-    // validate exam ID, category ID
-    // validate grader ID
-    // validate grader assigned
-
     $results = getGraderCategoryGradesQuery($examID, $categoryID, $graderID);
     $categoryPoints = array_map(
         function ($row) {
@@ -407,12 +398,6 @@ function getGraderCategoryGrades(int $examID, int $categoryID, string $graderID)
 function setGraderCategoryGrades(int $examID, int $categoryID, string $graderID,
     array $points
 ) {
-    // TODO: validation
-    // validate exam ID, category ID
-    // validate grader ID
-    // validate grader assigned
-    // validate points array
-
     foreach ($points as $studentPoints) {
         $studentID = $studentPoints['studentID'];
         $pointsSet = $studentPoints['points'];
@@ -438,8 +423,6 @@ function setGraderCategoryGrades(int $examID, int $categoryID, string $graderID,
 function setStudentCategoryPoints(int $examID, int $categoryID,
     string $graderID, string $studentID, int $points
 ) {
-    // TODO: validation
-
     if ($points < 0) {
         $points = null;
     }
@@ -460,8 +443,6 @@ function setStudentCategoryPoints(int $examID, int $categoryID,
 function setGraderCategorySubmitted(int $examID, int $categoryID,
     string $graderID, bool $submit
 ) {
-    // TODO: validation
-
     setGraderCategorySubmittedQuery($examID, $categoryID, $graderID, $submit);
 }
 
@@ -477,8 +458,6 @@ function setGraderCategorySubmitted(int $examID, int $categoryID,
 function allGraderCategoryPointsSet(int $examID, int $categoryID,
     string $graderID
 ) {
-    // TODO: validation
-
     return allGraderCategoryPointsSetQuery($examID, $categoryID, $graderID);
 }
 
@@ -490,8 +469,6 @@ function allGraderCategoryPointsSet(int $examID, int $categoryID,
  */
 function createStudentCategoryGrades(int $examID)
 {
-    // TODO: validation ?
-
     $students = getExamRegistrations($examID);
     $categories = getExamCategories($examID);
     $categoryIDs = array_column($categories, "id");
@@ -566,8 +543,6 @@ function determineCategoryGrade(array $points)
 function createStudentCategoryGradeEntry(int $examID, int $categoryID,
     string $studentID, int $points, bool $conflict
 ) {
-    // TODO: validation
-
     createStudentCategoryGradeQuery(
         $examID, $categoryID, $studentID, $points, $conflict
     );
@@ -584,8 +559,6 @@ function createStudentCategoryGradeEntry(int $examID, int $categoryID,
 function resolveStudentCategoryGradeConflict(int $examID, int $categoryID,
     string $studentID, int $grade
 ) {
-    // TODO: validation
-
     setStudentCategoryGradeQuery(
         $examID, $categoryID, $studentID, $grade, false
     );
@@ -601,8 +574,6 @@ function resolveStudentCategoryGradeConflict(int $examID, int $categoryID,
  */
 function conflictsExist(int $examID)
 {
-    // TODO: validation
-
     return conflictsExistQuery($examID);
 }
 
@@ -617,8 +588,6 @@ function conflictsExist(int $examID)
  */
 function getConflicts(int $examID)
 {
-    // TODO: validation
-
     $results = getConflictsQuery($examID);
 
     $studentIDsToCategories = array();

@@ -28,6 +28,8 @@
  * @param int      $locationID
  * @param bool     $inClass
  * @param string   $teacherID
+ *
+ * @return bool
  */
 function validateExamAttributes(DateTime $start, DateTime $cutoff, int $minutes,
     int $passingGrade, array $categories, int $locationID,
@@ -40,6 +42,7 @@ function validateExamAttributes(DateTime $start, DateTime $cutoff, int $minutes,
         validateTeacherID($teacherID);
     }
     validateExamCategories($passingGrade, $categories);
+    return true;
 }
 
 /**
@@ -49,6 +52,8 @@ function validateExamAttributes(DateTime $start, DateTime $cutoff, int $minutes,
  *
  * @param DateTime $start  start datetime
  * @param DateTime $cutoff cutoff datetime
+ *
+ * @return bool
  */
 function validateDates(DateTime $start, DateTime $cutoff)
 {
@@ -75,6 +80,8 @@ function validateDates(DateTime $start, DateTime $cutoff)
     }
 
     // TODO: max time difference (between start and cutoff, config) ?
+
+    return true;
 }
 
 /**
@@ -82,6 +89,8 @@ function validateDates(DateTime $start, DateTime $cutoff)
  * Throws argument exceptions if there is an issue
  *
  * @param int $length exam length
+ *
+ * @return bool
  */
 function validateExamLength(int $length)
 {
@@ -89,6 +98,8 @@ function validateExamLength(int $length)
         throw new InvalidArgumentException('Invalid exam length: ' . $length);
     }
     // TODO: check config max length value (minutes)
+
+    return true;
 }
 
 /**
@@ -97,12 +108,16 @@ function validateExamLength(int $length)
  * Does not check if location w/ ID exists
  *
  * @param int $id location ID
+ *
+ * @return bool
  */
 function validateLocationID(int $id)
 {
     if ($id <= 0) {
         throw new InvalidArgumentException('Invalid location id: ' . $id);
     }
+
+    return true;
 }
 
 /**
@@ -110,12 +125,16 @@ function validateLocationID(int $id)
  * Throws argument exception if there is an issue
  *
  * @param int $id location ID
+ *
+ * @return bool
  */
 function validateLocationIDExists(int $id)
 {
     if (!locationExists($id)) {
         throw new InvalidArgumentException("Location({$id}) does not exist");
     }
+
+    return true;
 }
 
 /**
@@ -124,11 +143,15 @@ function validateLocationIDExists(int $id)
  * Does not check if location w/ name exists
  *
  * @param string $name location name
+ *
+ * @return bool
  */
 function validateLocationName(string $name)
 {
     // TODO: character set validation, whitespace
     // TODO: string length validation
+
+    return true;
 }
 
 /**
@@ -136,12 +159,16 @@ function validateLocationName(string $name)
  * Throws argument exception if there is an issue.
  *
  * @param string $name Location name
+ *
+ * @return bool
  */
 function validateLocationNameDoesNotExist(string $name)
 {
     if (locationNameExists($name)) {
         throw new InvalidArgumentException("Location(\"{$name}\") exists");
     }
+
+    return true;
 }
 
 /**
@@ -151,6 +178,8 @@ function validateLocationNameDoesNotExist(string $name)
  *
  * @param int    $id   Location ID
  * @param string $name New/current location name
+ *
+ * @return bool
  */
 function validateLocationNameChange(int $id, string $name)
 {
@@ -158,6 +187,8 @@ function validateLocationNameChange(int $id, string $name)
     if (strcmp($name, $info['name']) != 0) {
         validateLocationNameDoesNotExist($name);
     }
+
+    return true;
 }
 
 /**
@@ -166,12 +197,16 @@ function validateLocationNameChange(int $id, string $name)
  * Does not check if room w/ ID exists
  *
  * @param int $id room ID
+ *
+ * @return bool
  */
 function validateRoomID(int $id)
 {
     if ($id <= 0) {
         throw new InvalidArgumentException('Invalid room id: ' . $id);
     }
+
+    return true;
 }
 
 /**
@@ -179,12 +214,16 @@ function validateRoomID(int $id)
  * Throws argument exception if there is an issue
  *
  * @param int $id room ID
+ *
+ * @return bool
  */
 function validateRoomIDExists(int $id)
 {
     if (!roomExists($id)) {
         throw new InvalidArgumentException("Room({$id}) does not exist");
     }
+
+    return true;
 }
 
 /**
@@ -193,11 +232,15 @@ function validateRoomIDExists(int $id)
  * Does not check if room w/ name exists
  *
  * @param string $name room name
+ *
+ * @return bool
  */
 function validateRoomName(string $name)
 {
     // TODO: character set validation, whitespace
     // TODO: string length validation
+
+    return true;
 }
 
 /**
@@ -205,12 +248,16 @@ function validateRoomName(string $name)
  * Throws argument exception if there is an issue.
  *
  * @param string $name Room name
+ *
+ * @return bool
  */
 function validateRoomNameDoesNotExist(string $name)
 {
     if (roomNameExists($name)) {
         throw new InvalidArgumentException("Room(\"{$name}\") exists");
     }
+
+    return true;
 }
 
 /**
@@ -221,6 +268,8 @@ function validateRoomNameDoesNotExist(string $name)
  *
  * @param int    $id
  * @param string $name
+ *
+ * @return bool
  */
 function validateRoomNameChange(int $id, string $name)
 {
@@ -228,6 +277,8 @@ function validateRoomNameChange(int $id, string $name)
     if (strcmp($name, $info['name']) != 0) {
         validateRoomNameDoesNotExist($name);
     }
+
+    return true;
 }
 
 /**
@@ -235,12 +286,16 @@ function validateRoomNameChange(int $id, string $name)
  * Throws argument exception if there is an issue
  *
  * @param int $seats
+ *
+ * @return bool
  */
 function validateSeatCount(int $seats)
 {
     if ($seats <= 0) {
         throw new InvalidArgumentException("Invalid seat count({$seats})");
     }
+
+    return true;
 }
 
 /**
@@ -254,28 +309,38 @@ function validateSeatCount(int $seats)
  *                              'id' => room id,
  *                              'seats' => overridden number of seats
  *                              )
+ *
+ * @return bool
  */
 function validateLocationRooms(int $seatsReserved, int $limitedSeats,
     array $rooms
 ) {
     // TODO: populate
+
+    return true;
 }
 
 /**
  * Validate it is safe to delete the given room
  *
  * @param int $id Room ID
+ *
+ * @return bool
  */
 function validateRoomIDSafeDelete(int $id)
 {
     validateRoomIDExists($id);
     // TODO: populate
+
+    return true;
 }
 
 /**
  * Validate it is safe to edit the room to given seat count
  *
  * @param int $id
+ *
+ * @return bool
  */
 function validateRoomIDSafeEdit(int $id, int $seats)
 {
@@ -285,12 +350,16 @@ function validateRoomIDSafeEdit(int $id, int $seats)
     // TODO: populate
     // really only want to check if lowering the seat amount
     // then checking the currently assigned seats
+
+    return true;
 }
 
 /**
  * Checks if account ID is valid
  *
  * @param string $id
+ *
+ * @return bool
  */
 function validateAccountID(string $id)
 {
@@ -299,6 +368,7 @@ function validateAccountID(string $id)
             "Account ID is not a valid format", ERROR_CODE_ARG
         );
     }
+    return true;
 }
 
 /**
@@ -306,6 +376,7 @@ function validateAccountID(string $id)
  *
  * @param string $id
  *
+ * @return bool
  * @throws InvalidArgumentException
  */
 function validateAccountExists(string $id)
@@ -316,6 +387,7 @@ function validateAccountExists(string $id)
             "Account ID does not exist", ERROR_CODE_ARG
         );
     }
+    return true;
 }
 
 /**
@@ -323,6 +395,8 @@ function validateAccountExists(string $id)
  * and the account exists
  *
  * @param string $id
+ *
+ * @return bool
  */
 function validateTempExists(string $id)
 {
@@ -332,6 +406,7 @@ function validateTempExists(string $id)
         );
     }
     validateAccountExists($id);
+    return true;
 }
 
 /**
@@ -340,6 +415,7 @@ function validateTempExists(string $id)
  * @param string $id
  * @param int    $type
  *
+ * @return bool
  * @throws InvalidArgumentException
  */
 function validateAccountHasType(string $id, int $type)
@@ -349,6 +425,7 @@ function validateAccountHasType(string $id, int $type)
             "Account ID({$id}) does not have type({$type})", ERROR_CODE_ARG
         );
     }
+    return true;
 }
 
 /**
@@ -359,6 +436,7 @@ function validateAccountHasType(string $id, int $type)
  * @param string|null $lastName
  * @param string|null $email
  *
+ * @return bool
  * @throws  InvalidArgumentException
  */
 function validateTempStudentFields(string $firstName = null,
@@ -380,6 +458,8 @@ function validateTempStudentFields(string $firstName = null,
     if (!is_null($email)) {
         validateAccountEmail($email);
     }
+
+    return true;
 }
 
 /**
@@ -390,6 +470,7 @@ function validateTempStudentFields(string $firstName = null,
  * @param string $lastName
  * @param string $email
  *
+ * @return bool
  * @throws InvalidArgumentException
  */
 function validateAccountFields(string $id, string $firstName, string $lastName,
@@ -399,6 +480,7 @@ function validateAccountFields(string $id, string $firstName, string $lastName,
     validateAccountName("first", $firstName);
     validateAccountName("last", $lastName);
     validateAccountEmail($email);
+    return true;
 }
 
 /**
@@ -408,6 +490,7 @@ function validateAccountFields(string $id, string $firstName, string $lastName,
  * @param string $identifier Identifier for error messages
  * @param string $name
  *
+ * @return bool
  * @throws InvalidArgumentException
  */
 function validateAccountName(string $identifier, string $name)
@@ -418,6 +501,8 @@ function validateAccountName(string $identifier, string $name)
     }
 
     // TODO: name validation
+
+    return true;
 }
 
 /**
@@ -425,6 +510,7 @@ function validateAccountName(string $identifier, string $name)
  *
  * @param string $email
  *
+ * @return bool
  * @throws InvalidArgumentException
  */
 function validateAccountEmail(string $email)
@@ -435,6 +521,8 @@ function validateAccountEmail(string $email)
     }
 
     // TODO: email validation
+
+    return true;
 }
 
 /**
@@ -443,6 +531,8 @@ function validateAccountEmail(string $email)
  *
  * @param string $accountID
  * @param int    $type
+ *
+ * @return bool
  */
 function validateAccountIDAndType(string $accountID, int $type)
 {
@@ -456,12 +546,15 @@ function validateAccountIDAndType(string $accountID, int $type)
             "Account ID w/ temp ID must have a temp type."
         );
     }
+    return true;
 }
 
 /**
  * Check if given student ID can register for an exam
  *
  * @param string $studentID
+ *
+ * @return bool
  */
 function validateStudentIDCanRegister(string $studentID)
 {
@@ -469,6 +562,7 @@ function validateStudentIDCanRegister(string $studentID)
     if (!canStudentStateRegister($state)) {
         throw new InvalidArgumentException('Student state cannot register');
     }
+    return true;
 }
 
 /**
@@ -476,6 +570,7 @@ function validateStudentIDCanRegister(string $studentID)
  *
  * @param string $studentID Student ID
  *
+ * @return bool
  * @throws InvalidArgumentException
  */
 function validateStudentID(string $studentID)
@@ -490,12 +585,14 @@ function validateStudentID(string $studentID)
  *
  * @param string $tempID
  *
+ * @return bool
  * @throws InvalidArgumentException
  */
 function validateTempID(string $tempID)
 {
     validateAccountExists($tempID);
     validateAccountHasType($tempID, ACCOUNT_TYPE_TEMP);
+    return true;
 }
 
 /**
@@ -503,14 +600,15 @@ function validateTempID(string $tempID)
  *
  * @param string $tempStudentID
  *
+ * @return bool
  * @throws InvalidArgumentException
  */
 function validateTempStudentID(string $tempStudentID)
 {
     validateTempExists($tempStudentID);
-
     validateAccountHasType($tempStudentID, ACCOUNT_TYPE_TEMP);
     validateAccountHasType($tempStudentID, ACCOUNT_TYPE_STUDENT);
+    return true;
 }
 
 /**
@@ -518,12 +616,14 @@ function validateTempStudentID(string $tempStudentID)
  *
  * @param string $teacherID
  *
+ * @return bool
  * @throws InvalidArgumentException
  */
 function validateTeacherID(string $teacherID)
 {
     validateAccountExists($teacherID);
     validateAccountHasType($teacherID, ACCOUNT_TYPE_TEACHER);
+    return true;
 }
 
 /**
@@ -531,12 +631,15 @@ function validateTeacherID(string $teacherID)
  *
  * @param string $graderID
  *
+ * @return bool
  * @throws InvalidArgumentException
  */
 function validateGraderID(string $graderID)
 {
     validateAccountExists($graderID);
     validateAccountHasType($graderID, ACCOUNT_TYPE_GRADER);
+
+    return true;
 }
 
 /**
@@ -544,12 +647,15 @@ function validateGraderID(string $graderID)
  *
  * @param string $adminID
  *
+ * @return bool
  * @throws InvalidArgumentException
  */
 function validateAdminID(string $adminID)
 {
     validateAccountExists($adminID);
     validateAccountHasType($adminID, ACCOUNT_TYPE_ADMIN);
+
+    return true;
 }
 
 /**
@@ -557,11 +663,15 @@ function validateAdminID(string $adminID)
  * Throws argument exception if there is an issue
  *
  * @param int $id
+ *
+ * @return bool
  */
 function validateCategoryID(int $id)
 {
     // TODO: validate category id, exists
     /// throw exception if not valid
+
+    return true;
 }
 
 /**
@@ -569,15 +679,19 @@ function validateCategoryID(int $id)
  *
  * @param int $state Registration state
  *
+ * @return bool
  * @throws InvalidArgumentException
  */
 function validateRegistrationState(int $state)
 {
     if (!isValidRegistrationState($state)) {
         throw new InvalidArgumentException(
+
             "Invalid registration state({$state})"
         );
     }
+
+    return true;
 }
 
 /**
@@ -585,6 +699,8 @@ function validateRegistrationState(int $state)
  *
  * @param string $studentID
  * @param int    $state
+ *
+ * @return bool
  */
 function validateRegistrationStateIs(string $studentID, int $state)
 {
@@ -597,6 +713,8 @@ function validateRegistrationStateIs(string $studentID, int $state)
             )
         );
     }
+
+    return true;
 }
 
 /**
@@ -605,6 +723,8 @@ function validateRegistrationStateIs(string $studentID, int $state)
  *
  * @param int    $examID    Exam ID
  * @param string $studentID Student ID
+ *
+ * @return bool
  */
 function validateRegistration(int $examID, string $studentID)
 {
@@ -636,6 +756,8 @@ function validateRegistration(int $examID, string $studentID)
             )
         );
     }
+
+    return true;
 }
 
 /**
@@ -644,6 +766,8 @@ function validateRegistration(int $examID, string $studentID)
  *
  * @param int    $examID    Exam ID
  * @param string $studentID Student ID
+ *
+ * @return bool
  */
 function validateDeregistration(int $examID, string $studentID)
 {
@@ -672,6 +796,8 @@ function validateDeregistration(int $examID, string $studentID)
             )
         );
     }
+
+    return true;
 }
 
 /**
@@ -679,6 +805,8 @@ function validateDeregistration(int $examID, string $studentID)
  * Throws argument exception if the exam state does not allow registration
  *
  * @param int $examID Exam ID
+ *
+ * @return bool
  */
 function validateExamAllowsRegistration(int $examID)
 {
@@ -693,6 +821,8 @@ function validateExamAllowsRegistration(int $examID)
             )
         );
     }
+
+    return true;
 }
 
 /**
@@ -701,6 +831,8 @@ function validateExamAllowsRegistration(int $examID)
  *
  * @param string $studentID Student ID
  * @param int    $examID    Exam ID
+ *
+ * @return bool
  */
 function validateStudentIsRegisteredFor(string $studentID, int $examID)
 {
@@ -712,6 +844,8 @@ function validateStudentIsRegisteredFor(string $studentID, int $examID)
             )
         );
     }
+
+    return true;
 }
 
 /**
@@ -721,6 +855,8 @@ function validateStudentIsRegisteredFor(string $studentID, int $examID)
  * @param int $examID
  * @param int $roomID
  * @param int $seat
+ *
+ * @return bool
  */
 function validateExamRoomSeat(int $examID, int $roomID, int $seat)
 {
@@ -731,7 +867,7 @@ function validateExamRoomSeat(int $examID, int $roomID, int $seat)
         if ($room['id'] == $roomID) {
             if ($seat < $room['seats']) {
                 // is valid
-                return;
+                return true;
             } else {
                 // invalid seat number
                 throw new InvalidArgumentException(
@@ -758,10 +894,14 @@ function validateExamRoomSeat(int $examID, int $roomID, int $seat)
  * Throws InvalidArgumentException if there is an issue
  *
  * @param int $examID
+ *
+ * @return bool
  */
 function validateExamRoomAvailable(int $examID)
 {
     // TODO: populate
+
+    return true;
 }
 
 /**
@@ -770,10 +910,14 @@ function validateExamRoomAvailable(int $examID)
  *
  * @param int $examID Exam ID
  * @param int $roomID Room ID
+ *
+ * @return bool
  */
 function validateExamHasRoom(int $examID, int $roomID)
 {
     // TODO: populate
+
+    return true;
 }
 
 /**
@@ -781,6 +925,8 @@ function validateExamHasRoom(int $examID, int $roomID)
  * Throws InvalidArgumentException if there is an issue
  *
  * @param int $examID Exam ID
+ *
+ * @return bool
  */
 function validateExamLocationAvailable(int $examID)
 {
@@ -790,6 +936,8 @@ function validateExamLocationAvailable(int $examID)
             sprintf("Exam(%d) has no location available", $examID)
         );
     }
+
+    return true;
 }
 
 /**
@@ -798,6 +946,8 @@ function validateExamLocationAvailable(int $examID)
  *
  * @param int    $examID    Exam ID
  * @param string $studentID Student ID
+ *
+ * @return bool
  */
 function validateExamSeatAssigned(int $examID, string $studentID)
 {
@@ -810,6 +960,8 @@ function validateExamSeatAssigned(int $examID, string $studentID)
             )
         );
     }
+
+    return true;
 }
 
 /**
@@ -817,6 +969,8 @@ function validateExamSeatAssigned(int $examID, string $studentID)
  * Throws argument exception if there is an issue
  *
  * @param int $id
+ *
+ * @return bool
  */
 function validateExamID(int $id)
 {
@@ -825,6 +979,8 @@ function validateExamID(int $id)
             sprintf("Exam ID(%d) is not a valid value", $id)
         );
     }
+
+    return true;
 }
 
 /**
@@ -832,6 +988,8 @@ function validateExamID(int $id)
  * Throws argument exception if there is an issue
  *
  * @param int $id Exam ID
+ *
+ * @return bool
  */
 function validateExamIDExists(int $id)
 {
@@ -850,6 +1008,8 @@ function validateExamIDExists(int $id)
  *
  * @param int   $passingGrade
  * @param array $categories
+ *
+ * @return bool
  */
 function validateExamCategories(int $passingGrade, array $categories)
 {
@@ -893,7 +1053,25 @@ function validateExamCategories(int $passingGrade, array $categories)
         );
     }
 
+    return true;
 }
+
+/**
+ * Validate that the following account ID matches the current exam
+ *
+ * @param string $accountIDA
+ * @param string $accountIDB
+ *
+ * @return bool
+ */
+function validateAccountsMatch(string $accountIDA, string $accountIDB) {
+    if ($accountIDA != $accountIDB) {
+        throw new InvalidArgumentException('Accounts do not match');
+    }
+    return true;
+}
+
+
 
 /**
  * Validate that no transaction is active
@@ -923,6 +1101,8 @@ function validateInTransaction()
  *
  * @param array $arr
  * @param array $keys
+ *
+ * @return bool
  */
 function validateKeysExist(array $arr, array $keys)
 {
@@ -931,6 +1111,7 @@ function validateKeysExist(array $arr, array $keys)
             throw new InvalidArgumentException("Key '{$key}' does not exist");
         }
     }
+    return true;
 }
 
 /**

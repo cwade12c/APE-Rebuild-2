@@ -12,9 +12,13 @@ class RegisterStudentForExam extends Operation
 {
     function __construct()
     {
-        parent::setAllowedAccountTypes(array(ACCOUNT_TYPE_TEACHER, ACCOUNT_TYPE_ADMIN));
+        parent::setAllowedAccountTypes(
+            array(ACCOUNT_TYPE_TEACHER, ACCOUNT_TYPE_ADMIN)
+        );
 
-        parent::registerExecution(array($this, "registerStudentForExamAsProxy"));
+        parent::registerExecution(
+            array($this, "registerStudentForExamAsProxy")
+        );
 
         parent::registerParameter("examID", "integer");
         parent::registerParameter("studentID", "string");
@@ -22,7 +26,9 @@ class RegisterStudentForExam extends Operation
         parent::registerValidation("validateExamIDExists", "examID");
         parent::registerValidation("validateExamAllowsRegistration", "examID");
         parent::registerValidation("validateExamRoomAvailable", "examID");
-        parent::registerValidation("validateRegistrationStateIs", array("studentID", "state"));
+        parent::registerValidation(
+            "validateRegistrationStateIs", array("studentID", "state")
+        );
     }
 
     public function execute(array $args, string $accountID = null)
@@ -30,12 +36,9 @@ class RegisterStudentForExam extends Operation
         return parent::execute($args, $accountID);
     }
 
-    public static function registerStudentForExamAsProxy(int $examID, string $studentID)
-    {
-        $result = getQueryResult(registerStudentForExam($examID, $studentID));
-
-        return array(
-            'registrationSuccess' => $result
-        );
+    public static function registerStudentForExamAsProxy(int $examID,
+        string $studentID
+    ) {
+        registerStudentForExam($examID, $studentID);
     }
 }

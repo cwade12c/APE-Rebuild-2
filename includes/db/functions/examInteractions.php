@@ -80,9 +80,6 @@ function getExamRegistrations(int $examID)
  */
 function isStudentRegisteredFor(int $examID, string $studentID)
 {
-    validateExamID($examID);
-    validateStudentID($studentID);
-
     return isStudentRegisteredForQuery($examID, $studentID);
 }
 
@@ -151,16 +148,14 @@ function setRegistrationState(string $studentID, int $state)
  */
 function registerStudentForExam(int $examID, string $studentID)
 {
-    validateStudentID($studentID);
-    validateRegistrationStateIs($studentID, STUDENT_STATE_READY);
-    validateExamAllowsRegistration($examID);
-    validateExamRoomAvailable($examID);
+    startTransaction();
 
     registerStudentForExamQuery($examID, $studentID);
 
     setRegistrationState($studentID, STUDENT_STATE_REGISTERED);
-}
 
+    commit();
+}
 /**
  * Force registers a student, bypasses any checks
  * Other than valid student/exam ID

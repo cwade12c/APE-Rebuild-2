@@ -43,35 +43,35 @@ function setSessionVariables()
             $_SESSION['firstName'] = 'Temporary';
             $_SESSION['lastName']  = 'Account';
             $_SESSION['userType']  = 'Temporary';
-            $_SESSION['ewuid']     = '111111';
+            $_SESSION['ewuid']     = '00111111';
             $_SESSION['email']     = 'temporary.a@eagles.ewu.edu';
         }
         else if(DEBUG_ROLE == ACCOUNT_TYPE_STUDENT) {
             $_SESSION['firstName'] = 'Student';
             $_SESSION['lastName']  = 'Account';
             $_SESSION['userType']  = 'Student';
-            $_SESSION['ewuid']     = '111113';
+            $_SESSION['ewuid']     = '00111113';
             $_SESSION['email']     = 'student.a@eagles.ewu.edu';
         }
         else if(DEBUG_ROLE == ACCOUNT_TYPE_GRADER) {
             $_SESSION['firstName'] = 'Grader';
             $_SESSION['lastName']  = 'Account';
             $_SESSION['userType']  = 'Grader';
-            $_SESSION['ewuid']     = '111128';
+            $_SESSION['ewuid']     = '00111128';
             $_SESSION['email']     = 'grader.a@eagles.ewu.edu';
         }
         else if(DEBUG_ROLE == ACCOUNT_TYPE_TEACHER) {
             $_SESSION['firstName'] = 'Teacher';
             $_SESSION['lastName']  = 'Account';
             $_SESSION['userType']  = 'Teacher';
-            $_SESSION['ewuid']     = '111131';
+            $_SESSION['ewuid']     = '00111131';
             $_SESSION['email']     = 'teacher.a@eagles.ewu.edu';
         }
         else if(DEBUG_ROLE == ACCOUNT_TYPE_ADMIN) {
             $_SESSION['firstName'] = 'Admin';
             $_SESSION['lastName']  = 'Account';
             $_SESSION['userType']  = 'Admin';
-            $_SESSION['ewuid']     = '111133';
+            $_SESSION['ewuid']     = '00111133';
             $_SESSION['email']     = 'admin.a@eagles.ewu.edu';
         }
     }

@@ -228,7 +228,30 @@ function getMyExams() {
     }
   };
 
-  callAjax('post', 'MyExams', params, callbacks);
+  callAjax('get', 'MyExams', params, callbacks);
+}
+
+function getGraderExamDetails(examId) {
+  var params = {
+    graderID: '' + getAccountProperty('accountID'),
+    examID: examId
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'GraderAssignedExamDetails', params, callbacks);
 }
 
 //</editor-fold>

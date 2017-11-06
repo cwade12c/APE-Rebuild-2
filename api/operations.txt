@@ -20,3 +20,4 @@ StudentState
 StudentUpcomingExams
 SubmitGraderProgress
 UpcomingExams
+UpdateRoom

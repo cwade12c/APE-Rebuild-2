@@ -30,8 +30,11 @@ class Location extends Operation
 
     public static function getLocation(int $id)
     {
+        $location = getLocationInformation($id);
+        $location['id'] = $id;
+
         return array(
-            'location' => getLocationInformation($id)
+            'location' => $location
         );
     }
 }

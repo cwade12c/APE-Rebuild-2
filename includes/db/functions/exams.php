@@ -216,8 +216,6 @@ function getExamState(int $id)
  */
 function getExamCategories(int $id)
 {
-    // TODO: validate id exists
-    // TODO: pull category id information? (name, default points)
     $categories = getExamCategoriesQuery($id);
 
     normalizeExamCategoriesArray($categories);

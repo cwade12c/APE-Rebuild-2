@@ -732,8 +732,6 @@ function getStudentCommentGrade(int $examID, int $categoryID, string $studentID
  */
 function getStudentExamGrade(int $examID, string $studentID)
 {
-    // TODO: validations
-
     return getStudentExamGradeQuery($examID, $studentID);
 }
 

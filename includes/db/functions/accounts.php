@@ -9,11 +9,18 @@
  * @subpackage     Database
  */
 
-/*
- * TODO: add more error checking to functions
- * Functions are meant to act as wrappers for the query functions
- * Need to catch and handle errors
- */
+function getAccountInfo(string $accountID)
+{
+    $info = getAccountInfoQuery($accountID);
+
+    $info['firstName'] = $info['f_name'];
+    unset($info['f_name']);
+
+    $info['lastName'] = $info['l_name'];
+    unset($info['l_name']);
+    
+    return $info;
+}
 
 /**
  * Check if given type has given permission

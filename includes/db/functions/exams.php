@@ -323,14 +323,7 @@ function createExamExtended(DateTime $start, DateTime $cutoff, int $minutes,
     int $passingGrade, array $categories, int $locationID,
     bool $inClass = false, string $teacherID = ""
 ) {
-    // validate arguments
-    validateExamAttributes(
-        $start, $cutoff, $minutes, $passingGrade, $categories, $locationID,
-        $inClass, $teacherID
-    );
-
-    // TODO: check for conflicting information w/ existing non-archived exams
-    // TODO: create transaction for query set
+    startTransaction();
 
     // create exam
     createExamQuery(
@@ -349,8 +342,7 @@ function createExamExtended(DateTime $start, DateTime $cutoff, int $minutes,
     // set exam state
     setExamState($id, EXAM_STATE_HIDDEN);
 
-    // TODO: validate success
-    // TODO: return exam id ?
+    commit();
 }
 
 // TODO: add/remove exam categories ?
@@ -569,36 +561,26 @@ function mapExamCategoriesBack(array $categoryIDs, array $categories)
     return $normalizedCategories;
 }
 
-// set state of exam (internal)
-/// handle transition ?
+/**
+ * Set exam state
+ *
+ * @param int $id
+ * @param int $state
+ */
 function setExamState(int $id, int $state)
 {
-    // TODO: validate id exists
-
-    // TODO: validate exam state function
-    if (!isExamStateValid($state)) {
-        throw new InvalidArgumentException('Illegal exam state: ' . $state);
-    }
-
-    // TODO: check if current state can be transitioned to given state
     setExamStateQuery($id, $state);
-
-    // TODO: check for success
 }
 
-// set exam location
+/**
+ * Set exam location
+ *
+ * @param int $id
+ * @param int $locationID
+ */
 function setExamLocation(int $id, int $locationID)
 {
-    // validate arguments
-    validateExamID($id);
-    validateLocationID($locationID);
-
-    // TODO: check if new location will cause issues with existing seating
     setExamLocationQuery($id, $locationID);
-
-    // TODO: reset seating?
-
-    // TODO: check for success
 }
 
 // TODO: have extended location check for setExamLocation() and updateExam()?

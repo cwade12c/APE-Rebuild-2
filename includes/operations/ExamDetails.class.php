@@ -47,6 +47,7 @@ class ExamDetails extends Operation
         }
 
         return array(
+            'examID' => $examID,
             'start' => $info['start'],
             'cutoff' => $info['cutoff'],
             'locationName' => $locationName,

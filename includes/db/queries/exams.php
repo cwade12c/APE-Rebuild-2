@@ -52,6 +52,33 @@ function getExamsQuery(int $state, int $type)
 }
 
 /**
+ * Query to get list of exam IDs for an in-class exam
+ *
+ * @param int    $state
+ * @param int    $type
+ * @param string $teacherID
+ *
+ * @return array
+ */
+function getInClassExamsQuery(int $state, int $type, string $teacherID)
+{
+    list($stateStr, $typeStr, $params) = buildFindExamsStateTypeStrings(
+        $state, $type
+    );
+    array_push($params, array(':teacherID', $teacherID, PDO::PARAM_STR));
+    $query = sprintf(
+        "SELECT `exams`.`id` FROM `exams` join `in_class_exams` ON( "
+        . " !`exams`.`is_regular` && `exams`.`id` = `in_class_exams`.`id` "
+        . " && `in_class_exams`.`teacher_id` = :teacherID) "
+        . " WHERE (%s && %s)", $stateStr, $typeStr
+    );
+
+    $sql = executeQuery($query, $params);
+
+    return getQueryResults($sql);
+}
+
+/**
  * Builds the necessary boolean comparison strings and parameters array
  * for the function getExamsQuery().
  * Not intended for outside use.

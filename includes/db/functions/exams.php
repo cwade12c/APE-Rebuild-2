@@ -24,107 +24,124 @@ function examExists(int $id)
 /**
  * Get list of IDs for all exams (all states)
  *
- * @param int $type for the type of exam (both, regular, in class)
- *                  use get exam type values defined in db 'constants.php'
+ * @param int         $type for the type of exam (both, regular, in class)
+ *                          use get exam type values defined in db 'constants.php'
+ * @param string|null $teacherID
  *
  * @return mixed
  */
-function getExamsAll(int $type = GET_EXAMS_TYPE_BOTH)
+function getExamsAll(int $type = GET_EXAMS_TYPE_BOTH, string $teacherID = null)
 {
-    return getExamsExtended(GET_EXAMS_ALL, $type);
+    return getExamsExtended(GET_EXAMS_ALL, $type, $teacherID);
 }
 
 /**
  * Get list of IDs for archived exams
  *
- * @param int $type for the type of exam (both, regular, in class)
- *                  use get exam type values defined in db 'constants.php'
+ * @param int         $type for the type of exam (both, regular, in class)
+ *                          use get exam type values defined in db 'constants.php'
+ * @param string|null $teacherID
  *
  * @return mixed
  */
-function getExamsArchived(int $type = GET_EXAMS_TYPE_BOTH)
-{
-    return getExamsExtended(GET_EXAMS_ARCHIVED, $type);
+function getExamsArchived(int $type = GET_EXAMS_TYPE_BOTH,
+    string $teacherID = null
+) {
+    return getExamsExtended(GET_EXAMS_ARCHIVED, $type, $teacherID);
 }
 
 /**
  * Get list of IDs for all non-archived exams
  *
- * @param int $type
+ * @param int         $type
+ * @param string|null $teacherID
  *
  * @return mixed
  */
-function getExamsNonArchived(int $type = GET_EXAMS_TYPE_BOTH)
-{
-    return getExamsExtended(GET_EXAMS_NON_ARCHIVED, $type);
+function getExamsNonArchived(int $type = GET_EXAMS_TYPE_BOTH,
+    string $teacherID = null
+) {
+    return getExamsExtended(GET_EXAMS_NON_ARCHIVED, $type, $teacherID);
 }
 
 /**
  * Get list of IDs for exams in finalizing state
  *
- * @param int $type for the type of exam (both, regular, in class)
- *                  use get exam type values defined in db 'constants.php'
+ * @param int         $type for the type of exam (both, regular, in class)
+ *                          use get exam type values defined in db 'constants.php'
+ * @param string|null $teacherID
  *
  * @return mixed
  */
-function getExamsFinalizing(int $type = GET_EXAMS_TYPE_BOTH)
-{
-    return getExamsExtended(GET_EXAMS_FINALIZING, $type);
+function getExamsFinalizing(int $type = GET_EXAMS_TYPE_BOTH,
+    string $teacherID = null
+) {
+    return getExamsExtended(GET_EXAMS_FINALIZING, $type, $teacherID);
 }
 
 /**
  * Get list of IDs for exams in grading state
  *
- * @param int $type for the type of exam (both, regular, in class)
- *                  use get exam type values defined in db 'constants.php'
+ * @param int         $type for the type of exam (both, regular, in class)
+ *                          use get exam type values defined in db 'constants.php'
+ * @param string|null $teacherID
  *
  * @return mixed
  */
-function getExamsGrading(int $type = GET_EXAMS_TYPE_BOTH)
-{
-    return getExamsExtended(GET_EXAMS_GRADING, $type);
+function getExamsGrading(int $type = GET_EXAMS_TYPE_BOTH,
+    string $teacherID = null
+) {
+    return getExamsExtended(GET_EXAMS_GRADING, $type, $teacherID);
 }
 
 /**
  * Get list of IDs for upcoming exams (states open, closed, in progress)
  *
- * @param int $type for the type of exam (both, regular, in class)
- *                  use get exam type values defined in db 'constants.php'
+ * @param int         $type for the type of exam (both, regular, in class)
+ *                          use get exam type values defined in db 'constants.php'
+ * @param string|null $teacherID
  *
  * @return mixed
  */
-function getExamsUpcoming(int $type = GET_EXAMS_TYPE_BOTH)
-{
-    return getExamsExtended(GET_EXAMS_UPCOMING, $type);
+function getExamsUpcoming(int $type = GET_EXAMS_TYPE_BOTH,
+    string $teacherID = null
+) {
+    return getExamsExtended(GET_EXAMS_UPCOMING, $type, $teacherID);
 }
 
 /**
  * Get list of IDs for open exams (states hidden, open, closed, in progress)
  *
- * @param int $type for the type of exam (both, regular, in class)
- *                  use get exam type values defined in db 'constants.php'
+ * @param int         $type for the type of exam (both, regular, in class)
+ *                          use get exam type values defined in db 'constants.php'
+ * @param string|null $teacherID
  *
  * @return mixed
  */
-function getExamsOpen(int $type = GET_EXAMS_TYPE_BOTH)
+function getExamsOpen(int $type = GET_EXAMS_TYPE_BOTH, string $teacherID = null)
 {
-    return getExamsExtended(GET_EXAMS_OPEN, $type);
+    return getExamsExtended(GET_EXAMS_OPEN, $type, $teacherID);
 }
 
 /**
  * Get list of IDs for exams w/ given information
  * Recommended to use other get exam functions for future proofing.
  *
- * @param int $state state as defined under get exam states
- *                   defined in db 'constants'.php
- * @param int $type  for the type of exam (both, regular, in class)
- *                   use get exam type values defined in db 'constants.php'
+ * @param int         $state state as defined under get exam states
+ *                           defined in db 'constants'.php
+ * @param int         $type  for the type of exam (both, regular, in class)
+ *                           use get exam type values defined in db 'constants.php'
+ * @param string|null $teacherID
  *
- * @return array    list of exam IDs
+ * @return array list of exam IDs
  */
-function getExamsExtended(int $state, int $type)
+function getExamsExtended(int $state, int $type, string $teacherID = null)
 {
-    $exams = getExamsQuery($state, $type);
+    if ($teacherID == null) {
+        $exams = getExamsQuery($state, $type);
+    }else{
+        $exams = getInClassExamsQuery($state, $type, $teacherID);
+    }
 
     $ids = array_column($exams, 'id');
 
@@ -241,8 +258,6 @@ function normalizeExamCategoriesArray(array &$categories)
  */
 function getInClassExamTeacher(int $id)
 {
-    // TODO: validate id exists
-    // TODO: determine if exam is in class
     return getExamTeacherQuery($id);
 }
 

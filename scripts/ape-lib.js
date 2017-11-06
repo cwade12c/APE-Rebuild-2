@@ -386,6 +386,30 @@ function getRoom(roomId) {
   callAjax('get', 'Room', params, callbacks);
 }
 
+function updateRoom(roomId, roomName, seatCount) {
+  var params = {
+    id: roomId,
+    name: roomName,
+    seats: seatCount
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'UpdateRoom', params, callbacks);
+}
+
 //</editor-fold>
 
 //<editor-fold desc="DOM Utility Functions">

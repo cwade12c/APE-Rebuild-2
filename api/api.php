@@ -21,9 +21,9 @@ function processRequest($args)
     $operation = $args["operation"];
     $parameters = json_decode($args["parameters"], true);
 
-    if (empty($operation) || empty($parameters)) {
+    if (empty($operation)) {
         sendResponse(
-            array(), false, "Cannot have an empty operation or parameters!"
+            array(), false, "Cannot have an empty operation"
         );
     } elseif (!isValidOperation($operation)) {
         sendResponse(array(), false, "An invalid operation was specified!");

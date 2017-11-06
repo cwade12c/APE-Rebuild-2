@@ -515,6 +515,28 @@ function createRoom(name, seats) {
   callAjax('post', 'CreateRoom', params, callbacks);
 }
 
+function deleteLocation(locationId) {
+  var params = {
+    id: locationId,
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification('Successfully deleted the Location with id of ' + params.id, 'success');
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'DeleteLocation', params, callbacks);
+}
+
 //</editor-fold>
 
 //<editor-fold desc="DOM Utility Functions">

@@ -3,6 +3,7 @@ CreateAccounts
 CreateExam
 CreateLocation
 CreateRoom
+DeleteLocation
 ExamDetails
 GraderAssignedExamDetails
 GraderAssignedExams

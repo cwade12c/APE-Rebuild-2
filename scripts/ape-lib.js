@@ -410,6 +410,29 @@ function updateRoom(roomId, roomName, seatCount) {
   callAjax('post', 'UpdateRoom', params, callbacks);
 }
 
+function updateLocationName(locationId, locationName) {
+  var params = {
+    id: locationId,
+    name: locationName
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'UpdateLocationName', params, callbacks);
+}
+
 //</editor-fold>
 
 //<editor-fold desc="DOM Utility Functions">
@@ -544,9 +567,9 @@ function setDateTimePicker (elementId, options, selectDateCallbackFunction) {
     lazyInit: true,
     value: null,
     lang: 'en',
-    format: 'Y/m/d H:i',
-    formatDate: 'Y/m/d',
-    formatTime: 'H:i',
+    format: 'Y-m-d H:i:s',
+    formatDate: 'Y-m-d',
+    formatTime: 'H:i:s',
     validateOnBlur: true,
     timepicker: true,
     datepicker: true,

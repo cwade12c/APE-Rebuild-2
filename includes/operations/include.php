@@ -6,6 +6,8 @@ require_once INCLUDES_PATH . 'operations/CreateAccounts.class.php';
 require_once INCLUDES_PATH . 'operations/CreateExam.class.php';
 require_once INCLUDES_PATH . 'operations/CreateLocation.class.php';
 require_once INCLUDES_PATH . 'operations/CreateRoom.class.php';
+require_once INCLUDES_PATH . 'operations/DeleteLocation.class.php';
+require_once INCLUDES_PATH . 'operations/DeleteRoom.class.php';
 require_once INCLUDES_PATH . 'operations/ExamDetails.class.php';
 require_once INCLUDES_PATH . 'operations/GraderAssignedExamDetails.class.php';
 require_once INCLUDES_PATH . 'operations/GraderAssignedExams.class.php';

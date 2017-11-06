@@ -4,6 +4,7 @@ CreateExam
 CreateLocation
 CreateRoom
 DeleteLocation
+DeleteRoom
 ExamDetails
 GraderAssignedExamDetails
 GraderAssignedExams

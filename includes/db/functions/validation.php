@@ -35,7 +35,8 @@ function validateExamAttributes(DateTime $start, DateTime $cutoff, int $minutes,
     int $passingGrade, array $categories, int $locationID,
     bool $inClass = false, string $teacherID = ""
 ) {
-    validateDates($start, $cutoff);
+    // TODO remove this thing
+
     validateExamLength($minutes);
     validateLocationID($locationID);
     if ($inClass) {
@@ -50,16 +51,18 @@ function validateExamAttributes(DateTime $start, DateTime $cutoff, int $minutes,
  * if any issues are found, an invalid argument exception is thrown.
  * Helper method for exam functions.
  *
- * @param DateTime $start  start datetime
- * @param DateTime $cutoff cutoff datetime
+ * @param DateTime|string $start  start datetime
+ * @param DateTime|string $cutoff cutoff datetime
  *
  * @return bool
  */
-function validateDates(DateTime $start, DateTime $cutoff)
+function validateDates($start, $cutoff)
 {
-    // null check
-    if ($start == null || $cutoff == null) {
-        throw new InvalidArgumentException('null date');
+    if (gettype($start) == 'string') {
+        $start = DateTime::createFromFormat(DATETIME_FORMAT, $start);
+    }
+    if (gettype($cutoff) == 'string') {
+        $cutoff = DateTime::createFromFormat(DATETIME_FORMAT, $cutoff);
     }
 
     $unixStart = $start->getTimestamp();
@@ -1303,5 +1306,19 @@ function validateIsType($value, string $type, string $msg)
         throw new InvalidArgumentException(
             "Expected {$type} value type for ({$msg})"
         );
+    }
+}
+
+/**
+ * Validate a string can be parsed to a datetime
+ *
+ * @param string $value
+ */
+function validateStringIsDateTime(string $value)
+{
+    try{
+        DateTime::createFromFormat(DATETIME_FORMAT, $value);
+    }catch(Exception $e) {
+        throw new InvalidArgumentException('Failed to parse datetime from string');
     }
 }

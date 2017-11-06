@@ -17,6 +17,7 @@ require_once INCLUDES_PATH . 'operations/Room.class.php';
 require_once INCLUDES_PATH . 'operations/Rooms.class.php';
 require_once INCLUDES_PATH . 'operations/StudentState.class.php';
 require_once INCLUDES_PATH . 'operations/StudentUpcomingExams.class.php';
+require_once INCLUDES_PATH . 'operations/CreateInClassExam.class.php';
 require_once INCLUDES_PATH . 'operations/TeacherExams.class.php';
 require_once INCLUDES_PATH . 'operations/UpcomingExams.class.php';
 require_once INCLUDES_PATH . 'operations/UpdateRoom.class.php';

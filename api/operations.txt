@@ -1,5 +1,7 @@
 CreateAccount
 CreateAccounts
+CreateExam
+CreateLocation
 ExamDetails
 GraderAssignedExamDetails
 GraderAssignedExams

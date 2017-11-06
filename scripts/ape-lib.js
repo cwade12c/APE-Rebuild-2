@@ -458,6 +458,40 @@ function updateLocationRooms(locationId, reservedSeats, limitedSeats, rooms) {
   callAjax('post', 'UpdateLocationRooms', params, callbacks);
 }
 
+function createLocation(name, reservedSeats, limitedSeats, rooms) {
+  var params = {
+    name: name,
+    seatsReserved: reservedSeats,
+    limitedSeats: limitedSeats,
+    rooms: rooms || [
+      {
+        id: 1,
+        seats: 33
+      },
+      {
+        id: 2,
+        seats: 33
+      }
+    ]
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification('Successfully created Location "' + params.name + '".');
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'CreateLocation', params, callbacks);
+}
+
 //</editor-fold>
 
 //<editor-fold desc="DOM Utility Functions">

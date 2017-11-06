@@ -302,6 +302,48 @@ function createAccounts(accounts) {
   callAjax('post', 'CreateAccounts', params, callbacks);
 }
 
+function getLocations() {
+  var params = {};
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'Locations', params, callbacks);
+}
+
+function getLocation(locationId) {
+  var params = {
+    id: locationId
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'Location', params, callbacks);
+}
+
 //</editor-fold>
 
 //<editor-fold desc="DOM Utility Functions">

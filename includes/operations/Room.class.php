@@ -30,8 +30,11 @@ class Room extends Operation
 
     public static function getRoom(int $id)
     {
+        $room = getRoomInformation($id);
+        $room['id'] = $id;
+
         return array(
-            'room' => getRoomInformation($id)
+            'room' => $room
         );
     }
 }

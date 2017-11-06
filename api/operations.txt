@@ -2,6 +2,7 @@ Categories
 Category
 CreateAccount
 CreateAccounts
+CreateCategory
 CreateExam
 CreateLocation
 CreateRoom

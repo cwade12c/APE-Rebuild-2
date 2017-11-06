@@ -601,6 +601,29 @@ function createRoom(name, seats) {
   callAjax('post', 'CreateRoom', params, callbacks);
 }
 
+function createCategory(name, points) {
+  var params = {
+    name: name,
+    points: points
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification('Successfully created Category "' + params.name + '".', 'success');
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'CreateCategory', params, callbacks);
+}
+
 function deleteLocation(locationId) {
   var params = {
     id: locationId,

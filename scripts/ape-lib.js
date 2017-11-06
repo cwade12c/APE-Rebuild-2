@@ -428,6 +428,26 @@ function getCategory(categoryId) {
   callAjax('get', 'Category', params, callbacks);
 }
 
+function getDefaultCategories() {
+  var params = {};
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'DefaultCategories', params, callbacks);
+}
+
 function updateRoom(roomId, roomName, seatCount) {
   var params = {
     id: roomId,

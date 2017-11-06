@@ -21,6 +21,7 @@ class GraderAssignedExamDetails extends Operation
 
         parent::registerValidation('validateGraderID', 'graderID');
         parent::registerValidation('validateExamIDExists', 'examID');
+        parent::registerValidation('isGraderAssignedExam', array('graderID', 'examID'));
     }
 
     public function execute(array $args, string $accountID = null)
@@ -36,7 +37,7 @@ class GraderAssignedExamDetails extends Operation
             'categories' => $examCategoryIDs
         ), $graderID);
 
-        //TODO get extra details
-        return array('assignedExams' => $assignedExams);
+        return array('assignedExamDetails' => $assignedExams,
+                     'graderIsAssigned' => true);
     }
 }

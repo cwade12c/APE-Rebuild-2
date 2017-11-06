@@ -492,6 +492,29 @@ function createLocation(name, reservedSeats, limitedSeats, rooms) {
   callAjax('post', 'CreateLocation', params, callbacks);
 }
 
+function createRoom(name, seats) {
+  var params = {
+    name: name,
+    seats: seats
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification('Successfully created Room "' + params.name + '".', 'success');
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'CreateRoom', params, callbacks);
+}
+
 //</editor-fold>
 
 //<editor-fold desc="DOM Utility Functions">

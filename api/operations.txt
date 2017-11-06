@@ -2,6 +2,7 @@ CreateAccount
 CreateAccounts
 CreateExam
 CreateLocation
+CreateRoom
 ExamDetails
 GraderAssignedExamDetails
 GraderAssignedExams

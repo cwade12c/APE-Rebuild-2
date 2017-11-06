@@ -254,6 +254,32 @@ function getGraderExamDetails(examId) {
   callAjax('get', 'GraderAssignedExamDetails', params, callbacks);
 }
 
+function createAccount(id, firstName, lastName, email, type) {
+  var params = {
+    id: id,
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    type: type
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification('Successfully created ' + firstName + ' ' + lastName + '.', 'success');
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'CreateAccount', params, callbacks);
+}
+
 //</editor-fold>
 
 //<editor-fold desc="DOM Utility Functions">

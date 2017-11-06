@@ -496,6 +496,28 @@ function updateCategory(categoryId, categoryName, points) {
   callAjax('post', 'UpdateCategory', params, callbacks);
 }
 
+function updateDefaultCategories(categoryIdList) {
+  var params = {
+    idList: categoryIdList || []
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification('Successfully updated the default categories with IDs [' + params.idList.join() + '].', 'success');
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'UpdateDefaultCategories', params, callbacks);
+}
+
 function updateLocationName(locationId, locationName) {
   var params = {
     id: locationId,

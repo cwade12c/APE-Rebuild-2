@@ -30,6 +30,7 @@ StudentState
 StudentUpcomingExams
 SubmitGraderProgress
 UpdateCategory
+UpdateDefaultCategories
 UpcomingExams
 UpdateLocationName
 UpdateLocationRooms

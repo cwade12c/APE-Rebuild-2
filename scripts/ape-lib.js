@@ -472,6 +472,30 @@ function updateRoom(roomId, roomName, seatCount) {
   callAjax('post', 'UpdateRoom', params, callbacks);
 }
 
+function updateCategory(categoryId, categoryName, points) {
+  var params = {
+    id: categoryId,
+    name: categoryName,
+    points: points
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification('Successfully updated the category "' + params.name + '".', 'success');
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'UpdateCategory', params, callbacks);
+}
+
 function updateLocationName(locationId, locationName) {
   var params = {
     id: locationId,

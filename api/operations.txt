@@ -27,6 +27,7 @@ SetGraderProgress
 StudentState
 StudentUpcomingExams
 SubmitGraderProgress
+UpdateCategory
 UpcomingExams
 UpdateLocationName
 UpdateLocationRooms

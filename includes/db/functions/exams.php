@@ -274,7 +274,6 @@ function getInClassExamTeacher(int $id)
 function createExam(DateTime $start, DateTime $cutoff, int $minutes,
     int $passing_grade, array $categories, int $locationID
 ) {
-    // call extended create
     createExamExtended(
         $start, $cutoff, $minutes, $passing_grade, $categories, $locationID
     );
@@ -294,7 +293,6 @@ function createExam(DateTime $start, DateTime $cutoff, int $minutes,
 function createInClassExam(DateTime $start, DateTime $cutoff, int $minutes,
     int $passingGrade, array $categories, int $locationID, string $teacherID
 ) {
-    // call extended create
     createExamExtended(
         $start, $cutoff, $minutes, $passingGrade, $categories, $locationID,
         true, $teacherID

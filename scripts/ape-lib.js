@@ -433,6 +433,31 @@ function updateLocationName(locationId, locationName) {
   callAjax('post', 'UpdateLocationName', params, callbacks);
 }
 
+function updateLocationRooms(locationId, reservedSeats, limitedSeats, rooms) {
+  var params = {
+    id: locationId,
+    seatsReserved: reservedSeats,
+    limitedSeats: limitedSeats,
+    rooms: rooms || []
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'UpdateLocationRooms', params, callbacks);
+}
+
 //</editor-fold>
 
 //<editor-fold desc="DOM Utility Functions">

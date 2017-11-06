@@ -13,6 +13,8 @@ Locations
 MyExams
 RegisterForExam
 RegisterStudentForExam
+Room
+Rooms
 SetGraderProgress
 StudentState
 StudentUpcomingExams

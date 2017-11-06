@@ -254,6 +254,138 @@ function getGraderExamDetails(examId) {
   callAjax('get', 'GraderAssignedExamDetails', params, callbacks);
 }
 
+function createAccount(id, firstName, lastName, email, type) {
+  var params = {
+    id: id,
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    type: type
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification('Successfully created ' + firstName + ' ' + lastName + '.', 'success');
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'CreateAccount', params, callbacks);
+}
+
+function createAccounts(accounts) {
+  var params = {
+    accounts: accounts || []
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification('Successfully created ' + params.accounts.length + ' accounts.', 'success');
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'CreateAccounts', params, callbacks);
+}
+
+function getLocations() {
+  var params = {};
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'Locations', params, callbacks);
+}
+
+function getLocation(locationId) {
+  var params = {
+    id: locationId
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'Location', params, callbacks);
+}
+
+function getRooms() {
+  var params = {};
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'Rooms', params, callbacks);
+}
+
+function getRoom(roomId) {
+  var params = {
+    id: roomId
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'Room', params, callbacks);
+}
+
 //</editor-fold>
 
 //<editor-fold desc="DOM Utility Functions">

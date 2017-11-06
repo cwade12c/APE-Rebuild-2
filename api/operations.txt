@@ -1,3 +1,5 @@
+CreateAccount
+CreateAccounts
 ExamDetails
 GraderAssignedExamDetails
 GraderAssignedExams
@@ -6,9 +8,13 @@ IsGrader
 IsGraderAssigned
 IsStudent
 IsTeacher
+Location
+Locations
 MyExams
 RegisterForExam
 RegisterStudentForExam
+Room
+Rooms
 SetGraderProgress
 StudentState
 StudentUpcomingExams

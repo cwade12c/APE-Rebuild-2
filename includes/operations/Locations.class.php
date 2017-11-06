@@ -32,6 +32,16 @@ class Locations extends Operation
             $location = getLocationInformation($locationID['id']);
             $location['id'] = $locationID['id'];
 
+            $roomsInformation = getLocationRooms($locationID['id']);
+            $rooms = array();
+
+            foreach($roomsInformation as $currentRoomInformation) {
+                $room = getRoomInformation($currentRoomInformation['id']);
+                $room['id'] = $currentRoomInformation['id'];
+                array_push($rooms, $room);
+            }
+
+            $location['rooms'] = $rooms;
             array_push($locations, $location);
         }
 

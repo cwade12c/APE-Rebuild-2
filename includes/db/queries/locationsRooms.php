@@ -150,6 +150,25 @@ function buildLocationRoomsValuesString(int $id, array $rooms)
 }
 
 /**
+ * Query to update location name
+ *
+ * @param int    $id            Location ID
+ * @param string $name          Location name
+ */
+function updateLocationNameQuery(int $id, string $name) {
+    $query = "UPDATE `locations` "
+        . " SET `name` = :name"
+        . " WHERE `id` = :id";
+
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $id, PDO::PARAM_INT),
+            array(':name', $name, PDO::PARAM_STR)
+        )
+    );
+}
+
+/**
  * Query to update location information (row entry)
  *
  * @param int    $id            Location ID

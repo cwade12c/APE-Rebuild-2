@@ -74,6 +74,17 @@ function createLocation(string $name, int $seatsReserved, int $limitedSeats,
 }
 
 /**
+ * Update the name of a location
+ *
+ * @param int    $id                location id
+ * @param string $name              new name of location
+ */
+function updateLocationName(int $id, string $name) {
+    validateLocationIDExists($id);
+    updateLocationNameQuery($id, $name);
+}
+
+/**
  * Update all information about a location
  *
  * @param int    $id                location id

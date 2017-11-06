@@ -386,6 +386,48 @@ function getRoom(roomId) {
   callAjax('get', 'Room', params, callbacks);
 }
 
+function getCategories() {
+  var params = {};
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'Categories', params, callbacks);
+}
+
+function getCategory(categoryId) {
+  var params = {
+    id: categoryId
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        console.log('Error');
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'Category', params, callbacks);
+}
+
 function updateRoom(roomId, roomName, seatCount) {
   var params = {
     id: roomId,

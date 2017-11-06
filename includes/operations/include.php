@@ -12,3 +12,5 @@ require_once INCLUDES_PATH . 'operations/GraderAssignedExams.class.php';
 require_once INCLUDES_PATH . 'operations/MyExams.class.php';
 require_once INCLUDES_PATH . 'operations/GraderAssignedExamDetails.class.php';
 require_once INCLUDES_PATH . 'operations/GraderProgress.class.php';
+require_once INCLUDES_PATH . 'operations/CreateAccount.class.php';
+require_once INCLUDES_PATH . 'operations/CreateAccounts.class.php';

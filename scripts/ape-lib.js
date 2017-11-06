@@ -280,6 +280,28 @@ function createAccount(id, firstName, lastName, email, type) {
   callAjax('post', 'CreateAccount', params, callbacks);
 }
 
+function createAccounts(accounts) {
+  var params = {
+    accounts: accounts || []
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification('Successfully created ' + params.accounts.length + ' accounts.', 'success');
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'CreateAccounts', params, callbacks);
+}
+
 //</editor-fold>
 
 //<editor-fold desc="DOM Utility Functions">

@@ -8,6 +8,7 @@ IsGrader
 IsGraderAssigned
 IsStudent
 IsTeacher
+Locations
 MyExams
 RegisterForExam
 RegisterStudentForExam

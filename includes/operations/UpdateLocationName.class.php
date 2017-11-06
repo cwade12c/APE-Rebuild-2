@@ -21,6 +21,7 @@ class UpdateLocationName extends Operation
 
         parent::registerValidation('validateLocationID', 'id');
         parent::registerValidation('validateLocationIDExists', 'id');
+        parent::registerValidation('validateLocationNameChange', array('id', 'name'));
     }
 
     public function execute(array $args, string $accountID = null)

@@ -254,7 +254,7 @@ function getGraderExamDetails(examId) {
   callAjax('get', 'GraderAssignedExamDetails', params, callbacks);
 }
 
-function createAccount(id, firstName, lastName, email, type) {
+/*function createAccount(id, firstName, lastName, email, type) {
   var params = {
     id: id,
     firstName: firstName,
@@ -278,7 +278,7 @@ function createAccount(id, firstName, lastName, email, type) {
   };
 
   callAjax('post', 'CreateAccount', params, callbacks);
-}
+}*/
 
 function createAccounts(accounts) {
   var params = {
@@ -308,7 +308,7 @@ function getLocations() {
   var callbacks = {
     success: function (response) {
       if(response.success === true) {
-        console.log(response);
+        return response;
       }
       else {
         console.log('Error');
@@ -750,9 +750,26 @@ function addRowToTable(tableElementId, tdCollection) {
   _.each(tdCollection, function(currentTd) {
     html += ('<td>' + currentTd + '</td>');
   });
+  console.log(html);
   html += '</tr>';
 
   $('#' + tableElementId).append(html);
+}
+
+function addOptionToSelect(selectElementId, optionCollection) {
+  var options = [];
+  _.each(optionCollection, function (currentOption) {
+    options.push('<option value="' + currentOption.value + '">' + currentOption.text + '</option>');
+  })
+  $('#' + selectElementId).html(options.join(''));
+}
+
+function getElementValue(elementId, type) {
+  var value = $('#' + elementId).val();
+  if(type === 'integer') {
+    return parseInt(value);
+  }
+  return value;
 }
 
 function removeRowFromTable(tableElementId, rowElementId) {

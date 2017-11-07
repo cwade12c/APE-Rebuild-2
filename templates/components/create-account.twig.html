@@ -1,0 +1,51 @@
+<script type="text/javascript">
+  var createAccount = function() {
+    var params = {
+      id: getElementValue('accountID'),
+      firstName: getElementValue('firstName'),
+      lastName: getElementValue('lastName'),
+      email: getElementValue('email'),
+      type: getElementValue('accountType', 'integer')
+    };
+
+    var callbacks = {
+      success: function (response) {
+        if(response.success === true) {
+          notification('Successfully created ' + params.firstName + ' ' + params.lastName + '.',
+            'success');
+        }
+        else {
+          notification(response.message);
+        }
+      },
+      error: function (response) {
+        notification(response.message);
+      }
+    };
+
+    callAjax('post', 'CreateAccount', params, callbacks);
+  }
+</script>
+
+
+
+
+<label for="accountID">ID: </label> <input type="text" class="form-control" id="accountID" name="accountID" />
+<br />
+<label for="firstName">First Name: </label> <input type="text" class="form-control" id="firstName" name="firstName" />
+<br />
+<label for="lastName">Last Name: </label> <input type="text" class="form-control" id="lastName" name="lastName" />
+<br />
+<label for="email">Email: </label> <input type="email" class="form-control" id="email" name="email" />
+<br />
+<label for="accountType">Account Type: </label>
+<select id="accountType">
+  <option value="1">Temp</option>
+  <option value="2">Student</option>
+  <option value="4">Grader</option>
+  <option value="8">Teacher</option>
+  <option value="16">Admin</option>
+</select>
+<button class="btn btn-primary pull-right" style="margin:10px;" onclick="createAccount()">Create
+  Account</button>
+<div class="clearfix"></div>

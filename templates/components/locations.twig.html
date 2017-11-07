@@ -1,0 +1,81 @@
+<script type="text/javascript">
+  var params = {};
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        var options = [];
+        _.each(response.data.locations, function (currentLocation) {
+          options.push({
+            value: currentLocation.id,
+            text: currentLocation.name
+          });
+        })
+        addOptionToSelect('locations', options);
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'Locations', params, callbacks);
+
+  var viewLocationDetails = function () {
+    var params = {
+      id: getElementValue('locations', 'integer')
+    };
+
+    var callbacks = {
+      success: function (response) {
+        if(response.success === true) {
+          var rooms = '';
+          _.each(response.data.location.rooms, function (currentRoom) {
+            var html = '<span class="label label-primary">' +
+              currentRoom.name + ' <span class="badge">' + currentRoom.seats +
+              ' seats</span></span>&nbsp;';
+            rooms += html;
+          })
+          var tdCollection = [
+            response.data.location.id,
+            response.data.location.name,
+            response.data.location.limited_seats,
+            response.data.location.reserved_seats,
+            rooms
+          ];
+          addRowToTable('location-table', tdCollection);
+        }
+        else {
+          notification(response.message);
+        }
+      },
+      error: function (response) {
+        notification(response.message);
+      }
+    };
+
+    callAjax('get', 'Location', params, callbacks);
+  }
+</script>
+
+<label for="locations">Select a Location: </label> <select id="locations"></select><button
+        class="btn btn-primary" onclick="viewLocationDetails()">View Details</button>
+
+<div class="table-responsive">
+  <table id="location-table" class="table table-striped">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Limited Seats</th>
+      <th>Reserved Seats</th>
+      <th>Rooms</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>

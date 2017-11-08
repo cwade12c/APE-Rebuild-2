@@ -119,11 +119,7 @@ function getAssignedExamGraders(int $examID)
 {
     $results = getAssignedExamGradersQuery($examID);
 
-    $graders = array_map(
-        function ($row) {
-            return $row['grader_id'];
-        }, $results
-    );
+    $graders = array_column($results, 'grader_id');
 
     return $graders;
 }
@@ -166,11 +162,7 @@ function getAssignedExamGradersCategories(int $examID)
 function getAssignedExamCategoryGraders(int $examID, int $categoryID)
 {
     $results = getAssignedExamCategoryGradersQuery($examID, $categoryID);
-    $graders = array_map(
-        function ($row) {
-            return $row['grader_id'];
-        }, $results
-    );
+    $graders = array_column($results, 'grader_id');
 
     return $graders;
 }
@@ -185,11 +177,7 @@ function getAssignedExamCategoryGraders(int $examID, int $categoryID)
 function getAssignedExams(string $graderID)
 {
     $results = getAssignedExamsQuery($graderID);
-    $exams = array_map(
-        function ($row) {
-            return $row['exam_id'];
-        }, $results
-    );
+    $exams = array_column($results, 'exam_id');
 
     return $exams;
 }
@@ -205,11 +193,7 @@ function getAssignedExams(string $graderID)
 function getAssignedExamCategories(string $graderID, int $examID)
 {
     $results = getAssignedExamCategoriesQuery($examID, $graderID);
-    $categories = array_map(
-        function ($row) {
-            return $row['category_id'];
-        }, $results
-    );
+    $categories = array_column($results, 'category_id');
 
     return $categories;
 }

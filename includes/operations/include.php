@@ -1,18 +1,8 @@
 <?php
 require_once INCLUDES_PATH . 'operations/Operation.class.php';
 
-require_once INCLUDES_PATH . 'operations/Categories.class.php';
-require_once INCLUDES_PATH . 'operations/Category.class.php';
 require_once INCLUDES_PATH . 'operations/CreateAccount.class.php';
 require_once INCLUDES_PATH . 'operations/CreateAccounts.class.php';
-require_once INCLUDES_PATH . 'operations/CreateCategory.class.php';
-require_once INCLUDES_PATH . 'operations/CreateExam.class.php';
-require_once INCLUDES_PATH . 'operations/CreateLocation.class.php';
-require_once INCLUDES_PATH . 'operations/CreateRoom.class.php';
-require_once INCLUDES_PATH . 'operations/DefaultCategories.class.php';
-require_once INCLUDES_PATH . 'operations/DeleteCategory.class.php';
-require_once INCLUDES_PATH . 'operations/DeleteLocation.class.php';
-require_once INCLUDES_PATH . 'operations/DeleteRoom.class.php';
 require_once INCLUDES_PATH . 'operations/ExamDetails.class.php';
 require_once INCLUDES_PATH . 'operations/ExamDetailsFull.class.php';
 require_once INCLUDES_PATH . 'operations/GraderAssignedExamDetails.class.php';
@@ -29,10 +19,9 @@ require_once INCLUDES_PATH . 'operations/Rooms.class.php';
 require_once INCLUDES_PATH . 'operations/StudentState.class.php';
 require_once INCLUDES_PATH . 'operations/StudentUpcomingExams.class.php';
 require_once INCLUDES_PATH . 'operations/CreateInClassExam.class.php';
+require_once INCLUDES_PATH . 'operations/CreateExam.class.php';
 require_once INCLUDES_PATH . 'operations/TeacherExams.class.php';
-require_once INCLUDES_PATH . 'operations/UpdateCategory.class.php';
-require_once INCLUDES_PATH . 'operations/UpdateDefaultCategories.class.php';
 require_once INCLUDES_PATH . 'operations/UpcomingExams.class.php';
 require_once INCLUDES_PATH . 'operations/UpdateLocationName.class.php';
-require_once INCLUDES_PATH . 'operations/UpdateLocationRooms.class.php';
 require_once INCLUDES_PATH . 'operations/UpdateRoom.class.php';
+require_once INCLUDES_PATH . 'operations/ExamGraders.class.php';

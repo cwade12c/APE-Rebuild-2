@@ -439,7 +439,6 @@ function getLocationInformation(int $id)
  */
 function getLocationRooms(int $id)
 {
-    validateLocationIDExists($id);
 
     // get rooms list
     $rooms = getLocationRoomsQuery($id);

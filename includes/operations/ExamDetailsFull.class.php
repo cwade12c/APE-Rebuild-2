@@ -42,6 +42,8 @@ class ExamDetailsFull extends Operation
 
         $registrations = self::getRegistrationInformation($examID);
 
+        list($isRegular, $teacherID) = self::getExamInClassInformation($info);
+
         return array(
             'examID'        => $examID,
             'start'         => $info['start'],
@@ -56,7 +58,9 @@ class ExamDetailsFull extends Operation
             'categories'    => $categories,
             'registrations' => $registrations,
             'state'         => $info['state'],
-            'stateStr'      => examStateToString($info['state'])
+            'stateStr'      => examStateToString($info['state']),
+            'teacherID'     => $teacherID,
+            'isRegular'     => $isRegular
         );
     }
 
@@ -121,5 +125,12 @@ class ExamDetailsFull extends Operation
         }
 
         return $registrations;
+    }
+
+    public static function getExamInClassInformation(array $examInfo) {
+        $isRegular = $examInfo['isRegular'];
+        $teacherID = $isRegular ? null : getInClassExamTeacher($examInfo['id']);
+
+        return array($isRegular, $teacherID);
     }
 }

@@ -188,7 +188,7 @@ function getExamInformation(int $id)
 function getExamLocationID(int $id)
 {
     $info = getExamInformation($id);
-    return $info['location_id'];
+    return $info['locationID'];
 }
 
 /**

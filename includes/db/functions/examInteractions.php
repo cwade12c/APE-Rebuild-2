@@ -552,7 +552,7 @@ function examSeatSpaceAvailable(int $examID)
 function examLocationAvailable(int $examID)
 {
     $info = getExamInformation($examID);
-    return is_null($info['location_id']);
+    return is_null($info['locationID']);
 }
 
 /**

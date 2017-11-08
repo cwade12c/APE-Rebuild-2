@@ -122,12 +122,17 @@ function getCategories()
 /**
  * Get a list of all default category IDs
  *
- * @return mixed
+ * @return array
  */
 function getDefaultCategories()
 {
-    // TODO: check if any exist?
-    return getDefaultCategoriesQuery();
+    $results = getDefaultCategoriesQuery();
+    if (!$results) {
+        return array();
+    }
+    $categoryIDs = array_column($results, 'id');
+
+    return $categoryIDs;
 }
 
 /**
@@ -135,7 +140,6 @@ function getDefaultCategories()
  */
 function clearDefaultCategories()
 {
-    // TODO: check for success?
     clearDefaultCategoriesQuery();
 }
 
@@ -146,11 +150,12 @@ function clearDefaultCategories()
  */
 function setDefaultCategories(array $idList)
 {
-    // TODO: check list of IDs are all valid
-    // TODO: check for success
-    // TODO: multiple queries, transaction?
+    startTransaction();
+
     clearDefaultCategories();
     setDefaultCategoriesQuery($idList);
+
+    commit();
 }
 
 /**

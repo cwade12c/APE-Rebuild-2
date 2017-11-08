@@ -101,10 +101,11 @@ function createLocationRoomsQuery(int $id, array $rooms)
 
     // build, execute query string
     $query = sprintf(
-        "INSERT INTO `locations_rooms` "
+        "INSERT INTO `location_rooms` "
         . " (`location_id`, `room_id`, `seats`) "
         . " VALUES %s", $setStr
     );
+
     $sql = executeQuery($query, $params);
 }
 
@@ -134,7 +135,7 @@ function buildLocationRoomsValuesString(int $id, array $rooms)
         $roomIDKey = sprintf(':room%d', $i);
         $roomSeatsKey = sprintf(':seats%d', $i);
         array_push(
-            $values, sprintf('(:id, %s, $s)', $roomIDKey, $roomSeatsKey)
+            $values, sprintf('(:id, %s, %s)', $roomIDKey, $roomSeatsKey)
         );
         // add parameters
         array_push($params, array($roomIDKey, $room['id'], PDO::PARAM_INT));

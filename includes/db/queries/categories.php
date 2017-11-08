@@ -237,7 +237,7 @@ function buildDefaultCategoriesStringParams(array $ids)
     foreach ($ids as $i => $id) {
         // determine param name
         $val = sprintf(':id%d', $i);
-        array_push($values, sprintf('(:%s)', $val));
+        array_push($values, sprintf('(%s)', $val));
         // add parameter
         array_push($params, array($val, $id, PDO::PARAM_INT));
     }

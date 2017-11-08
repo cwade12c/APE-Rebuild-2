@@ -61,16 +61,13 @@ function getLocations()
 function createLocation(string $name, int $seatsReserved, int $limitedSeats,
     array $rooms
 ) {
-    validateLocationNameDoesNotExist($name);
-    validateLocationRooms($seatsReserved, $limitedSeats, $rooms);
-
-    // TODO: multiple queries, transaction?
+    startTransaction();
 
     createLocationQuery($name, $seatsReserved, $limitedSeats);
     $id = getLastInsertedID();
     createLocationRoomsQuery($id, $rooms);
 
-    // TODO: validate success?
+    commit();
 }
 
 /**

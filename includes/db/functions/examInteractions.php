@@ -126,9 +126,6 @@ function getRegistrationState(string $studentID)
  */
 function setRegistrationState(string $studentID, int $state)
 {
-    validateStudentID($studentID);
-    validateRegistrationState($state);
-
     setRegistrationStateQuery($studentID, $state);
 }
 

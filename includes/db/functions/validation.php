@@ -783,7 +783,6 @@ function validateRegistrationState(int $state)
 {
     if (!isValidRegistrationState($state)) {
         throw new InvalidArgumentException(
-
             "Invalid registration state({$state})"
         );
     }
@@ -809,6 +808,21 @@ function validateRegistrationStateIs(string $studentID, int $state)
                 $studentID, $currentState, $state
             )
         );
+    }
+
+    return true;
+}
+
+/**
+ * Validate that a student is in the blocked registration state
+ *
+ * @param string $studentID
+ */
+function validateStudentBlocked(string $studentID)
+{
+    $state = getRegistrationState($studentID);
+    if ($state != STUDENT_STATE_BLOCKED) {
+        throw new InvalidArgumentException("student($studentID) is not in the blocked state($state)");
     }
 
     return true;

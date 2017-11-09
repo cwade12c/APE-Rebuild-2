@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Upgrade a temp account to a
+ * Upgrade a temp account to a full account
  *
  * @author         Mathew McCain
  * @category       APE

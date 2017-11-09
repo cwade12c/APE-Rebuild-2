@@ -17,7 +17,6 @@
  */
 function examExists(int $id)
 {
-    validateExamID($id);
     return examExistsQuery($id);
 }
 
@@ -200,7 +199,6 @@ function getExamLocationID(int $id)
  */
 function getExamState(int $id)
 {
-    validateExamID($id);
     return getExamStateQuery($id);
 }
 
@@ -368,32 +366,13 @@ function createExamExtended(DateTime $start, DateTime $cutoff, int $minutes,
 function updateExam(int $id, DateTime $start, DateTime $cutoff, int $minutes,
     int $passingGrade, int $locationID, array $categories
 ) {
-    // validate arguments
-    validateExamID($id);
-    validateExamAttributes(
-        $start, $cutoff, $minutes, $passingGrade, $categories, $locationID
-    );
-
-
-    // TODO: validate exam state allows updates
-    // TODO: validate new location has enough space for current students
-
-
-    // TODO: create transaction ? race conditions possible
-
-    //$currentInfo = getExamInformation($id);
+    startTransaction();
 
     // update exam
     updateExamQuery($id, $start, $cutoff, $minutes, $passingGrade, $locationID);
     updateExamCategories($id, $categories);
 
-    // TODO: if location changed, reset seat assignments
-    // TODO: any changes necessary for graders assigned to categories
-    /// transfer graders if necessary
-
-    // TODO: validate success
-    // TODO: refresh exam ?
-    /// set 'dirty bit' to mark as needing refresh, such as assigned seats?
+    commit();
 }
 
 /**

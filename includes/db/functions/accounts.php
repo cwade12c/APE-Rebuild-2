@@ -191,8 +191,6 @@ function accountExists(string $accountID)
 function createAccount(string $accountID, int $type = ACCOUNT_TYPE_NONE,
     string $firstName = null, string $lastName = null, string $email = null
 ) {
-    validateAccountIDAndType($accountID, $type);
-
     createAccountQuery($accountID, $type, $firstName, $lastName, $email);
 }
 
@@ -207,8 +205,6 @@ function createAccount(string $accountID, int $type = ACCOUNT_TYPE_NONE,
 function createTempStudent(string $firstName = null, string $lastName = null,
     string $email = null
 ) {
-    validateTempStudentFields($firstName, $lastName, $email);
-
     $id = generateTempID();
 
     $type = ACCOUNT_TYPE_TEMP | ACCOUNT_TYPE_STUDENT;
@@ -226,8 +222,6 @@ function createTempStudent(string $firstName = null, string $lastName = null,
 function createStudent(string $id, string $firstName, string $lastName,
     string $email
 ) {
-    validateAccountFields($id, $firstName, $lastName, $email);
-
     createAccount($id, ACCOUNT_TYPE_STUDENT, $firstName, $lastName, $email);
 }
 
@@ -242,8 +236,6 @@ function createStudent(string $id, string $firstName, string $lastName,
 function createGrader(string $id, string $firstName, string $lastName,
     string $email
 ) {
-    validateAccountFields($id, $firstName, $lastName, $email);
-
     createAccount($id, ACCOUNT_TYPE_GRADER, $firstName, $lastName, $email);
 }
 
@@ -259,8 +251,6 @@ function createGrader(string $id, string $firstName, string $lastName,
 function createTeacher(string $id, string $firstName, string $lastName,
     string $email
 ) {
-    validateAccountFields($id, $firstName, $lastName, $email);
-
     createAccount(
         $id, ACCOUNT_TYPE_TEACHER | ACCOUNT_TYPE_GRADER, $firstName, $lastName,
         $email
@@ -279,8 +269,6 @@ function createTeacher(string $id, string $firstName, string $lastName,
 function createAdmin(string $id, string $firstName, string $lastName,
     string $email
 ) {
-    validateAccountFields($id, $firstName, $lastName, $email);
-
     createAccount($id, ACCOUNT_TYPE_ADMIN, $firstName, $lastName, $email);
 }
 

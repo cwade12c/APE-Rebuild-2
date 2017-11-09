@@ -23,8 +23,6 @@
  */
 function getExamsRegisteredFor(string $studentID)
 {
-    validateStudentID($studentID);
-
     $results = getExamsRegisteredForQuery($studentID);
     $exams = array_column($results, 'exam_id');
 

@@ -41,8 +41,6 @@ function getExamsRegisteredFor(string $studentID)
  */
 function getActiveExamsRegisteredFor(string $studentID)
 {
-    validateStudentID($studentID);
-
     $results = getActiveExamsRegisteredForQuery($studentID);
     $exams = array_column($results, 'exam_id');
 
@@ -58,14 +56,8 @@ function getActiveExamsRegisteredFor(string $studentID)
  */
 function getExamRegistrations(int $examID)
 {
-    validateExamID($examID);
-
     $results = getAllExamRegistrationsQuery($examID);
-    $studentIDs = array_map(
-        function ($row) {
-            return $row['student_id'];
-        }, $results
-    );
+    $studentIDs = array_column($results, 'student_id');
 
     return $studentIDs;
 }

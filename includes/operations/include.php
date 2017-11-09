@@ -4,6 +4,7 @@ require_once INCLUDES_PATH . 'operations/Operation.class.php';
 require_once INCLUDES_PATH . 'operations/Categories.class.php';
 require_once INCLUDES_PATH . 'operations/Category.class.php';
 require_once INCLUDES_PATH . 'operations/CreateAccount.class.php';
+require_once INCLUDES_PATH . 'operations/TempToFull.class.php';
 require_once INCLUDES_PATH . 'operations/CreateAccounts.class.php';
 require_once INCLUDES_PATH . 'operations/CreateCategory.class.php';
 require_once INCLUDES_PATH . 'operations/CreateExam.class.php';

@@ -375,6 +375,21 @@ function validateAccountID(string $id)
 }
 
 /**
+ * @param string $id
+ *
+ * @return bool
+ */
+function validateEWUID(string $id)
+{
+    if (!validID($id)) {
+        throw new InvalidArgumentException(
+            "EWU ID is not a valid format", ERROR_CODE_ARG
+        );
+    }
+    return true;
+}
+
+/**
  * Validate the given account exists
  *
  * @param string $id

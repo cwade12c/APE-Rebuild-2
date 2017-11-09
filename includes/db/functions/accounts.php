@@ -293,17 +293,14 @@ function createAdmin(string $id, string $firstName, string $lastName,
  */
 function promoteTempToStudent(string $tempID, string $id)
 {
-    validateTempStudentID($tempID);
-    validateAccountID($id);
-
     if (accountExists($id)) {
         combineStudent($tempID, $id);
     }else{
         startTransaction();
 
         // strip off temp type - retain others
-        $type = getAccountType($id) & (~ACCOUNT_TYPE_TEMP);
-        setAccountType($id, $type);
+        $type = getAccountType($tempID) & (~ACCOUNT_TYPE_TEMP);
+        setAccountType($tempID, $type);
 
         updateAccountIDQuery($tempID, $id);
 
@@ -331,7 +328,10 @@ function combineStudent(string $tempID, string $id)
      *
      * should not have done the account ID as the primary keys
      *  would've solved a lot of issues.
-     * good enough for now though
+     *
+     * possible workaround,
+     * only allow if no registered exams are in grading/finalization
+     * once archived, just clean out all the old entries and do
      */
 }
 

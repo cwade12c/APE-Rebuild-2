@@ -685,8 +685,6 @@ function getStudentCategoryGrades(int $examID, string $studentID)
  */
 function getStudentCategoryGrade(int $examID, int $categoryID, string $studentID
 ) {
-    // TODO: validations
-
     return getStudentCategoryGradeQuery($examID, $categoryID, $studentID);
 }
 

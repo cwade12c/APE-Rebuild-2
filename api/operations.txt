@@ -23,6 +23,7 @@ Locations
 MyExams
 RegisterForExam
 RegisterStudentForExam
+ReportTypes
 Room
 Rooms
 SetGraderProgress

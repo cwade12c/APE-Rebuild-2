@@ -1452,7 +1452,8 @@ function validateAccountsMatch(string $accountIDA, string $accountIDB)
  *
  * @return bool
  */
-function validateReportRows(array $rows) {
+function validateReportRows(array $rows)
+{
     $validReportTypes = array(
         REPORT_TYPE_NONE,
         REPORT_TYPE_STUDENT_ID,
@@ -1464,7 +1465,7 @@ function validateReportRows(array $rows) {
         REPORT_TYPE_STUDENT_CATEGORY_GRADES
     );
 
-    foreach($rows as $row) {
+    foreach ($rows as $row) {
         if (!in_array($row, $validReportTypes)) {
             throw new InvalidArgumentException('Invalid report type {$row}');
         }
@@ -1480,11 +1481,54 @@ function validateReportRows(array $rows) {
  *
  * @return bool
  */
-function validateReportIDExists(int $id) {
+function validateReportIDExists(int $id)
+{
     if (!reportExistsQuery($id)) {
         throw new InvalidArgumentException("Report({$id}) does not exist");
     }
 
+    return true;
+}
+
+/**
+ * Validate the search state
+ *
+ * @param int $state
+ *
+ * @return bool
+ */
+function validateSearchStates(int $state)
+{
+    if (!in_array(
+        $state,
+        array(GET_EXAMS_ALL, GET_EXAMS_OPEN, GET_EXAMS_UPCOMING,
+              GET_EXAMS_GRADING, GET_EXAMS_FINALIZING, GET_EXAMS_NON_ARCHIVED,
+              GET_EXAMS_ARCHIVED)
+    )
+    ) {
+        throw new InvalidArgumentException("Not a valid search state");
+    }
+    return true;
+}
+
+/**
+ * Validate the search type
+ *
+ * @param int $type
+ *
+ * @return bool
+ */
+function validateSearchType(int $type)
+{
+    if (!in_array(
+        $type,
+        array(GET_EXAMS_TYPE_BOTH,
+              GET_EXAMS_TYPE_REGULAR,
+              GET_EXAMS_TYPE_IN_CLASS)
+    )
+    ) {
+        throw new InvalidArgumentException("Not a valid search type");
+    }
     return true;
 }
 
@@ -1497,6 +1541,7 @@ function validateNoTransaction()
     if (inTransaction()) {
         throw new LogicException("A transaction is active");
     }
+    return true;
 }
 
 /**
@@ -1508,6 +1553,7 @@ function validateInTransaction()
     if (!inTransaction()) {
         throw new LogicException("A transaction is not active");
     }
+    return true;
 }
 
 /**
@@ -1538,6 +1584,7 @@ function validateKeysExist(array $arr, array $keys)
 function validateIsString($value, string $msg)
 {
     validateIsType($value, 'string', $msg);
+    return true;
 }
 
 /**
@@ -1549,6 +1596,7 @@ function validateIsString($value, string $msg)
 function validateIsInt($value, string $msg)
 {
     validateIsType($value, 'integer', $msg);
+    return true;
 }
 
 /**
@@ -1560,6 +1608,7 @@ function validateIsInt($value, string $msg)
 function validateIsArray($value, string $msg)
 {
     validateIsType($value, 'array', $msg);
+    return true;
 }
 
 /**
@@ -1579,6 +1628,7 @@ function validateIsType($value, string $type, string $msg)
             "Expected {$type} value type for ({$msg})"
         );
     }
+    return true;
 }
 
 /**
@@ -1595,4 +1645,5 @@ function validateStringIsDateTime(string $value)
             'Failed to parse datetime from string'
         );
     }
+    return true;
 }

@@ -34,6 +34,7 @@ require_once INCLUDES_PATH . 'operations/ExamGradeInfo.class.php';
 require_once INCLUDES_PATH . 'operations/ExamRegistrations.class.php';
 require_once INCLUDES_PATH . 'operations/ExamCategories.class.php';
 require_once INCLUDES_PATH . 'operations/ExamLocation.class.php';
+require_once INCLUDES_PATH . 'operations/ExamSearch.class.php';
 require_once INCLUDES_PATH . 'operations/GenerateReport.class.php';
 require_once INCLUDES_PATH . 'operations/GraderAssignedExamDetails.class.php';
 require_once INCLUDES_PATH . 'operations/GraderAssignedExams.class.php';

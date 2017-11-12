@@ -11,6 +11,7 @@ DeleteCategory
 DeleteLocation
 DeleteRoom
 ExamDetails
+GenerateReport
 GraderAssignedExamDetails
 GraderAssignedExams
 IsAdmin

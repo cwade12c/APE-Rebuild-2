@@ -468,6 +468,30 @@ function getReportTypes() {
   callAjax('get', 'ReportTypes', params, callbacks);
 }
 
+function generateReport(examId, reportTypes) {
+  var params = {
+    examID: examId,
+    types: reportTypes || []
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification('Successfully generated the report!', 'success');
+        console.log(response);
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'GenerateReport', params, callbacks);
+}
+
 function getReports() {
   var params = {};
 

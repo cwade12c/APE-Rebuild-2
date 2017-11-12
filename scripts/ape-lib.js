@@ -687,6 +687,30 @@ function createRoom(name, seats) {
   callAjax('post', 'CreateRoom', params, callbacks);
 }
 
+function createReport(reportName, reportTypes) {
+  var params = {
+    name: reportName,
+    rows: reportTypes
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification('Successfully created Report "' + params.name + '".', 'success');
+        console.log(response);
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'CreateReport', params, callbacks);
+}
+
 function createCategory(name, points) {
   var params = {
     name: name,

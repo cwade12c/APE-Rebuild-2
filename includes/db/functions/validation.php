@@ -1332,6 +1332,33 @@ function validateAccountsMatch(string $accountIDA, string $accountIDB)
 }
 
 /**
+ * Validate that the following rows match existing report types
+ *
+ * @param array $rows
+ *
+ * @return bool
+ */
+function validateReportRows(array $rows) {
+    $validReportTypes = array(
+        REPORT_TYPE_NONE,
+        REPORT_TYPE_STUDENT_ID,
+        REPORT_TYPE_STUDENT_FIRST_NAME,
+        REPORT_TYPE_STUDENT_LAST_NAME,
+        REPORT_TYPE_STUDENT_EMAIL,
+        REPORT_TYPE_STUDENT_GRADE,
+        REPORT_TYPE_STUDENT_PASSED,
+        REPORT_TYPE_STUDENT_CATEGORY_GRADES
+    );
+
+    foreach($rows as $row) {
+        if (!in_array($row, $validReportTypes)) {
+            throw new InvalidArgumentException('Invalid report type {$row}');
+        }
+    }
+    return true;
+}
+
+/**
  * Validate that no transaction is active
  * Throws LogicException if there is an issue
  */

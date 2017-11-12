@@ -18,6 +18,7 @@ require_once INCLUDES_PATH . 'operations/CreateAccounts.class.php';
 require_once INCLUDES_PATH . 'operations/CreateCategory.class.php';
 require_once INCLUDES_PATH . 'operations/CreateExam.class.php';
 require_once INCLUDES_PATH . 'operations/CreateLocation.class.php';
+require_once INCLUDES_PATH . 'operations/CreateReport.class.php';
 require_once INCLUDES_PATH . 'operations/CreateRoom.class.php';
 require_once INCLUDES_PATH . 'operations/DefaultCategories.class.php';
 require_once INCLUDES_PATH . 'operations/DeleteCategory.class.php';

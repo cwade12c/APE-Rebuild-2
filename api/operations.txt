@@ -5,6 +5,7 @@ CreateAccounts
 CreateCategory
 CreateExam
 CreateLocation
+CreateReport
 CreateRoom
 DefaultCategories
 DeleteCategory

@@ -23,12 +23,14 @@ class RegisterStudentForExam extends Operation
         parent::registerParameter("examID", "integer");
         parent::registerParameter("studentID", "string");
 
+        parent::registerAccountIDValidation(
+            'validateUserCanEditExam', 'examID'
+        );
+
         parent::registerValidation("validateExamIDExists", "examID");
         parent::registerValidation("validateExamAllowsRegistration", "examID");
         parent::registerValidation("validateExamRoomAvailable", "examID");
-        parent::registerValidation(
-            "validateRegistrationStateIs", array("studentID", "state")
-        );
+        parent::registerValidation('validateStudentIDCanRegister', 'studentID');
     }
 
     public function execute(array $args, string $accountID = null)
@@ -40,5 +42,7 @@ class RegisterStudentForExam extends Operation
         string $studentID
     ) {
         registerStudentForExam($examID, $studentID);
+
+        return array(true);
     }
 }

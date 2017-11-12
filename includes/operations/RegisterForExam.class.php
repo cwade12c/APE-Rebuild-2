@@ -39,5 +39,7 @@ class RegisterForExam extends Operation
     public static function registerForExam(int $examID, string $studentID)
     {
         registerStudentForExam($examID, $studentID);
+
+        return array(true);
     }
 }

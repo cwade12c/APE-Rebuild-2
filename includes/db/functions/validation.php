@@ -732,6 +732,25 @@ function validateGraderAssignedToExamCategory(string $graderID, int $examID,
 }
 
 /**
+ * Validate grader is not assigned to exam/category
+ *
+ * @param string $graderID
+ * @param int    $examID
+ * @param int    $categoryID
+ *
+ * @return bool
+ */
+function validateGraderNotAssigned(string $graderID, int $examID, int $categoryID)
+{
+    if (isGraderAssignedExamCategory($graderID, $examID, $categoryID)) {
+        throw new InvalidArgumentException(
+            "Grader($graderID) already assigned to exam($examID) category($categoryID)"
+        );
+    }
+    return true;
+}
+
+/**
  * Validate the grader has not submitted for exam category
  *
  * @param string $graderID
@@ -1213,7 +1232,7 @@ function validateExamStateIs(int $examID, $stateExpected)
         }
     }
 
-    foreach ($stateExpected as $state) {
+    foreach ($statesAllowed as $state) {
         if (!isExamStateValid($state)) {
             throw new InvalidArgumentException(
                 'state given to expect is not valid'
@@ -1263,6 +1282,23 @@ function validateExamStateAllowsEdits(int $examID)
 }
 
 /**
+ * Validate an exam's state allows graders to be assigned
+ *
+ * @param int $examID
+ *
+ * @return bool
+ */
+function validateExamStateAllowsGraderAssignment(int $examID)
+{
+    $state = getExamState($examID);
+    if (!doesExamStateAllowGraderAssignments($state)) {
+        throw new InvalidArgumentException("Exam state does not allow grader assignments");
+    }
+
+    return true;
+}
+
+/**
  * Validate if user can edit this exam
  *
  * @param string $accountID
@@ -1272,18 +1308,11 @@ function validateExamStateAllowsEdits(int $examID)
  */
 function validateUserCanEditExam(string $accountID, int $examID)
 {
-    $type = getAccountType($accountID);
-    if (typeHas($type, ACCOUNT_TYPE_ADMIN)) {
-        return true;
-    }else if (typeHas($type, ACCOUNT_TYPE_TEACHER)) {
-        $examTeacher = getInClassExamTeacher($examID);
-        if (!$examTeacher || ($examTeacher != $accountID)) {
-            throw new InvalidArgumentException("Exam does not belong to this teacher");
-        }
-        return true;
+    if (!canEditExam($accountID, $examID)) {
+        throw new InvalidArgumentException("User cannot edit this exam");
     }
 
-    throw new InvalidArgumentException("User cannot edit this exam");
+    return true;
 }
 
 /**

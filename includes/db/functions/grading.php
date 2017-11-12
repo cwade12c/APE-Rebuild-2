@@ -45,12 +45,16 @@ function isGraderAssignedExamCategory(string $graderID, int $examID, int $catego
  */
 function assignGrader(int $examID, int $categoryID, string $graderID)
 {
+    startTransaction();
+
     assignGraderQuery($examID, $categoryID, $graderID);
 
     $state = getExamState($examID);
     if ($state == EXAM_STATE_GRADING) {
         insertGraderDuringGrading($examID, $categoryID, $graderID);
     }
+
+    commit();
 }
 
 /**
@@ -354,6 +358,21 @@ function getGraderCategoryGrades(int $examID, int $categoryID, string $graderID)
     );
 
     return $categoryPoints;
+}
+
+/**
+ * Get grader's category grade for a student
+ *
+ * @param int    $examID
+ * @param int    $categoryID
+ * @param string $graderID
+ * @param string $studentID
+ *
+ * @return int
+ */
+function getGraderCategoryStudentGrade(int $examID, int $categoryID, string $graderID, string $studentID)
+{
+    return getGraderCategoryStudentGradeQuery($examID, $categoryID, $graderID, $studentID);
 }
 
 /**

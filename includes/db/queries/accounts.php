@@ -298,7 +298,9 @@ function getIdsByTypeQuery(int $type)
  */
 function getFullAccountInformationByTypeQuery(int $type)
 {
-    $query = "SELECT * FROM `accounts` WHERE `type`=:type";
+    $query
+        = "SELECT 'id', 'f_name', 'l_name', 'email' "
+        . " FROM `accounts` WHERE `type`=:type";
     $sql = executeQuery(
         $query, array(
             array(':type', $type, PDO::PARAM_INT)

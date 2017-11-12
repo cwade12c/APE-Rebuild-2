@@ -581,6 +581,27 @@ function setExamLocation(int $id, int $locationID)
     setExamLocationQuery($id, $locationID);
 }
 
+/**
+ * Check if user can edit the given exam
+ *
+ * @param string $accountID
+ * @param int    $examID
+ *
+ * @return bool
+ */
+function canEditExam(string $accountID, int $examID)
+{
+    $type = getAccountType($accountID);
+    if (typeHas($type, ACCOUNT_TYPE_ADMIN)) {
+        return true;
+    }else if (typeHas($type, ACCOUNT_TYPE_TEACHER)) {
+        $examTeacher = getInClassExamTeacher($examID);
+        return ($examTeacher && ($examTeacher == $accountID));
+    }
+
+    return false;
+}
+
 // TODO: have extended location check for setExamLocation() and updateExam()?
 // will simplify the checks
 // or just limit those functions to be used by exam interactions

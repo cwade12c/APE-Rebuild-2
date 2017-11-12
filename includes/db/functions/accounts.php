@@ -448,7 +448,7 @@ function getAllStudents()
 /**
  * Get all grader accounts with full information
  *
- * @return mixed
+ * @return array
  */
 function getAllGraders()
 {

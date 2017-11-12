@@ -68,7 +68,7 @@ class ResolveConflict extends Operation
 
         $examGrade = determineExamGrade($passingGrade, $categoryGrades);
 
-        setStudentExamGradeQuery(
+        setStudentExamGrade(
             $examID, $studentID, $examGrade['grade'], $examGrade['passed']
         );
     }

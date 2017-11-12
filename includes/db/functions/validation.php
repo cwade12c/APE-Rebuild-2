@@ -1268,6 +1268,31 @@ function validateExamCategoryGrade(int $examID, int $categoryID, int $grade)
 }
 
 /**
+ * Validate grade is valid for exam
+ *
+ * @param int $examID
+ * @param int $grade
+ *
+ * @return bool
+ */
+function validateExamGrade(int $examID, int $grade)
+{
+    if ($grade < 0) {
+        throw new InvalidArgumentException("Grade cannot be negative");
+    }
+
+    $categories = getExamCategories($examID);
+    $points = array_column($categories, 'points');
+    $max = array_sum($points);
+
+    if ($grade > $max) {
+        throw new InvalidArgumentException("Grade higher than max possible");
+    }
+
+    return true;
+}
+
+/**
  * Validate no conflicts exist for an exam
  *
  * @param int $examID

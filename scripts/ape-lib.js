@@ -468,6 +468,26 @@ function getReportTypes() {
   callAjax('get', 'ReportTypes', params, callbacks);
 }
 
+function getReports() {
+  var params = {};
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        console.log(response);
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('get', 'Reports', params, callbacks);
+}
+
 function updateRoom(roomId, roomName, seatCount) {
   var params = {
     id: roomId,

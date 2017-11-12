@@ -23,6 +23,7 @@ Locations
 MyExams
 RegisterForExam
 RegisterStudentForExam
+Reports
 ReportTypes
 Room
 Rooms

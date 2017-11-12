@@ -14,6 +14,7 @@ require_once INCLUDES_PATH . 'operations/Category.class.php';
 require_once INCLUDES_PATH . 'operations/CreateAccount.class.php';
 require_once INCLUDES_PATH . 'operations/TempToFull.class.php';
 require_once INCLUDES_PATH . 'operations/ResolveBlock.class.php';
+require_once INCLUDES_PATH . 'operations/ResolveConflict.class.php';
 require_once INCLUDES_PATH . 'operations/CreateAccounts.class.php';
 require_once INCLUDES_PATH . 'operations/CreateCategory.class.php';
 require_once INCLUDES_PATH . 'operations/CreateExam.class.php';

@@ -361,6 +361,21 @@ function getGraderCategoryGrades(int $examID, int $categoryID, string $graderID)
 }
 
 /**
+ * Get grader's category grade for a student
+ *
+ * @param int    $examID
+ * @param int    $categoryID
+ * @param string $graderID
+ * @param string $studentID
+ *
+ * @return int
+ */
+function getGraderCategoryStudentGrade(int $examID, int $categoryID, string $graderID, string $studentID)
+{
+    return getGraderCategoryStudentGradeQuery($examID, $categoryID, $graderID, $studentID);
+}
+
+/**
  * Sets the student points for a grader's assigned category
  *
  * @param int    $examID

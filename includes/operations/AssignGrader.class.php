@@ -28,10 +28,7 @@ class AssignGrader extends Operation
 
         parent::registerValidation('validateExamIDExists', 'examID');
         parent::registerValidation('validateExamCategory', array('examID', 'categoryID'));
-        parent::registerValidation('validateExamStateAllowsEdits', 'examID');
-        parent::registerValidation(
-            'validateExamCategories', array('passingGrade', 'categories')
-        );
+        parent::registerValidation('validateExamStateAllowsGraderAssignment', 'examID');
         parent::registerValidation('validateGraderID', 'graderID');
         parent::registerValidation('validateGraderNotAssigned', array('graderID', 'examID', 'categoryID'));
     }

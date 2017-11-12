@@ -1232,7 +1232,7 @@ function validateExamStateIs(int $examID, $stateExpected)
         }
     }
 
-    foreach ($stateExpected as $state) {
+    foreach ($statesAllowed as $state) {
         if (!isExamStateValid($state)) {
             throw new InvalidArgumentException(
                 'state given to expect is not valid'
@@ -1308,18 +1308,11 @@ function validateExamStateAllowsGraderAssignment(int $examID)
  */
 function validateUserCanEditExam(string $accountID, int $examID)
 {
-    $type = getAccountType($accountID);
-    if (typeHas($type, ACCOUNT_TYPE_ADMIN)) {
-        return true;
-    }else if (typeHas($type, ACCOUNT_TYPE_TEACHER)) {
-        $examTeacher = getInClassExamTeacher($examID);
-        if (!$examTeacher || ($examTeacher != $accountID)) {
-            throw new InvalidArgumentException("Exam does not belong to this teacher");
-        }
-        return true;
+    if (!canEditExam($accountID, $examID)) {
+        throw new InvalidArgumentException("User cannot edit this exam");
     }
 
-    throw new InvalidArgumentException("User cannot edit this exam");
+    return true;
 }
 
 /**

@@ -505,5 +505,5 @@ function doesMinimumNumberOfAdminsExist()
  */
 function hashAccountID(string $accountID)
 {
-    return hash(ACCOUNT_HASH_ALG, $accountID);
+    return hash(HASHING_ALGORITHM, $accountID);
 }

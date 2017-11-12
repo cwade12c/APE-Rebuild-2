@@ -116,9 +116,6 @@ define(
     '/^' . TEMP_ID_PREFIX . '[a-zA-Z0-9+\/=]{' . TEMP_ID_BYTES_GENERATED . '}$/'
 );
 
-/* hashing algorithm for account IDs, used to obfuscate IDs to graders */
-define('ACCOUNT_HASH_ALG', 'sha256');
-
 /* Error codes for exceptions */
 /* error code base */
 define('ERROR_CODE_BASE', 100);

@@ -2,6 +2,8 @@
 
 /**
  * Generate Report class to generate an array of result rows for a report
+ * An authorizationToken is returned, which can be passed to a DownloadReport file
+ * as a security validation check
  *
  * @author         Curran Higgins
  * @category       APE
@@ -33,7 +35,9 @@ class GenerateReport extends Operation
 
         return array(
             'reportHeaders' => $generatedReport[0],
-            'reportRows' => $generatedReport[1]
+            'reportRows' => $generatedReport[1],
+            'authorizationToken' => hash(HASHING_ALGORITHM, date('m/d/Y h') .
+                AUTHORIZATION_TOKEN)
         );
     }
 }

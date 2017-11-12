@@ -1268,6 +1268,21 @@ function validateExamCategoryGrade(int $examID, int $categoryID, int $grade)
 }
 
 /**
+ * Validate no conflicts exist for an exam
+ *
+ * @param int $examID
+ *
+ * @return bool
+ */
+function validateNoConflictsExist(int $examID)
+{
+    if (conflictsExist($examID)) {
+        throw new InvalidArgumentException("Conflicts exist for exam");
+    }
+    return true;
+}
+
+/**
  * Validate the state of an exam is an allowed value
  *
  * @param int       $examID

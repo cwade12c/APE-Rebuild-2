@@ -12,6 +12,7 @@ require_once INCLUDES_PATH . 'operations/CanFinalizeExam.class.php';
 require_once INCLUDES_PATH . 'operations/Categories.class.php';
 require_once INCLUDES_PATH . 'operations/Category.class.php';
 require_once INCLUDES_PATH . 'operations/CreateAccount.class.php';
+require_once INCLUDES_PATH . 'operations/FinalizeExam.class.php';
 require_once INCLUDES_PATH . 'operations/TempToFull.class.php';
 require_once INCLUDES_PATH . 'operations/ResolveBlock.class.php';
 require_once INCLUDES_PATH . 'operations/ResolveConflict.class.php';

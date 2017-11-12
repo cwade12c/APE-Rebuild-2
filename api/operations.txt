@@ -38,4 +38,5 @@ UpdateDefaultCategories
 UpcomingExams
 UpdateLocationName
 UpdateLocationRooms
+UpdateReport
 UpdateRoom

@@ -55,6 +55,7 @@ require_once INCLUDES_PATH . 'operations/UpdateDefaultCategories.class.php';
 require_once INCLUDES_PATH . 'operations/UpcomingExams.class.php';
 require_once INCLUDES_PATH . 'operations/UpdateLocationName.class.php';
 require_once INCLUDES_PATH . 'operations/UpdateLocationRooms.class.php';
+require_once INCLUDES_PATH . 'operations/UpdateReport.class.php';
 require_once INCLUDES_PATH . 'operations/UpdateRoom.class.php';
 require_once INCLUDES_PATH . 'operations/UpdateExamState.class.php';
 require_once INCLUDES_PATH . 'operations/UpdateExamTime.class.php';

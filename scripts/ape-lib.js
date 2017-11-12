@@ -711,6 +711,32 @@ function createReport(reportName, reportTypes) {
   callAjax('post', 'CreateReport', params, callbacks);
 }
 
+function updateReport(reportId, reportName, reportTypes) {
+  var params = {
+    id: reportId,
+    name: reportName,
+    rows: reportTypes
+  };
+
+  var callbacks = {
+    success: function (response) {
+      if(response.success === true) {
+        notification('Successfully updated Report "' + params.name + '".', 'success');
+        console.log(response);
+      }
+      else {
+        notification(response.message);
+      }
+    },
+    error: function (response) {
+      notification(response.message);
+    }
+  };
+
+  callAjax('post', 'UpdateReport', params, callbacks);
+}
+
+
 function createCategory(name, points) {
   var params = {
     name: name,

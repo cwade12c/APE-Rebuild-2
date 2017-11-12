@@ -1,6 +1,8 @@
 <?php
 require_once INCLUDES_PATH . 'operations/Operation.class.php';
 
+require_once INCLUDES_PATH . 'operations/AccountIDValid.class.php';
+require_once INCLUDES_PATH . 'operations/AccountIDExists.class.php';
 require_once INCLUDES_PATH . 'operations/Categories.class.php';
 require_once INCLUDES_PATH . 'operations/Category.class.php';
 require_once INCLUDES_PATH . 'operations/CreateAccount.class.php';

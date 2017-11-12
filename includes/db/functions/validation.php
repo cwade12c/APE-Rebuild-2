@@ -740,8 +740,9 @@ function validateGraderAssignedToExamCategory(string $graderID, int $examID,
  *
  * @return bool
  */
-function validateGraderNotAssigned(string $graderID, int $examID, int $categoryID)
-{
+function validateGraderNotAssigned(string $graderID, int $examID,
+    int $categoryID
+) {
     if (isGraderAssignedExamCategory($graderID, $examID, $categoryID)) {
         throw new InvalidArgumentException(
             "Grader($graderID) already assigned to exam($examID) category($categoryID)"
@@ -841,7 +842,9 @@ function validateStudentBlocked(string $studentID)
 {
     $state = getRegistrationState($studentID);
     if ($state != STUDENT_STATE_BLOCKED) {
-        throw new InvalidArgumentException("student($studentID) is not in the blocked state($state)");
+        throw new InvalidArgumentException(
+            "student($studentID) is not in the blocked state($state)"
+        );
     }
 
     return true;
@@ -1209,6 +1212,77 @@ function validateExamCategory(int $examID, int $categoryID)
 }
 
 /**
+ * Validate
+ *
+ * @param int    $examID
+ * @param int    $categoryID
+ * @param string $studentID
+ *
+ * @return bool
+ */
+function validateConflictExists(int $examID, int $categoryID, string $studentID)
+{
+    $conflicts = getConflicts($examID);
+    foreach ($conflicts as $conflict) {
+        if ($studentID == $conflict['studentID']) {
+            if (in_array($categoryID, $conflict['categories'])) {
+                return true;
+            }
+            throw new InvalidArgumentException(
+                "Student has no conflict for the given category"
+            );
+        }
+    }
+
+    throw new InvalidArgumentException("Student has no conflicts");
+}
+
+/**
+ * Validate the category grade
+ *
+ * @param int $examID
+ * @param int $categoryID
+ * @param int $grade
+ *
+ * @return bool
+ */
+function validateExamCategoryGrade(int $examID, int $categoryID, int $grade)
+{
+    if ($grade < 0) {
+        throw new InvalidArgumentException("Grade cannot be negative");
+    }
+
+    $categories = getExamCategories($examID);
+    foreach ($categories as $category) {
+        if ($category['id'] == $categoryID) {
+            if ($grade > $category['points']) {
+                throw new InvalidArgumentException(
+                    "Grade higher than category max"
+                );
+            }
+            return true;
+        }
+    }
+    // category id not found
+    return false;
+}
+
+/**
+ * Validate no conflicts exist for an exam
+ *
+ * @param int $examID
+ *
+ * @return bool
+ */
+function validateNoConflictsExist(int $examID)
+{
+    if (conflictsExist($examID)) {
+        throw new InvalidArgumentException("Conflicts exist for exam");
+    }
+    return true;
+}
+
+/**
  * Validate the state of an exam is an allowed value
  *
  * @param int       $examID
@@ -1292,7 +1366,9 @@ function validateExamStateAllowsGraderAssignment(int $examID)
 {
     $state = getExamState($examID);
     if (!doesExamStateAllowGraderAssignments($state)) {
-        throw new InvalidArgumentException("Exam state does not allow grader assignments");
+        throw new InvalidArgumentException(
+            "Exam state does not allow grader assignments"
+        );
     }
 
     return true;
@@ -1311,6 +1387,19 @@ function validateUserCanEditExam(string $accountID, int $examID)
     if (!canEditExam($accountID, $examID)) {
         throw new InvalidArgumentException("User cannot edit this exam");
     }
+
+    return true;
+}
+
+function validateComment(string $comment)
+{
+    $attributeDetails = getTableAttributeDetails('exam_grades', 'comment');
+    $length = $attributeDetails['CHARACTER_MAXIMUM_LENGTH'];
+    if (strlen($comment) > $length) {
+        throw new InvalidArgumentException("Comment too long");
+    }
+
+    // TODO sanitize the string
 
     return true;
 }
@@ -1474,9 +1563,11 @@ function validateIsType($value, string $type, string $msg)
  */
 function validateStringIsDateTime(string $value)
 {
-    try{
+    try {
         DateTime::createFromFormat(DATETIME_FORMAT, $value);
-    }catch(Exception $e) {
-        throw new InvalidArgumentException('Failed to parse datetime from string');
+    } catch (Exception $e) {
+        throw new InvalidArgumentException(
+            'Failed to parse datetime from string'
+        );
     }
 }

@@ -910,10 +910,6 @@ function setStudentExamComment(int $examID, string $studentID,
  */
 function finalizeExam(int $examID)
 {
-    // TODO: validations
-    // validate in 'finalizing' state
-    // validate no conflicts exist
-
     transitionExamToArchived($examID);
 }
 

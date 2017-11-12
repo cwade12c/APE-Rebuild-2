@@ -11,23 +11,24 @@ function sanitize(string $input)
     return htmlentities($input);
 }
 
-function logSecurityIncident(str $event, $extendedInfo)
+function logSecurityIncident(string $event, string $extendedInfo)
 {
     if (is_writable(LOG_PATH)) {
+        global $params;
+        $message = date("m/d/Y") . " => $event : $extendedInfo [" . $_SERVER['REMOTE_ADDR'] .
+            "] [" . $_SERVER['HTTP_REFERER'] . "] [" . $params['id'] . "] [" . $params['email'] .
+            "] \n";
+
         if ( ! $handle = fopen(LOG_PATH, 'a')) {
-            if (DEBUG) {
-                die("Security incident: unable to read the security log file");
-            }
+            die("Security incident ($event) : unable to read the security log file");
         }
-        if (fwrite($handle, $event . " : " . $extendedInfo) === false) {
-            if (DEBUG) {
-                die("Security incident: unable to write to the security log file");
-            }
+        if (fwrite($handle, $message) === false) {
+            die("Security incident ($event) : unable to write to the security log file");
         }
 
         fclose($handle);
-    } else if (DEBUG) {
-        die("Security incident: unable to write to the security log file");
+    } else {
+        die("Security incident ($event) : unable to write to the security log file");
     }
 }
 

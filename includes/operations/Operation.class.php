@@ -319,8 +319,12 @@ abstract class Operation
                 return;
             }
         }
+
+        $message = "Account type ({$type}) does not match any acceptable types";
+
+        logSecurityIncident("INVALID_PERMISSION", $message);
         throw new InvalidArgumentException(
-            "Account type ({$type}) does not match any acceptable types"
+            $message
         );
     }
 
@@ -360,8 +364,12 @@ abstract class Operation
                 );
             }
         } catch (Exception $e) {
+            $message = "Account ID ({$accountID}) failed operation account validation";
+            $id = reset($args);
+
+            logSecurityIncident("ACCOUNT_HIJACK ($id)", $message);
             throw new InvalidArgumentException(
-                "Account ID ({$accountID}) failed operation account validation"
+                $message
             );
         }
     }

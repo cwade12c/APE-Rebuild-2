@@ -35,6 +35,7 @@ class ResolveConflict extends Operation
         );
         parent::registerValidation('validateExamCategory', array('examID', 'categoryID'));
         parent::registerValidation('validateStudentID', 'studentID');
+        parent::registerValidation('validateStudentIsRegisteredFor', array('studentID', 'examID'));
         parent::registerValidation('validateConflictExists', array('examID', 'categoryID', 'studentID'));
         parent::registerValidation('validateExamCategoryGrade', array('examID', 'categoryID', 'grade'));
     }

@@ -1391,6 +1391,19 @@ function validateUserCanEditExam(string $accountID, int $examID)
     return true;
 }
 
+function validateComment(string $comment)
+{
+    $attributeDetails = getTableAttributeDetails('exam_grades', 'comment');
+    $length = $attributeDetails['CHARACTER_MAXIMUM_LENGTH'];
+    if (strlen($comment) > $length) {
+        throw new InvalidArgumentException("Comment too long");
+    }
+
+    // TODO sanitize the string
+
+    return true;
+}
+
 /**
  * Validate that the following account ID matches the current exam
  *

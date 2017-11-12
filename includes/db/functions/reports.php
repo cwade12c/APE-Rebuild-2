@@ -94,6 +94,18 @@ function wipeReportRows(int $id)
 }
 
 /**
+ * Update the name and rows of a report ID
+ *
+ * @param int $id
+ * @param string $name
+ * @param array  $rows
+ */
+function updateReport(int $id, string $name, array $rows) {
+    updateReportNameQuery($id, $name);
+    updateReportTypesQuery($id, $rows);
+}
+
+/**
  * Used internally for functions to validate the rows array
  * Checks that only positive integers present
  *

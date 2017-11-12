@@ -1359,6 +1359,22 @@ function validateReportRows(array $rows) {
 }
 
 /**
+ * Checks if report w/ ID exists
+ * Throws argument exception if there is an issue
+ *
+ * @param int $id report ID
+ *
+ * @return bool
+ */
+function validateReportIDExists(int $id) {
+    if (!reportExistsQuery($id)) {
+        throw new InvalidArgumentException("Report({$id}) does not exist");
+    }
+
+    return true;
+}
+
+/**
  * Validate that no transaction is active
  * Throws LogicException if there is an issue
  */

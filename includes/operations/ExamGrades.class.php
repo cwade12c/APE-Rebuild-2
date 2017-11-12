@@ -12,15 +12,21 @@ class ExamGrades extends Operation
 {
     function __construct()
     {
-        parent::requireLogin(false);
+        parent::setAllowedAccountTypes(array(ACCOUNT_TYPE_ADMIN, ACCOUNT_TYPE_TEACHER));
 
-        parent::registerExecution(array($this, 'getExamInformation'));
+        parent::registerExecution(array($this, 'getExamGrades'));
 
-        parent::registerParameter('id', 'integer');
+        parent::registerParameter('examID', 'integer');
         parent::registerStaticParameter('archivedState', EXAM_STATE_ARCHIVED);
 
-        parent::registerValidation('validateExamIDExists', 'id');
-        parent::registerValidation('validateExamStateIs',array('id', 'archivedState'));
+        parent::registerAccountIDValidation(
+            'validateUserCanEditExam', 'examID'
+        );
+
+        parent::registerValidation('validateExamIDExists', 'examID');
+        parent::registerValidation(
+            'validateExamStateIs', array('examID', 'archivedState')
+        );
     }
 
     public function execute(array $args, string $accountID = null)
@@ -28,18 +34,29 @@ class ExamGrades extends Operation
         return parent::execute($args, $accountID);
     }
 
+    /**
+     * @param int $examID
+     *
+     * @return array        Associative array, keys
+     *                      'grades' => set of grade info
+     *                      grade info
+     *                      'studentID'
+     *                      'grade'
+     *                      'passed'
+     */
     public static function getExamGrades(int $examID)
     {
         $registrations = getExamRegistrations($examID);
         $grades = array();
-        foreach($registrations as $studentID) {
-            $points = getStudentExamGrade($examID, $studentID);
-            $grade = array('studentID' => $studentID, 'grade' => $points);
+        foreach ($registrations as $studentID) {
+            $info = getStudentExamGradeDetails($examID, $studentID);
+            $grade = array('studentID' => $studentID,
+                           'grade'     => $info['grade'],
+                           'passed'    => $info['passed']);
             array_push($grades, $grade);
         }
 
         return array(
-            'examID' => $examID,
             'grades' => $grades
         );
     }

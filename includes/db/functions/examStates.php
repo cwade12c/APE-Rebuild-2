@@ -128,10 +128,10 @@ function doesExamStateAllowEdits(int $state)
         // allows
         case EXAM_STATE_HIDDEN:
         case EXAM_STATE_OPEN:
-        case EXAM_STATE_CLOSED:
-        case EXAM_STATE_IN_PROGRESS:
             return true;
         // does not allow
+        case EXAM_STATE_CLOSED:
+        case EXAM_STATE_IN_PROGRESS:
         case EXAM_STATE_GRADING:
         case EXAM_STATE_FINALIZING:
         case EXAM_STATE_ARCHIVED:

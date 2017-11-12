@@ -634,3 +634,45 @@ function updateExamQuery(int $id, DateTime $start, DateTime $cutoff,
         )
     );
 }
+
+/**
+ * Query to update exam time attributes
+ *
+ * @param int      $examID
+ * @param DateTime $start
+ * @param DateTime $cutoff
+ * @param int      $length
+ */
+function updateExamTimeQuery(int $examID, DateTime $start, DateTime $cutoff, int $length)
+{
+    $query = "UPDATE `exams` "
+        . " SET `start` = :start, `cutoff` = :cutoff, `length` = :len "
+        . " WHERE `id` = :id";
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $examID, PDO::PARAM_INT),
+            buildDateTimeStrParam(':start', $start),
+            buildDateTimeStrParam(':cutoff', $cutoff),
+            array(':len', $length, PDO::PARAM_INT)
+        )
+    );
+}
+
+/**
+ * Query to only set the exam passing grade
+ *
+ * @param int $examID
+ * @param int $passingGrade
+ */
+function updateExamPassingGradeQuery(int $examID, int $passingGrade)
+{
+    $query = "UPDATE `exams` "
+        . " SET `passing_grade` = :passingGrade "
+        . " WHERE `id` = :id";
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $examID, PDO::PARAM_INT),
+            array(':passingGrade', $passingGrade, PDO::PARAM_INT)
+        )
+    );
+}

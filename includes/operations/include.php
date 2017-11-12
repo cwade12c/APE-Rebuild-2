@@ -1,6 +1,10 @@
 <?php
 require_once INCLUDES_PATH . 'operations/Operation.class.php';
 
+require_once INCLUDES_PATH . 'operations/AccountIDValid.class.php';
+require_once INCLUDES_PATH . 'operations/AccountIDExists.class.php';
+require_once INCLUDES_PATH . 'operations/AccountGeneralInfo.class.php';
+require_once INCLUDES_PATH . 'operations/AccountDetails.class.php';
 require_once INCLUDES_PATH . 'operations/Categories.class.php';
 require_once INCLUDES_PATH . 'operations/Category.class.php';
 require_once INCLUDES_PATH . 'operations/CreateAccount.class.php';
@@ -44,3 +48,7 @@ require_once INCLUDES_PATH . 'operations/UpcomingExams.class.php';
 require_once INCLUDES_PATH . 'operations/UpdateLocationName.class.php';
 require_once INCLUDES_PATH . 'operations/UpdateLocationRooms.class.php';
 require_once INCLUDES_PATH . 'operations/UpdateRoom.class.php';
+require_once INCLUDES_PATH . 'operations/UpdateExamState.class.php';
+require_once INCLUDES_PATH . 'operations/UpdateExamTime.class.php';
+require_once INCLUDES_PATH . 'operations/UpdateExamLocation.class.php';
+require_once INCLUDES_PATH . 'operations/UpdateExamGrades.class.php';

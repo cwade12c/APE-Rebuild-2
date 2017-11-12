@@ -1230,6 +1230,63 @@ function validateExamStateIs(int $examID, $stateExpected)
 }
 
 /**
+ * Validate exam state
+ *
+ * @param int $state
+ *
+ * @return bool
+ */
+function validateExamState(int $state)
+{
+    if (!isExamStateValid($state)) {
+        throw new InvalidArgumentException('State is not valid');
+    }
+
+    return true;
+}
+
+/**
+ * Validate an exam's state allows edits such as location updates
+ *
+ * @param int $examID
+ *
+ * @return bool
+ */
+function validateExamStateAllowsEdits(int $examID)
+{
+    $state = getExamState($examID);
+    if (!doesExamStateAllowEdits($state)) {
+        throw new InvalidArgumentException("Exam state does not allow edits");
+    }
+
+    return true;
+}
+
+/**
+ * Validate if user can edit this exam
+ *
+ * @param string $accountID
+ * @param int    $examID
+ *
+ * @return bool
+ */
+function validateUserCanEditExam(string $accountID, int $examID)
+{
+    $type = getAccountType($accountID);
+    if (typeHas($type, ACCOUNT_TYPE_ADMIN)) {
+        return true;
+    }else if (typeHas($type, ACCOUNT_TYPE_TEACHER)) {
+        $examTeacher = getInClassExamTeacher($examID);
+        if (!$examTeacher || ($examTeacher != $accountID)) {
+            throw new InvalidArgumentException("Exam does not belong to this teacher");
+        }
+        return true;
+    }
+
+    throw new InvalidArgumentException("User cannot edit this exam");
+}
+
+/**
  * Validate that the following account ID matches the current exam
  *
  * @param string $accountIDA

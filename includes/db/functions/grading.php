@@ -45,12 +45,16 @@ function isGraderAssignedExamCategory(string $graderID, int $examID, int $catego
  */
 function assignGrader(int $examID, int $categoryID, string $graderID)
 {
+    startTransaction();
+
     assignGraderQuery($examID, $categoryID, $graderID);
 
     $state = getExamState($examID);
     if ($state == EXAM_STATE_GRADING) {
         insertGraderDuringGrading($examID, $categoryID, $graderID);
     }
+
+    commit();
 }
 
 /**

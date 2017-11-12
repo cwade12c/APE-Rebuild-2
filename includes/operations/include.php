@@ -5,6 +5,8 @@ require_once INCLUDES_PATH . 'operations/AccountIDValid.class.php';
 require_once INCLUDES_PATH . 'operations/AccountIDExists.class.php';
 require_once INCLUDES_PATH . 'operations/AccountGeneralInfo.class.php';
 require_once INCLUDES_PATH . 'operations/AccountDetails.class.php';
+require_once INCLUDES_PATH . 'operations/AssignGrader.class.php';
+require_once INCLUDES_PATH . 'operations/AvailableGraders.class.php';
 require_once INCLUDES_PATH . 'operations/Categories.class.php';
 require_once INCLUDES_PATH . 'operations/Category.class.php';
 require_once INCLUDES_PATH . 'operations/CreateAccount.class.php';

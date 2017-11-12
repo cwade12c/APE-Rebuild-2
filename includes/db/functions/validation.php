@@ -732,6 +732,25 @@ function validateGraderAssignedToExamCategory(string $graderID, int $examID,
 }
 
 /**
+ * Validate grader is not assigned to exam/category
+ *
+ * @param string $graderID
+ * @param int    $examID
+ * @param int    $categoryID
+ *
+ * @return bool
+ */
+function validateGraderNotAssigned(string $graderID, int $examID, int $categoryID)
+{
+    if (isGraderAssignedExamCategory($graderID, $examID, $categoryID)) {
+        throw new InvalidArgumentException(
+            "Grader($graderID) already assigned to exam($examID) category($categoryID)"
+        );
+    }
+    return true;
+}
+
+/**
  * Validate the grader has not submitted for exam category
  *
  * @param string $graderID
@@ -1257,6 +1276,23 @@ function validateExamStateAllowsEdits(int $examID)
     $state = getExamState($examID);
     if (!doesExamStateAllowEdits($state)) {
         throw new InvalidArgumentException("Exam state does not allow edits");
+    }
+
+    return true;
+}
+
+/**
+ * Validate an exam's state allows graders to be assigned
+ *
+ * @param int $examID
+ *
+ * @return bool
+ */
+function validateExamStateAllowsGraderAssignment(int $examID)
+{
+    $state = getExamState($examID);
+    if (!doesExamStateAllowGraderAssignments($state)) {
+        throw new InvalidArgumentException("Exam state does not allow grader assignments");
     }
 
     return true;

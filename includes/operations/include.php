@@ -32,6 +32,8 @@ require_once INCLUDES_PATH . 'operations/Locations.class.php';
 require_once INCLUDES_PATH . 'operations/Location.class.php';
 require_once INCLUDES_PATH . 'operations/MyExams.class.php';
 require_once INCLUDES_PATH . 'operations/Name.class.php';
+require_once INCLUDES_PATH . 'operations/Reports.class.php';
+require_once INCLUDES_PATH . 'operations/ReportTypes.class.php';
 require_once INCLUDES_PATH . 'operations/RegisterForExam.class.php';
 require_once INCLUDES_PATH . 'operations/RegisterStudentForExam.class.php';
 require_once INCLUDES_PATH . 'operations/Room.class.php';

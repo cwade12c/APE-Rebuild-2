@@ -1,48 +1,35 @@
 <?php
 
-//Debug, include, and general flags configurations
-DEFINE("INCLUDE_ACCESS", true); //set to true in order to use includes.php
-DEFINE("DEBUG", false); //set to true to display error information and bypass permission restrictions
-
-//Paths configurations
 DEFINE(
-    "INCLUDES_PATH", "/make/this/an/absolute/path"
-); //should be an absolute path
+    "CONFIG_PATH", "/var/www/html/config"
+); //an absolute path to the configuration directory
 DEFINE(
-    "CAS_CERT_PATH", "/make/this/absolute/to/some/pem/file.pem"
-); //should be an absolute path to a .pem file
-DEFINE(
-    "LOG_PATH", "/make/this/absolute/to/some.log"
-); //should be an absolute path to a .log file
+    "INCLUDE_ACCESS", true
+); //set to true in order to use includes.php
 
-//Database configurations
-DEFINE("HOST", "localhost");
-DEFINE("USER", "");
-DEFINE("PASS", "");
-DEFINE("DB", "");
+require_once(CONFIG_PATH . "path.config.php");
+require_once(CONFIG_PATH . "db.config.php");
+require_once(CONFIG_PATH . "host.config.php");
+require_once(CONFIG_PATH . "general.config.php");
+require_once(CONFIG_PATH . "navigation.config.php");
+require_once(CONFIG_PATH . "security.config.php");
 
-//Domains and Hosts configurations
-DEFINE("DOMAIN", "http://127.0.0.1");
-DEFINE("CAS_DOMAIN", "login.ewu.edu");
-DEFINE("CAS_HOSTS", array());
+require_once(AUTOLOADER_PATH);
 
-//Account.class configurations
-DEFINE("MINIMUM_NUMBER_OF_ADMINS", 1);
+// Do not edit below this line
+if(DEBUG) { //TODO comment this out before prod
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
 
-//Custom site configurations
-DEFINE("SITE_TITLE", "EWU Advanced Placement Exam");
-DEFINE(
-    "SITE_KEY_WORDS",
-    "Eastern,Washington,University,Computer,Science,CS,Advanced,Programming,Exam,APE"
-);
-DEFINE(
-    "SITE_DESCRIPTION",
-    "Register and manage your EWU Computer Science Advanced Programming Exam."
-);
-DEFINE("SITE_AUTHOR", "Eastern Washington University");
-DEFINE("HOME_PAGE", DOMAIN . "home.php");
-DEFINE("AUTH_PAGE", DOMAIN . "login.php");
+    //displayDebugAlert();
 
+    if(isset($_GET['debugrole'])) {
+        DEFINE("DEBUG_ROLE", $_GET['debugrole']);
+    }
+    else {
+        DEFINE("DEBUG_ROLE", 16);
+    }
+}
 
 try {
     $dsn = "mysql:host=" . HOST . ";dbname=" . DB;
@@ -52,13 +39,17 @@ try {
     die('DB Error: ' . $error->getMessage());
 }
 
-session_start();
+global $params;
+$params = array(
+    'isLoggedIn' => false,
+    'availableNavLinks' => GUEST_LINKS
+);
 
-require_once(INCLUDES_PATH . 'includes.php');
-
-if (DEBUG == true) {
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
+function displayDebugAlert() {
+    echo "<div class=\"alert alert-danger\" style=\"text-align:center;\" role=\"alert\">
+  <span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>
+  WARNING: Debug is enabled! This introduces security risks. Turn it off before entering prod.
+</div>";
 }
 
-?>
+session_start();

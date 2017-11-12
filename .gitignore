@@ -9,5 +9,6 @@ config/db.config.php
 config/general.config.php
 config/host.config.php
 config/path.config.php
+config/security.config.php
 cache/
 node_modules/

@@ -1,34 +1,15 @@
 <script type="text/javascript">
-  var createAccount = function() {
-    var params = {
-      id: getElementValue('accountID'),
-      firstName: getElementValue('firstName'),
-      lastName: getElementValue('lastName'),
-      email: getElementValue('email'),
-      type: getElementValue('accountType', 'integer')
-    };
+  var makeAccount = function() {
 
-    var callbacks = {
-      success: function (response) {
-        if(response.success === true) {
-          notification('Successfully created ' + params.firstName + ' ' + params.lastName + '.',
-            'success');
-        }
-        else {
-          notification(response.message);
-        }
-      },
-      error: function (response) {
-        notification(response.message);
-      }
-    };
+    var id = getElementValue('accountID');
+    var firstName = getElementValue('firstName');
+    var lastName = getElementValue('lastName');
+    var email = getElementValue('email');
+    var type = getElementValue('accountType', 'integer');
 
-    callAjax('post', 'CreateAccount', params, callbacks);
+    createAccount(id, firstName, lastName, email, type);
   }
 </script>
-
-
-
 
 <label for="accountID">ID: </label> <input type="text" class="form-control" id="accountID" name="accountID" />
 <br />
@@ -46,6 +27,5 @@
   <option value="8">Teacher</option>
   <option value="16">Admin</option>
 </select>
-<button class="btn btn-primary pull-right" style="margin:10px;" onclick="createAccount()">Create
-  Account</button>
+<button class="btn btn-primary pull-right" style="margin:10px;" onclick="makeAccount()">Create Account</button>
 <div class="clearfix"></div>

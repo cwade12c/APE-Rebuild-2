@@ -1,5 +1,5 @@
 <script type="text/javascript">
-  var params = {};
+/*  var params = {};
 
   var callbacks = {
     success: function (response) {
@@ -22,43 +22,43 @@
     }
   };
 
-  callAjax('get', 'Locations', params, callbacks);
+  callAjax('get', 'Locations', params, callbacks);*/
 
-  var viewLocationDetails = function () {
-    var params = {
-      id: getElementValue('locations', 'integer')
-    };
+  getLocations().then(function (response) {
+    if(response) {
+      var options = [];
 
-    var callbacks = {
-      success: function (response) {
-        if(response.success === true) {
-          var rooms = '';
-          _.each(response.data.location.rooms, function (currentRoom) {
-            var html = '<span class="label label-primary">' +
-              currentRoom.name + ' <span class="badge">' + currentRoom.seats +
-              ' seats</span></span>&nbsp;';
-            rooms += html;
-          })
-          var tdCollection = [
-            response.data.location.id,
-            response.data.location.name,
-            response.data.location.limited_seats,
-            response.data.location.reserved_seats,
-            rooms
-          ];
-          addRowToTable('location-table', tdCollection);
-        }
-        else {
-          notification(response.message);
-        }
-      },
-      error: function (response) {
-        notification(response.message);
-      }
-    };
+      _.each(response.data.locations, function (currentLocation) {
+        options.push({
+          value: currentLocation.id,
+          text: currentLocation.name
+        });
+      })
 
-    callAjax('get', 'Location', params, callbacks);
-  }
+      addOptionToSelect('locations', options);
+    }
+  });
+
+var viewLocationDetails = function() {
+    var id = getElementValue('locations', 'integer');
+    getLocation(id).then(function (response) {
+      var rooms = '';
+      _.each(response.data.location.rooms, function (currentRoom) {
+        var html = '<span class="label label-primary">' +
+          currentRoom.name + ' <span class="badge">' + currentRoom.seats +
+          ' seats</span></span>&nbsp;';
+        rooms += html;
+      })
+      var tdCollection = [
+        response.data.location.id,
+        response.data.location.name,
+        response.data.location.limited_seats,
+        response.data.location.reserved_seats,
+        rooms
+      ];
+      addRowToTable('location-table', tdCollection);
+    })
+}
 </script>
 
 <label for="locations">Select a Location: </label> <select id="locations"></select><button

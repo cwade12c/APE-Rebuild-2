@@ -594,7 +594,7 @@ function canEditExam(string $accountID, int $examID)
     $type = getAccountType($accountID);
     if (typeHas($type, ACCOUNT_TYPE_ADMIN)) {
         return true;
-    }else if (typeHas($type, ACCOUNT_TYPE_TEACHER)) {
+    } elseif (typeHas($type, ACCOUNT_TYPE_TEACHER)) {
         $examTeacher = getInClassExamTeacher($examID);
         return ($examTeacher && ($examTeacher == $accountID));
     }

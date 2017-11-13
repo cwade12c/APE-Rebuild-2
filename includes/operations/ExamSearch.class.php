@@ -54,14 +54,14 @@ class ExamSearch extends Operation
      *                          search by teacher ID
      *
      * @return array            'exams' => resulting exams, details
-     *                          check 'ExamDetails' for keys
+     *                          check 'ExamDetailsBasic' for keys
      *
      *
      */
     public static function search(int $states, int $types, string $teacherID = null)
     {
         $ids = getExamsExtended($states, $types, $teacherID);
-        $exams = array_map(array(new ExamDetails(), 'getExamInformation'), $ids);
+        $exams = array_map(array(new ExamDetailsBasic(), 'getExamInformation'), $ids);
         return array('exams', $exams);
     }
 

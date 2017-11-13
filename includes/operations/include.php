@@ -27,6 +27,7 @@ require_once INCLUDES_PATH . 'operations/DeleteCategory.class.php';
 require_once INCLUDES_PATH . 'operations/DeleteLocation.class.php';
 require_once INCLUDES_PATH . 'operations/DeleteRoom.class.php';
 require_once INCLUDES_PATH . 'operations/ExamDetails.class.php';
+require_once INCLUDES_PATH . 'operations/ExamDetailsBasic.class.php';
 require_once INCLUDES_PATH . 'operations/ExamDetailsFull.class.php';
 require_once INCLUDES_PATH . 'operations/ExamFinalizationProgress.class.php';
 require_once INCLUDES_PATH . 'operations/ExamGraders.class.php';

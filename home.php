@@ -21,7 +21,9 @@ $parameters = array(
     'registeredExams' => $registeredExams
 );
 
-renderPage("home.twig.html", $parameters);
+renderPage("pages/home.twig.html", $parameters);
+
+//updateReportTypesQuery(8, array(1,2,3,4));
 
 /*$result = registerStudentForExam(9, $params["id"]);
 var_dump($result);*/

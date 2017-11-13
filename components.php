@@ -5,5 +5,5 @@ enforceAuthentication();
 
 $parameters = array();
 
-renderPage("components.twig.html", $parameters);
+renderPage("pages/components.twig.html", $parameters);
 

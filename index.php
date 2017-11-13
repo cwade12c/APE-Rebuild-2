@@ -42,7 +42,7 @@ $parameters = array(
         'resources' => $resources
 );
 
-renderPage('upcoming-apes.twig.html', $parameters);
+renderPage('pages/upcoming-apes.twig.html', $parameters);
 
 /*$template = $twig->load('upcoming-apes.twig.html');
 echo $template->render(array('params' => $params, 'exams' => $exams, 'resources' => $resources));*/

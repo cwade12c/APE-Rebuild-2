@@ -18,7 +18,7 @@ function getAccountInfo(string $accountID)
 
     $info['lastName'] = $info['l_name'];
     unset($info['l_name']);
-    
+
     return $info;
 }
 
@@ -195,6 +195,20 @@ function createAccount(string $accountID, int $type = ACCOUNT_TYPE_NONE,
 }
 
 /**
+ * To update account information
+ *
+ * @param string      $accountID
+ * @param string|null $firstName
+ * @param string|null $lastName
+ * @param string|null $email
+ */
+function updateAccountInfo(string $accountID,
+    string $firstName = null, string $lastName = null, string $email = null
+) {
+    updateAccountInfoQuery($accountID, $firstName, $lastName, $email);
+}
+
+/**
  * Create a temp student w/ given information
  * At-least 1 field must be filled in
  *
@@ -283,7 +297,7 @@ function promoteTempToStudent(string $tempID, string $id)
 {
     if (accountExists($id)) {
         combineStudent($tempID, $id);
-    }else{
+    } else {
         startTransaction();
 
         // strip off temp type - retain others

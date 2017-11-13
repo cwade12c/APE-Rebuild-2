@@ -16,7 +16,7 @@ if (userIsLoggedIn()) {
 
 <?php
 
-$exams = getUpcomingExams(); //this will instantiate Exam objects from a Class
+$exams = UpcomingExams::getUpcomingExams(); //this will instantiate Exam objects from a Class
 $resources = array(
   array("title" => "Winter 2011 Student Version",
         "content" => "Includes practice material for Data Abstraction (Stock), General (Files), LinkedList (Add, Sort, Remove), and Recursion (LinkedList, GCD).",

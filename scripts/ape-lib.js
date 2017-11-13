@@ -26,7 +26,7 @@ function callAjax(requestType, operationName, operationParameters, callBackFunct
     complete: completeFnc
   };
 
-  $.ajax(callParameters);
+  return $.ajax(callParameters);
 }
 
 function getAccountProperties() {
@@ -116,7 +116,7 @@ function name(name) {
     }
   };
 
-  callAjax('post', 'name', params, callbacks);
+  return callAjax('post', 'name', params, callbacks);
 }
 
 function getExamInformation(examId) {
@@ -138,7 +138,7 @@ function getExamInformation(examId) {
     }
   };
 
-  callAjax('get', 'ExamDetails', params, callbacks);
+  return callAjax('get', 'ExamDetails', params, callbacks);
 }
 
 function getStudentState(studentId) {
@@ -160,7 +160,7 @@ function getStudentState(studentId) {
     }
   };
 
-  callAjax('get', 'StudentState', params, callbacks);
+  return callAjax('get', 'StudentState', params, callbacks);
 }
 
 function registerForExam(examId) {
@@ -183,7 +183,7 @@ function registerForExam(examId) {
     }
   };
 
-  callAjax('post', 'RegisterForExam', params, callbacks);
+  return callAjax('post', 'RegisterForExam', params, callbacks);
 }
 
 /*function registerStudentForExam(examId, studentId) {
@@ -206,7 +206,7 @@ function registerForExam(examId) {
     }
   };
 
-  callAjax('post', 'RegisterStudentForExam', params, callbacks);
+  return callAjax('post', 'RegisterStudentForExam', params, callbacks);
 }*/
 
 function getMyExams() {
@@ -228,7 +228,7 @@ function getMyExams() {
     }
   };
 
-  callAjax('get', 'MyExams', params, callbacks);
+  return callAjax('get', 'MyExams', params, callbacks);
 }
 
 function getGraderExamDetails(examId) {
@@ -251,10 +251,10 @@ function getGraderExamDetails(examId) {
     }
   };
 
-  callAjax('get', 'GraderAssignedExamDetails', params, callbacks);
+  return callAjax('get', 'GraderAssignedExamDetails', params, callbacks);
 }
 
-/*function createAccount(id, firstName, lastName, email, type) {
+function createAccount(id, firstName, lastName, email, type) {
   var params = {
     id: id,
     firstName: firstName,
@@ -277,8 +277,8 @@ function getGraderExamDetails(examId) {
     }
   };
 
-  callAjax('post', 'CreateAccount', params, callbacks);
-}*/
+  return callAjax('post', 'CreateAccount', params, callbacks);
+}
 
 function createAccounts(accounts) {
   var params = {
@@ -299,7 +299,7 @@ function createAccounts(accounts) {
     }
   };
 
-  callAjax('post', 'CreateAccounts', params, callbacks);
+  return callAjax('post', 'CreateAccounts', params, callbacks);
 }
 
 function getLocations() {
@@ -319,7 +319,7 @@ function getLocations() {
     }
   };
 
-  callAjax('get', 'Locations', params, callbacks);
+  return callAjax('get', 'Locations', params, callbacks);
 }
 
 function getLocation(locationId) {
@@ -330,10 +330,10 @@ function getLocation(locationId) {
   var callbacks = {
     success: function (response) {
       if(response.success === true) {
-        console.log(response);
+        return response;
       }
       else {
-        console.log('Error');
+        notification(response.message);
       }
     },
     error: function (response) {
@@ -341,7 +341,7 @@ function getLocation(locationId) {
     }
   };
 
-  callAjax('get', 'Location', params, callbacks);
+  return callAjax('get', 'Location', params, callbacks);
 }
 
 function getRooms() {
@@ -361,7 +361,7 @@ function getRooms() {
     }
   };
 
-  callAjax('get', 'Rooms', params, callbacks);
+  return callAjax('get', 'Rooms', params, callbacks);
 }
 
 function getRoom(roomId) {
@@ -383,7 +383,7 @@ function getRoom(roomId) {
     }
   };
 
-  callAjax('get', 'Room', params, callbacks);
+  return callAjax('get', 'Room', params, callbacks);
 }
 
 function getCategories() {
@@ -403,7 +403,7 @@ function getCategories() {
     }
   };
 
-  callAjax('get', 'Categories', params, callbacks);
+  return callAjax('get', 'Categories', params, callbacks);
 }
 
 function getCategory(categoryId) {
@@ -425,7 +425,7 @@ function getCategory(categoryId) {
     }
   };
 
-  callAjax('get', 'Category', params, callbacks);
+  return callAjax('get', 'Category', params, callbacks);
 }
 
 function getDefaultCategories() {
@@ -445,7 +445,7 @@ function getDefaultCategories() {
     }
   };
 
-  callAjax('get', 'DefaultCategories', params, callbacks);
+  return callAjax('get', 'DefaultCategories', params, callbacks);
 }
 
 function getReportTypes() {
@@ -465,7 +465,7 @@ function getReportTypes() {
     }
   };
 
-  callAjax('get', 'ReportTypes', params, callbacks);
+  return callAjax('get', 'ReportTypes', params, callbacks);
 }
 
 function generateReport(examId, reportTypes) {
@@ -489,7 +489,7 @@ function generateReport(examId, reportTypes) {
     }
   };
 
-  callAjax('post', 'GenerateReport', params, callbacks);
+  return callAjax('post', 'GenerateReport', params, callbacks);
 }
 
 function getReports() {
@@ -509,7 +509,7 @@ function getReports() {
     }
   };
 
-  callAjax('get', 'Reports', params, callbacks);
+  return callAjax('get', 'Reports', params, callbacks);
 }
 
 function updateRoom(roomId, roomName, seatCount) {
@@ -533,7 +533,7 @@ function updateRoom(roomId, roomName, seatCount) {
     }
   };
 
-  callAjax('post', 'UpdateRoom', params, callbacks);
+  return callAjax('post', 'UpdateRoom', params, callbacks);
 }
 
 function updateCategory(categoryId, categoryName, points) {
@@ -557,7 +557,7 @@ function updateCategory(categoryId, categoryName, points) {
     }
   };
 
-  callAjax('post', 'UpdateCategory', params, callbacks);
+  return callAjax('post', 'UpdateCategory', params, callbacks);
 }
 
 function updateDefaultCategories(categoryIdList) {
@@ -579,7 +579,7 @@ function updateDefaultCategories(categoryIdList) {
     }
   };
 
-  callAjax('post', 'UpdateDefaultCategories', params, callbacks);
+  return callAjax('post', 'UpdateDefaultCategories', params, callbacks);
 }
 
 function updateLocationName(locationId, locationName) {
@@ -602,7 +602,7 @@ function updateLocationName(locationId, locationName) {
     }
   };
 
-  callAjax('post', 'UpdateLocationName', params, callbacks);
+  return callAjax('post', 'UpdateLocationName', params, callbacks);
 }
 
 function updateLocationRooms(locationId, reservedSeats, limitedSeats, rooms) {
@@ -627,7 +627,7 @@ function updateLocationRooms(locationId, reservedSeats, limitedSeats, rooms) {
     }
   };
 
-  callAjax('post', 'UpdateLocationRooms', params, callbacks);
+  return callAjax('post', 'UpdateLocationRooms', params, callbacks);
 }
 
 function createLocation(name, reservedSeats, limitedSeats, rooms) {
@@ -661,7 +661,7 @@ function createLocation(name, reservedSeats, limitedSeats, rooms) {
     }
   };
 
-  callAjax('post', 'CreateLocation', params, callbacks);
+  return callAjax('post', 'CreateLocation', params, callbacks);
 }
 
 function createRoom(name, seats) {
@@ -684,7 +684,7 @@ function createRoom(name, seats) {
     }
   };
 
-  callAjax('post', 'CreateRoom', params, callbacks);
+  return callAjax('post', 'CreateRoom', params, callbacks);
 }
 
 function createReport(reportName, reportTypes) {
@@ -708,7 +708,7 @@ function createReport(reportName, reportTypes) {
     }
   };
 
-  callAjax('post', 'CreateReport', params, callbacks);
+  return callAjax('post', 'CreateReport', params, callbacks);
 }
 
 function updateReport(reportId, reportName, reportTypes) {
@@ -733,7 +733,7 @@ function updateReport(reportId, reportName, reportTypes) {
     }
   };
 
-  callAjax('post', 'UpdateReport', params, callbacks);
+  return callAjax('post', 'UpdateReport', params, callbacks);
 }
 
 
@@ -757,7 +757,7 @@ function createCategory(name, points) {
     }
   };
 
-  callAjax('post', 'CreateCategory', params, callbacks);
+  return callAjax('post', 'CreateCategory', params, callbacks);
 }
 
 function deleteLocation(locationId) {
@@ -779,7 +779,7 @@ function deleteLocation(locationId) {
     }
   };
 
-  callAjax('post', 'DeleteLocation', params, callbacks);
+  return callAjax('post', 'DeleteLocation', params, callbacks);
 }
 
 function deleteRoom(roomId) {
@@ -801,7 +801,7 @@ function deleteRoom(roomId) {
     }
   };
 
-  callAjax('post', 'DeleteRoom', params, callbacks);
+  return callAjax('post', 'DeleteRoom', params, callbacks);
 }
 
 function deleteCategory(categoryId) {
@@ -823,7 +823,7 @@ function deleteCategory(categoryId) {
     }
   };
 
-  callAjax('post', 'DeleteCategory', params, callbacks);
+  return callAjax('post', 'DeleteCategory', params, callbacks);
 }
 
 //</editor-fold>
@@ -864,7 +864,6 @@ function addRowToTable(tableElementId, tdCollection) {
   _.each(tdCollection, function(currentTd) {
     html += ('<td>' + currentTd + '</td>');
   });
-  console.log(html);
   html += '</tr>';
 
   $('#' + tableElementId).append(html);

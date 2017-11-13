@@ -94,5 +94,69 @@ chown www-data security.log; chmod 755 security.log
     ├── symfony ----------------------------- Twig dependency
     ├── tether ------------------------------ Bootstrap dependency
     └── twig -------------------------------- Template engine
-
 ```
+
+## Adding a new page
+
+Adding a new page consists of:
+* Creating a new php file (pageName.php)
+    * Include `config.php`
+    * Invoke `enforceAuthentication();`
+    * Create a `$parameters` array to send extra variables to Twig template (can be an empty array)
+    * Invoke `renderPage("pages/pageName.twig.html", $parameters);`
+* Creating a new Twig file in `templates/pages`
+    * Extend the base template `{% extends "layout/base.twig.html" %}`
+    * Overwrite the content block 
+        ```
+        {% block content %}
+
+        {% endblock %}
+        ```
+    * Add custom markup to the content block or include components
+        ```
+        {% block content %}
+            {{ include('components/nameOfComponent.twig.html') }}
+        {% endblock %}
+        ```
+        * If you need to conditionally show child templates (for example, a different homepage depending on the user type), use Twig conditionals
+        ```
+        {% block content %}
+            {% if params.type == constant('ACCOUNT_TYPE_STUDENT') %}
+                {{ include('pages/home/student-home.twig.html') }}
+            {% elseif params.type == constant('ACCOUNT_TYPE_GRADER') %}
+                {{ include('pages/home/grader-home.twig.html') }}
+            {% elseif params.type == constant('ACCOUNT_TYPE_TEACHER') %}
+                {{ include('pages/home/teacher-home.twig.html') }}
+            {% elseif params.type == constant('ACCOUNT_TYPE_ADMIN') %}
+                {{ include('pages/home/admin-home.twig.html') }}
+            {% endif %}
+        {% endblock %}
+        ```
+        
+### New page example
+* Create `createAccount.php`
+    ```
+    <?php
+    
+    include("config.php");
+    enforceAuthentication();
+    
+    $parameters = array();
+    renderPage("pages/create-account.twig.html", $parameters);
+    ```
+* Create `templates/pages/create-account.twig.html`
+    ```
+    {% extends "layout/base.twig.html" %}
+
+    {% block title %}Create Account{% endblock %}
+
+    {% block head %}
+    {{ parent() }}
+    {% endblock %}
+
+    {% block content %}
+        <h2>Create New Account</h2>
+        {{ include('components/create-account.twig.html') }}
+    {% endblock %}
+    ```
+*If you have trouble loading your new page, try clearing Twig's cache:* `rm -r cache/*`

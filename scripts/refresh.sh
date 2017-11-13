@@ -5,6 +5,7 @@
 # will run the script for all website/ subwebsites for development
 # the 'refresh.php' file requires #!/usr/bin/php at the top with execute permissions
 # cron job: * * * * * /absolute/path/to/refresh.sh
+# above job will run every minute
 
 PARENT_DIR=$(pwd)
 REFRESH_SUBDIR='scripts'

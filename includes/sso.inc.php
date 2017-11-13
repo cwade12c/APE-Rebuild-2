@@ -1,10 +1,14 @@
 <?php
 
-function enforceAuthentication()
+function initCAS()
 {
     phpCAS::client(SAML_VERSION_1_1, CAS_DOMAIN, 443, '/cas', false);
     phpCAS::setCasServerCACert(CAS_CERT_PATH);
     phpCAS::handleLogoutRequests(true, CAS_HOSTS);
+}
+
+function enforceAuthentication()
+{
     phpCAS::forceAuthentication();
 
     $_SESSION['username'] = phpCAS::getUser();
@@ -25,10 +29,6 @@ function enforceAuthentication()
 
 function userIsLoggedIn()
 {
-    phpCAS::client(SAML_VERSION_1_1, CAS_DOMAIN, 443, '/cas', false);
-    phpCAS::setCasServerCACert(CAS_CERT_PATH);
-    phpCAS::handleLogoutRequests(true, CAS_HOSTS);
-
     return phpCAS::isAuthenticated();
 }
 

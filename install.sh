@@ -1,4 +1,6 @@
 apt install bower node composer
+a2enmod rewrite
+service apache2 restart
 bower install
 composer install
 npm install

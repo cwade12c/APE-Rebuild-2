@@ -1,8 +1,6 @@
 <?php
 
-include('config.php');
-
-enforceAuthentication();
+//enforceAuthentication();
 
 /*echo accountIsStudent((string)$_SESSION['ewuid']);
 

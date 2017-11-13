@@ -14,7 +14,13 @@ if(userIsLoggedIn()) {
         require("pages/home.php");
     }
     else {
-        require("pages/" . sanitize($page) . ".php");
+        if(file_exists("pages/" . sanitize($page) . ".php")) {
+            require("pages/" . sanitize($page) . ".php");
+        }
+        else {
+            require("pages/home.php");
+            echo "<script type='text/javascript'>notification('The page does not exist.');</script>";
+        }
     }
 }
 else {

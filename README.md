@@ -15,6 +15,7 @@ phpAPE is a web application that allows for the administration, registration, an
 | ------ | ------ |
 | php | 7.0.22 |
 | apache | 2.4.18 |
+| mod-rewrite |  |
 | curl | 7.47.0 |
 
 ## Installation
@@ -55,6 +56,11 @@ cd /var/www; touch security.log;
 chown www-data security.log; chmod 755 security.log
 ```
 
+--**Step 11.** Enable mod-rewrite and restart apache:
+```
+a2enmod rewrite; service apache2 restart 
+```
+
 **IMPORTANT: Make sure that `DEBUG` is set to `false` in `config/security.config.php`**
 
 ## Directory Structure
@@ -70,6 +76,7 @@ chown www-data security.log; chmod 755 security.log
 │   │   └── queries ------------------------- Database query functions
 │   └── operations -------------------------- Operation behaviors for the API
 ├── node_modules ---------------------------- Contains installed node packages
+├── pages ----------------------------------- PHP page files that invoke renderTemplate(...)
 ├── scripts --------------------------------- APE javascript files
 ├── sources --------------------------------- General resources
 │   ├── images ------------------------------ Image resources
@@ -99,7 +106,7 @@ chown www-data security.log; chmod 755 security.log
 ## Adding a new page
 
 Adding a new page consists of:
-* Creating a new php file (pageName.php)
+* Creating a new php file (pages/pageName.php)
     * Include `config.php`
     * Invoke `enforceAuthentication();`
     * Create a `$parameters` array to send extra variables to Twig template (can be an empty array)
@@ -134,7 +141,8 @@ Adding a new page consists of:
         ```
         
 ### New page example
-* Create `createAccount.php`
+* URL will be: site.tld/createAccount
+* Create `pages/createAccount.php`
     ```
     <?php
     

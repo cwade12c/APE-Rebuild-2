@@ -1,1 +1,7 @@
-FallbackResource index.php
+#FallbackResource index.php
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RedirectMatch ^/(.*?)/$ /$1
+RewriteRule ^ index.php [QSA,L]

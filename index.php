@@ -14,7 +14,7 @@ if(userIsLoggedIn()) {
         require("pages/home.php");
     }
     else {
-        require("pages/" . $page . ".php");
+        require("pages/" . sanitize($page) . ".php");
     }
 }
 else {

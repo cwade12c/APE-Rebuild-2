@@ -11,7 +11,7 @@ echo $template->render(array('params' => $params));*/
 
 //renderPage("home.twig.html", array());
 
-$upcomingExams = UpcomingExams::getUpcomingExams();
+$upcomingExams = getUpcomingExams();
 $registeredExams = getExamsRegisteredFor($params['id']);
 
 $parameters = array(
@@ -25,4 +25,3 @@ renderPage("pages/home.twig.html", $parameters);
 
 /*$result = registerStudentForExam(9, $params["id"]);
 var_dump($result);*/
-?>

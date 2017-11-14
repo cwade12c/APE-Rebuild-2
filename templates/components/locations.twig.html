@@ -1,78 +1,62 @@
 <script type="text/javascript">
-/*  var params = {};
-
-  var callbacks = {
-    success: function (response) {
-      if(response.success === true) {
-        var options = [];
-        _.each(response.data.locations, function (currentLocation) {
-          options.push({
-            value: currentLocation.id,
-            text: currentLocation.name
-          });
-        })
-        addOptionToSelect('locations', options);
-      }
-      else {
-        notification(response.message);
-      }
-    },
-    error: function (response) {
-      notification(response.message);
-    }
-  };
-
-  callAjax('get', 'Locations', params, callbacks);*/
-
   getLocations().then(function (response) {
     if(response) {
       var options = [];
 
       _.each(response.data.locations, function (currentLocation) {
-        options.push({
-          value: currentLocation.id,
-          text: currentLocation.name
-        });
-      })
+        viewLocationDetails(parseInt(currentLocation.id));
+      });
 
       addOptionToSelect('locations', options);
     }
   });
 
-var viewLocationDetails = function() {
-    var id = getElementValue('locations', 'integer');
+var viewLocationDetails = function(id) {
     getLocation(id).then(function (response) {
       var rooms = '';
       _.each(response.data.location.rooms, function (currentRoom) {
         var html = '<span class="label label-primary">' +
           currentRoom.name + ' <span class="badge">' + currentRoom.seats +
-          ' seats</span></span>&nbsp;';
+          ' seats</span></span><br />';
         rooms += html;
       })
-      var tdCollection = [
-        response.data.location.id,
-        response.data.location.name,
-        response.data.location.limited_seats,
-        response.data.location.reserved_seats,
-        rooms
-      ];
+
+        var locationID = parseInt(id);
+        console.log(locationID);
+
+        var htmlButton_edit ='<button class="btn btn-primary">Edit</button>';
+        var htmlButton_delete ='<button class="btn btn-danger" onclick="removeLocation(' + locationID + ')">Delete</button>';
+
+        var tdCollection = [
+            response.data.location.id,
+            response.data.location.name,
+            rooms,
+            response.data.location.limited_seats,
+            response.data.location.reserved_seats,
+            htmlButton_edit,
+            htmlButton_delete
+        ];
       addRowToTable('location-table', tdCollection);
     })
 }
-</script>
 
-<label for="locations">Select a Location: </label> <select id="locations"></select><button
-        class="btn btn-primary" onclick="viewLocationDetails()">View Details</button>
+var removeLocation = function(id) {
+    deleteLocation(id);
+    removeRowFromTable('location-table', 'row-' + id);
+}
+</script>
 
 <div class="table-responsive">
   <table id="location-table" class="table table-striped">
     <thead>
     <tr>
       <th>ID</th>
-      <th>Name</th>
-      <th>Limited Seats</th>
-      <th>Reserved Seats</th>
+      <th>Building</th>
       <th>Rooms</th>
+      <th>Total Seats</th>
+      <th>Reserved Seats</th>
+      <th></th>
+      <th></th>
     </tr>
     </thead>
     <tbody>

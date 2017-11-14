@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block content %}
+
     {% if params.type == constant('ACCOUNT_TYPE_STUDENT') %}
         {{ include('pages/home/student-home.twig.html') }}
     {% elseif params.type == constant('ACCOUNT_TYPE_GRADER') %}
@@ -16,4 +17,5 @@
     {% elseif params.type == constant('ACCOUNT_TYPE_ADMIN') %}
         {{ include('pages/home/admin-home.twig.html') }}
     {% endif %}
+
 {% endblock %}

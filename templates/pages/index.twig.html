@@ -8,22 +8,21 @@
 
 {% block content %}
     <div class="row">
-        {% for exam in upcomingExams %}
-        <div class="col-md-4">
-            <h2>{{exam.start}}</h2>
-            <p><span style='font-weight:bold;'>Location:</span> <span class="label label-warning">{{exam.location}}</span></p>
-            <p><span style='font-weight:bold;'>Available Seats:</span> <span class="label label-info">{{exam.limitedSeats}}</span></p>
-            <p><span style='font-weight:bold;'>Reserved Seats:</span> <span class="label label-primary">{{exam.reservedSeats}}</span></p>
-            <p><span style='font-weight:bold;'>Passing Grade:</span> <span class="label label-success">{{exam.passingGrade}}</span></p>
-            <p>
-                <a class="btn" href="#">Register »</a>
-            </p>
-        </div>
+        {% for exam in exams %}
+                <div class="col-md-12">
+                    <h3 class="text-info">{{exam.start}}</h3>
+                    <div class="table">
+                        <p><span style='font-weight:bold;'>Location:</span> <span class="label label-warning">{{exam.location}}</span></p>
+                        <p><span style='font-weight:bold;'>Available Seats:</span> <span class="label label-info">{{exam.limitedSeats}}</span></p>
+                        <p><span style='font-weight:bold;'>Reserved Seats:</span> <span class="label label-primary">{{exam.reservedSeats}}</span></p>
+                        <p><span style='font-weight:bold;'>Passing Grade:</span> <span class="label label-success">{{exam.passingGrade}}</span></p>
+                    </div>
+                </div>
         {% endfor %}
     </div>
     <div class="row">
         <div class="col-md-12">
-            <h3 class="text-info">Resources</h3>
+            <h3 class="text-info">Test</h3>
         </div>
 
         {% for resource in resources %}
@@ -35,9 +34,10 @@
                 <div class="panel-body">
                     {{resource.content}}
                 </div>
-                <div class="panel-footer">
+               {# <div class="panel-footer">
                     {{resource.download}}
                 </div>
+                #}
             </div>
         </div>
         {% endfor %}

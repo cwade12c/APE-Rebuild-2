@@ -24,25 +24,37 @@ if(userIsLoggedIn()) {
     }
 }
 else {
-    $exams = UpcomingExams::getUpcomingExams(); //this will instantiate Exam objects from a Class
+    $exams = getUpcomingExams(); //this will instantiate Exam objects from a Class
     $resources = array(
-        array("title" => "Winter 2011 Student Version",
-            "content" => "Includes practice material for Data Abstraction (Stock), General (Files), LinkedList (Add, Sort, Remove), and Recursion (LinkedList, GCD).",
-            "download" => "http://penguin.ewu.edu/advancement_exam/practice_exams/W11APE.zip",
+        array("title" => "Exam Environment",
+            "content" => "Linux Operating System
+                          Editors
+                          JGrasp
+                          GEdit
+                          Eclipse
+                          JDK 8.0 (1.8.x)
+                          Java API documentation
+                          No Internet access
+                          No notes or texts allowed
+                          The exam is now a Test Driven Design Exam where you are writing code based on the provided tests",
+            //"download" => "http://penguin.ewu.edu/advancement_exam/practice_exams/W11APE.zip",
             "style" => "panel-info"
         ),
         array(
-            "title" => "Winter 2012 Student Version",
-            "content" => "Includes practice material for Data Abstraction (Student Interface), General (Files), LinkedList (Clear, Add-Ordered, Remove-All), and Recursion (LinkedList, Ackermann).",
-            "download" => "http://penguin.ewu.edu/advancement_exam/practice_exams/W12APE.zip",
+            "title" => "Exam Specifics",
+            "content" => "General Program Design: 30%
+                          Data Abstraction and Class Design: 30%
+                          Linked List Manipulation: 20%
+                          Recursion: 20%",
+            //"download" => "http://penguin.ewu.edu/advancement_exam/practice_exams/W12APE.zip",
             "style" => "panel-info"
-        ),
+        )/*,
         array(
             "title" => "Summer 2013 Student Version",
             "content" => "Includes practice material for Data Abstraction (Inheritance, Interface), General (FileIO_Exceptions, Sorting), LinkedList (Append-All, Remove-All-Occurrences, Set), and Recursion (Hanoi, Power).",
-            "download" => "http://penguin.ewu.edu/advancement_exam/practice_exams/Summer2013APE.zip",
-            "style" => "panel-danger"
-        )
+            //"download" => "http://penguin.ewu.edu/advancement_exam/practice_exams/Summer2013APE.zip",
+            "style" => "panel-info"
+        )*/
     );
 
     $parameters = array(
@@ -50,5 +62,5 @@ else {
         'resources' => $resources
     );
 
-    renderPage('pages/upcoming-apes.twig.html', $parameters);
+    renderPage('pages/index.twig.html', $parameters);
 }

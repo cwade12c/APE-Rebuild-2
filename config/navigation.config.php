@@ -1,4 +1,11 @@
 <?php
+//Manage Action Navigation CSS classes
+DEFINE("ACTION_CREATE", "btn btn-success");
+DEFINE("ACTION_UPDATE", "btn btn-primary");
+DEFINE("ACTION_DELETE", "btn btn-danger");
+DEFINE("ACTION_ARCHIVE", "btn btn-warning");
+DEFINE("ACTION_GENERIC", "btn btn-secondary");
+
 //Manage Navigation Links
 
 //<editor-fold desc="Student Links">
@@ -220,7 +227,7 @@ DEFINE("ADMIN_LINKS", array(
     ),
 
     array(
-        'url' => 'manageLocations.php',
+        'url' => 'locations',
         'title' => 'Manage Locations',
         'text' => 'Locations'
     ),

@@ -45,14 +45,15 @@
             {{ include('layout/top-nav.twig.html') }}
         </div>
         <div class="row">
-            <div class="col-xs-1">
-                <div class="btn-group-vertical action-bar" role="group" aria-label="...">
-                    <button class="btn btn-success">Add</button>
-                    <button class="btn btn-danger">Delete</button>
-                    <button class="btn btn-primary">Edit</button>
-                    <button class="btn btn-warning">Archive</button>
+            {% if actions is defined %}
+                <div class="col-xs-1">
+                    <div class="btn-group-vertical action-bar" role="group" aria-label="...">
+                        {% for action in actions %}
+                            <button class="{{ action.type }}" onclick="{{ action.funcSignature }}">{{ action.text | raw}}</button>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
+            {% endif %}
             <div class="col-xs-10 main">
 {#                <input id="datetimepicker" type="text" >
                 <a onclick="getExamInformation(10)">Get Exam Information</a>

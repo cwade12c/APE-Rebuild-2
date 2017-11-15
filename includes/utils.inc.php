@@ -55,4 +55,34 @@ function renderPage(string $template, array $pageParams)
     echo $page->render($parameters);
 }
 
-?>
+function registerAction(array &$actions, string $type, string $text, string $funcSignature) {
+    $action = array();
+    $icon = getActionIcon($type);
+
+    $action["type"] = $type;
+    $action["text"] = $icon . "&nbsp;" . $text;
+    $action["funcSignature"] = $funcSignature;
+
+    array_push($actions, $action);
+}
+
+function getActionIcon(string $type) {
+    switch($type) {
+        case ACTION_CREATE:
+            return '<span class="fa fa-plus-circle"></span>';
+            break;
+        case ACTION_UPDATE:
+            return '<span class="fa fa-pencil"></span>';
+            break;
+        case ACTION_DELETE:
+            return '<span class="fa fa-remove"></span>';
+            break;
+        case ACTION_ARCHIVE:
+            return '<span class="fa fa-archive"></span>';
+            break;
+        case ACTION_GENERIC:
+            return '<span class="fa fa-bullseye"></span>';
+            break;
+    }
+    return "";
+}

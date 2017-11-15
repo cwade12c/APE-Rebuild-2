@@ -4,8 +4,8 @@
 #RewriteRule ^(.*)/$ /$1 [L,R=301]
 
 RewriteEngine On
-RewriteRule ^login /chdev/pages/login.php [L]
-RewriteRule ^logout /chdev/pages/logout.php [L]
+RewriteRule ^login /REPLACE_ME/pages/login.php [L]
+RewriteRule ^logout /REPLACE_ME/pages/logout.php [L]
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f

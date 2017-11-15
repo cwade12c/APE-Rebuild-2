@@ -24,7 +24,7 @@ if(userIsLoggedIn()) {
     }
 }
 else {
-    $exams = getUpcomingExams(); //this will instantiate Exam objects from a Class
+    $exams = UpcomingExams::getUpcomingExams(); //this will instantiate Exam objects from a Class
     $resources = array(
         array("title" => "Exam Environment",
             "content" => "Linux Operating System

@@ -11,7 +11,7 @@ DEFINE("ACTION_GENERIC", "btn btn-secondary");
 //<editor-fold desc="Student Links">
 DEFINE("GUEST_LINKS", array(
     array(
-        'url' => 'home.php',
+        'url' => 'home',
         'title' => 'Upcoming Apes',
         'text' => 'Home'
     ),
@@ -27,7 +27,7 @@ DEFINE("GUEST_LINKS", array(
 //<editor-fold desc="Student Links">
 DEFINE("STUDENT_LINKS", array(
     array(
-        'url' => 'home.php',
+        'url' => 'home',
         'title' => 'Student Home',
         'text' => 'Home'
     ),
@@ -63,7 +63,7 @@ DEFINE("STUDENT_LINKS", array(
 //<editor-fold desc="Grader Links">
 DEFINE("GRADER_LINKS", array(
     array(
-        'url' => 'home.php',
+        'url' => 'home',
         'title' => 'Student Home',
         'text' => 'Home'
     ),
@@ -113,7 +113,7 @@ DEFINE("GRADER_LINKS", array(
 //<editor-fold desc="Teacher Links">
 DEFINE("TEACHER_LINKS", array(
     array(
-        'url' => 'home.php',
+        'url' => 'home',
         'title' => 'Teacher Home',
         'text' => 'Home'
     ),
@@ -169,7 +169,7 @@ DEFINE("TEACHER_LINKS", array(
 //<editor-fold desc="Admin Links">
 DEFINE("ADMIN_LINKS", array(
     array(
-        'url' => 'home.php',
+        'url' => 'home',
         'title' => 'Admin Home',
         'text' => 'Home'
     ),

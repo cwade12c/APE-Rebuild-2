@@ -11,7 +11,7 @@ echo $template->render(array('params' => $params));*/
 
 //renderPage("home.twig.html", array());
 
-$upcomingExams = getUpcomingExams();
+$upcomingExams = UpcomingExams::getUpcomingExams();
 $registeredExams = getExamsRegisteredFor($params['id']);
 
 $parameters = array(

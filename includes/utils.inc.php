@@ -2,8 +2,8 @@
 
 function redirect($path)
 {
-    header('Location: ' . DOMAIN . $path, true, 302);
-    exit;
+    $url = DOMAIN . $path;
+    echo "<meta http-equiv='refresh' content='0;url=$url' />";
 }
 
 function sanitize(string $input)

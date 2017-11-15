@@ -10,7 +10,7 @@ DEFINE("GUEST_LINKS", array(
     ),
 
     array(
-        'url' => 'login.php',
+        'url' => 'login',
         'title' => 'Login',
         'text' => 'Login'
     )
@@ -46,7 +46,7 @@ DEFINE("STUDENT_LINKS", array(
     ),
 
     array(
-        'url' => 'logout.php',
+        'url' => 'logout',
         'title' => 'Logout of Your Account',
         'text' => 'Logout'
     )
@@ -96,7 +96,7 @@ DEFINE("GRADER_LINKS", array(
     ),
 
     array(
-        'url' => 'logout.php',
+        'url' => 'logout',
         'title' => 'Logout of Your Account',
         'text' => 'Logout'
     )
@@ -152,7 +152,7 @@ DEFINE("TEACHER_LINKS", array(
     ),
 
     array(
-        'url' => 'logout.php',
+        'url' => 'logout',
         'title' => 'Logout',
         'text' => 'Logout'
     )
@@ -246,7 +246,7 @@ DEFINE("ADMIN_LINKS", array(
     ),
 
     array(
-        'url' => 'logout.php',
+        'url' => 'logout',
         'title' => 'Logout',
         'text' => 'Logout'
     )

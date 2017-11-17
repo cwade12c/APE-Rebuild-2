@@ -1,0 +1,18 @@
+{% extends "layout/base.twig.html" %}
+
+{% block title %}Grading{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <span style='font-weight:bold;'>ID:</span> <span class="label label-warning">{{id}}</span>
+            <span style='font-weight:bold;'>Exam:</span> <span class="label label-warning">{{exam}}</span>
+            <span style='font-weight:bold;'>Category:</span> <span class="label label-warning">{{category}}</span>
+            <span style='font-weight:bold;'>IsGrader:</span> {{isGrader}}
+        </div>
+    </div>
+{% endblock %}

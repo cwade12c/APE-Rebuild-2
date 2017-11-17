@@ -3,31 +3,34 @@
 require_once("config.php");
 initCAS();
 
-if(userIsLoggedIn()) {
-    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && !in_array(strtolower($_SERVER['HTTPS']), array("off", "no"))) ? "https" : "http";
-    $url = $protocol . "://" . $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'];
+if (userIsLoggedIn()) {
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
+        && !in_array(strtolower($_SERVER['HTTPS']), array("off", "no")))
+        ? "https" : "http";
+    $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     $difference = strlen($url) - strlen(DOMAIN);
     $page = substr($url, -$difference);
 
     enforceAuthentication();
-    if($difference == 0) {
-        require("pages/home.php");
-    }
-    else {
-        if(file_exists("pages/" . sanitize($page) . ".php")) {
+
+    try {
+        if ($difference == 0) {
+            require("pages/home.php");
+        } elseif (file_exists("pages/" . sanitize($page) . ".php")) {
             require("pages/" . sanitize($page) . ".php");
-        }
-        else {
+        } else {
             require("pages/home.php");
             echo "<script type='text/javascript'>notification('The page does not exist.');</script>";
         }
+    }catch(Exception $e) {
+        // TODO render 'missing' page
+        error_log("Exception while loading a page, $e");
     }
-}
-else {
-    $exams = UpcomingExams::getUpcomingExams(); //this will instantiate Exam objects from a Class
+} else {
+    $exams = UpcomingExams::getUpcomingExams();
     $resources = array(
-        array("title" => "Exam Environment",
-            "content" => "Linux Operating System
+        array("title"   => "Exam Environment",
+              "content" => "Linux Operating System
                           Editors
                           JGrasp
                           GEdit
@@ -37,17 +40,17 @@ else {
                           No Internet access
                           No notes or texts allowed
                           The exam is now a Test Driven Design Exam where you are writing code based on the provided tests",
-            //"download" => "http://penguin.ewu.edu/advancement_exam/practice_exams/W11APE.zip",
-            "style" => "panel-info"
+              //"download" => "http://penguin.ewu.edu/advancement_exam/practice_exams/W11APE.zip",
+              "style"   => "panel-info"
         ),
         array(
-            "title" => "Exam Specifics",
+            "title"   => "Exam Specifics",
             "content" => "General Program Design: 30%
                           Data Abstraction and Class Design: 30%
                           Linked List Manipulation: 20%
                           Recursion: 20%",
             //"download" => "http://penguin.ewu.edu/advancement_exam/practice_exams/W12APE.zip",
-            "style" => "panel-info"
+            "style"   => "panel-info"
         )/*,
         array(
             "title" => "Summer 2013 Student Version",
@@ -58,7 +61,7 @@ else {
     );
 
     $parameters = array(
-        'exams' => $exams,
+        'exams'     => $exams,
         'resources' => $resources
     );
 

@@ -39,7 +39,21 @@ function logSecurityIncident(string $event, string $extendedInfo)
     }
 }
 
-function renderPage(string $template, array $pageParams)
+function getCurrentUserID()
+{
+    global $params;
+    return $params['id'];
+}
+
+function getQuery()
+{
+    $str = $_SERVER['QUERY_STRING'];
+    $arr = array();
+    parse_str($str, $arr);
+    return $arr;
+}
+
+function renderPage(string $template, array $pageParams = array())
 {
     global $params, $twig;
     $page = $twig->load($template);

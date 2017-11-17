@@ -963,7 +963,7 @@ $.fn.getComments = function () {
   return this.contents().map(function () {
     if (this.nodeType === 8) return this.nodeValue;
   }).get();
-}
+};
 
 function setDateTimePicker (elementId, options, selectDateCallbackFunction) {
   selectDateCallbackFunction = selectDateCallbackFunction || function (ct, $i) {};
@@ -988,7 +988,7 @@ function setDateTimePicker (elementId, options, selectDateCallbackFunction) {
     defaultSelect: true,
     allowBlank: false,
     onSelectDate: selectDateCallbackFunction
-  }
+  };
   options = options || defaultOptions;
 
   if(!_.has(options, 'onSelectDate')) {

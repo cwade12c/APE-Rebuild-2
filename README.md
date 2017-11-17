@@ -162,3 +162,9 @@ Adding a new page consists of:
     {% endblock %}
     ```
 *If you have trouble loading your new page, try clearing Twig's cache:* `rm -r cache/*`
+*To refresh the autoloads `composer install`
+
+### Composer
+Composer offers several subcommands that may be necessary
+* Use `composer list` to list all commands
+* Use `composer install` to update dependencies, autoload lists, etc

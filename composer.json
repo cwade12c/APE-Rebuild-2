@@ -26,7 +26,6 @@
             "includes/db/queries/locationsRooms.php",
             "includes/db/queries/reports.php",
             "includes/operations/include.php",
-            "includes/securityConstants.php",
             "includes/sso.inc.php",
             "includes/templates.inc.php",
             "includes/utils.inc.php"

@@ -1,33 +1,29 @@
 <?php
+/**
+ * Config file, sets up any constants / includes for site
+ */
 
-DEFINE(
-    "CONFIG_PATH", "/var/www/html/config"
-); //an absolute path to the configuration directory
-DEFINE(
-    "INCLUDE_ACCESS", true
-); //set to true in order to use includes.php
+DEFINE('CONFIG_PATH', 'config/');
 
-require_once(CONFIG_PATH . "path.config.php");
-require_once(CONFIG_PATH . "db.config.php");
-require_once(CONFIG_PATH . "host.config.php");
-require_once(CONFIG_PATH . "general.config.php");
-require_once(CONFIG_PATH . "navigation.config.php");
-require_once(CONFIG_PATH . "security.config.php");
+require_once(CONFIG_PATH . 'base.config.php');
+require_once(CONFIG_PATH . 'path.config.php');
+require_once(CONFIG_PATH . 'host.config.php');
+require_once(CONFIG_PATH . 'general.config.php');
+require_once(CONFIG_PATH . 'navigation.config.php');
+require_once(CONFIG_PATH . 'security.config.php');
 
 require_once(AUTOLOADER_PATH);
 
-// Do not edit below this line
-if(DEBUG) { //TODO comment this out before prod
+if(DEBUG) {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
 
     //displayDebugAlert();
 
     if(isset($_GET['debugrole'])) {
-        DEFINE("DEBUG_ROLE", $_GET['debugrole']);
-    }
-    else {
-        DEFINE("DEBUG_ROLE", 16);
+        DEFINE('DEBUG_ROLE', $_GET['debugrole']);
+    } else {
+        DEFINE('DEBUG_ROLE', ACCOUNT_TYPE_ADMIN);
     }
 }
 

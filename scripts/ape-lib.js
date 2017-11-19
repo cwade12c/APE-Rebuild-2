@@ -1,5 +1,8 @@
 // <editor-fold desc="API Functions">
 
+var emptyFunction = function () {
+};
+
 /**
  * Log helper
  * @param str
@@ -28,21 +31,52 @@ function getProperty(obj, property, defaultValue) {
     return obj.hasOwnProperty(property) ? obj[property] : defaultValue;
 }
 
+/**
+ * Wrapper for an ajax call
+ *
+ * @param requestType
+ * @param parameters
+ * @param callBackFunctions Should be js object, accepted functions, each can be function or array of functions
+ *                          success
+ *                          error
+ *                          complete
+ * @returns {*}
+ */
 function callAjax(requestType, parameters, callBackFunctions) {
     requestType = requestType || 'GET';
     callBackFunctions = callBackFunctions || {};
 
-    var successFnc = getProperty(callBackFunctions, 'success',
+    function convertCallback(fnc) {
+        if (!fnc) {
+            return [];
+        } else if (typeof fnc === 'function') {
+            return [fnc];
+        } else if (fnc && typeof fnc === 'object' && fnc.constructor === Array) {
+            return fnc;
+        } else {
+            return [];
+        }
+    }
+
+    function setupCallback(property, defaultFnc) {
+        var callback = convertCallback(getProperty(callBackFunctions, property, []));
+        callback.unshift(defaultFnc);
+        return callback;
+    }
+
+    var successFnc = setupCallback('success',
         function (data, status, jqXHR) {
             logLine('Ajax call succeeded');
         }
     );
-    var errorFnc = getProperty(callBackFunctions, 'error',
+
+    var errorFnc = setupCallback('error',
         function (jqXHR, status) {
             logLine('Ajax call error');
         }
     );
-    var completeFnc = getProperty(callBackFunctions, 'complete',
+
+    var completeFnc = setupCallback('complete',
         function (jqXHR, status) {
             logLine('Ajax call completed');
         }
@@ -74,31 +108,6 @@ function callAjax(requestType, parameters, callBackFunctions) {
  *          complete - on ajax.complete
  */
 function callAPI(operationName, operationParameters, callBackFunctions) {
-    callBackFunctions = callBackFunctions || {};
-
-    var successFnc = getProperty(callBackFunctions, 'success',
-        function (message, data) {
-            logLine('API Success, message: ' + message);
-            logLine('API Success, data: ' + JSON.stringify(data));
-        }
-    );
-    var failureFnc = getProperty(callBackFunctions, 'failure',
-        function (message) {
-            logLineNotification('API Failed, message: ' + message);
-        }
-    );
-
-    var success = function (response) {
-        if (response.success === true) {
-            successFnc(response.message, response.data);
-        } else {
-            failureFnc(response.message);
-        }
-    };
-
-    callBackFunctions.failure = undefined;
-    callBackFunctions.success = success;
-
     operationName = operationName || '';
     operationParameters = operationParameters || {};
     operationParameters = JSON.stringify(operationParameters);
@@ -107,6 +116,35 @@ function callAPI(operationName, operationParameters, callBackFunctions) {
         operation: operationName,
         parameters: operationParameters
     };
+
+    callBackFunctions = callBackFunctions || {};
+
+    var successFnc = getProperty(callBackFunctions, 'success', emptyFunction);
+    var failureFnc = getProperty(callBackFunctions, 'failure', emptyFunction);
+
+    var success = function (response) {
+        if (response.success === true) {
+            logLine('API Success, message: ' + response.message);
+            logLine('API Success, data: ' + JSON.stringify(response.data));
+            successFnc(response.message, response.data);
+        } else {
+            logLineNotification('API Failed, message: ' + response.message);
+            failureFnc(response.message);
+        }
+    };
+
+    callBackFunctions.failure = undefined;
+    callBackFunctions.success = success;
+
+    var errorFnc = getProperty(callBackFunctions, 'error', emptyFunction);
+
+    var error = function () {
+        logLine("Operation(" + operationName + ") error");
+        errorFnc();
+    };
+
+    callBackFunctions.error = undefined;
+    callBackFunctions.error = error;
 
     return callAjax('POST', fullParameters, callBackFunctions);
 }
@@ -192,7 +230,7 @@ function name(name) {
         success: function (message, data) {
             notification(data.name, 'success', 'https://google.com', false);
         },
-        failure: function(message) {
+        failure: function (message) {
             notification(message);
         },
         error: function (response) {
@@ -304,15 +342,8 @@ function getLocations() {
     var params = {};
 
     var callbacks = {
-        success: function (message, data) {
-            logLine("Locations success: " + message);
-            logLine("Locations data: " + JSON.stringify(data));
-        },
         failure: function (message) {
             logLineNotification("Locations failed: " + message);
-        },
-        error: function (response) {
-            notification(response.message);
         }
     };
 
@@ -325,10 +356,6 @@ function getLocation(locationId) {
     };
 
     var callbacks = {
-        success: function (message, data) {
-            logLine("Location success: " + message);
-            logLine("Location data: " + JSON.stringify(data));
-        },
         failure: function (message) {
             logLineNotification("Location failed: " + message);
         }

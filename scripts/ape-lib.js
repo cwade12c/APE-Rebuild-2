@@ -1,5 +1,8 @@
 // <editor-fold desc="API Functions">
 
+/**
+ * used in place of just defining an empty function
+ */
 var emptyFunction = function () {
 };
 
@@ -9,6 +12,14 @@ var emptyFunction = function () {
  */
 function logLine(str) {
     console.log(str + '\n');
+}
+
+/**
+ * Log helper
+ * @param str
+ */
+function errorLine(str) {
+    console.error(str + '\n');
 }
 
 /**

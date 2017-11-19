@@ -45,12 +45,34 @@ function getCurrentUserID()
     return $params['id'];
 }
 
-function getQuery()
+/**
+ * Get the query string and parse into array
+ * @return array
+ */
+function getParseQuery()
 {
     $str = $_SERVER['QUERY_STRING'];
     $arr = array();
     parse_str($str, $arr);
     return $arr;
+}
+
+/**
+ * Get value from query string or default
+ *
+ * @param string $key
+ * @param        $default
+ *
+ * @return mixed
+ */
+function getQueryVar(string $key, $default)
+{
+    global $params;
+
+    if (!isset($params['query']) && !isset($params['query'][$key])) {
+        return $default;
+    }
+    return $params['query'][$key];
 }
 
 function renderPage(string $template, array $pageParams = array())

@@ -38,7 +38,8 @@ try {
 global $params;
 $params = array(
     'isLoggedIn' => false,
-    'availableNavLinks' => GUEST_LINKS
+    'availableNavLinks' => GUEST_LINKS,
+    'query' => getParseQuery()
 );
 
 function displayDebugAlert() {

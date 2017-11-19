@@ -8,6 +8,7 @@ function redirect($path)
 
 function sanitize(string $input)
 {
+    // TODO replace with standard function to handle
     $cleanInput = preg_replace("/%00/", "", $input);
     $cleanInput = preg_replace("/%3C/", "", $cleanInput);
     $cleanInput = preg_replace("/%3c/", "", $cleanInput);
@@ -21,9 +22,8 @@ function sanitize(string $input)
 function logSecurityIncident(string $event, string $extendedInfo)
 {
     if (is_writable(LOG_PATH)) {
-        global $params;
         $message = date("m/d/Y") . " => $event : $extendedInfo [" . $_SERVER['REMOTE_ADDR'] .
-            "] [" . $_SERVER['HTTP_REFERER'] . "] [" . $params['id'] . "] [" . $params['email'] .
+            "] [" . $_SERVER['HTTP_REFERER'] . "] [" . getCurrentUserID() . "] [" . getParam('email', 'N/A') .
             "] \n";
 
         if ( ! $handle = fopen(LOG_PATH, 'a')) {
@@ -39,10 +39,49 @@ function logSecurityIncident(string $event, string $extendedInfo)
     }
 }
 
-function getCurrentUserID()
+/**
+ * Used to ensure the existing parameters are not overwritten
+ */
+function setupParams()
 {
     global $params;
-    return $params['id'];
+    if (!isset($params)) {
+        $params = array();
+    }
+}
+
+/**
+ * To set a global parameter
+ * @param string $key
+ * @param        $value
+ */
+function setParam(string $key, $value)
+{
+    setupParams();
+    global $params;
+    $params[$key] = $value;
+}
+
+/**
+ * To get global parameter or default value
+ *
+ * @param string $key
+ * @param        $default
+ *
+ * @return mixed
+ */
+function getParam(string $key, $default = null)
+{
+    global $params;
+    if (isset($params[$key])) {
+        return $params[$key];
+    }
+    return $default;
+}
+
+function getCurrentUserID()
+{
+    return getParam('id');
 }
 
 /**
@@ -67,12 +106,11 @@ function getParseQuery()
  */
 function getQueryVar(string $key, $default)
 {
-    global $params;
-
-    if (!isset($params['query']) && !isset($params['query'][$key])) {
+    $query = getParam('query', array());
+    if (!isset($query[$key])) {
         return $default;
     }
-    return $params['query'][$key];
+    return $query[$key];
 }
 
 function renderPage(string $template, array $pageParams = array())

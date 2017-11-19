@@ -35,12 +35,9 @@ try {
     die('DB Error: ' . $error->getMessage());
 }
 
-global $params;
-$params = array(
-    'isLoggedIn' => false,
-    'availableNavLinks' => GUEST_LINKS,
-    'query' => getParseQuery()
-);
+setParam('isLoggedIn', false);
+setParam('availableNavLinks', GUEST_LINKS);
+setParam('query', getParseQuery());
 
 function displayDebugAlert() {
     echo "<div class=\"alert alert-danger\" style=\"text-align:center;\" role=\"alert\">

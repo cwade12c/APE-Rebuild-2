@@ -23,12 +23,21 @@ function errorLine(str) {
 }
 
 /**
- * Helper to log line and notification
+ * Helper to log error and notification
+ * @param str
+ */
+function errorLineNotification(str) {
+    errorLine(str);
+    notification(str);
+}
+
+/**
+ * Helper function to log line and notification
  * @param str
  */
 function logLineNotification(str) {
     logLine(str);
-    notification(str);
+    notification(str, 'info');
 }
 
 /**
@@ -139,7 +148,7 @@ function callAPI(operationName, operationParameters, callBackFunctions) {
             logLine('API Success, data: ' + JSON.stringify(response.data));
             successFnc(response.message, response.data);
         } else {
-            logLineNotification('API Failed, message: ' + response.message);
+            errorLineNotification('API Failed, message: ' + response.message);
             failureFnc(response.message);
         }
     };
@@ -354,7 +363,7 @@ function getLocations() {
 
     var callbacks = {
         failure: function (message) {
-            logLineNotification("Locations failed: " + message);
+            errorLineNotification("Locations failed: " + message);
         }
     };
 
@@ -368,7 +377,7 @@ function getLocation(locationId) {
 
     var callbacks = {
         failure: function (message) {
-            logLineNotification("Location failed: " + message);
+            errorLineNotification("Location failed: " + message);
         }
     };
 
@@ -616,6 +625,31 @@ function deleteCategory(categoryId) {
     };
 
     return callAPI('DeleteCategory', params, callbacks);
+}
+
+/**
+ * @param variable
+ * @returns {boolean}
+ */
+function isValid(variable) {
+    return typeof variable !== 'undefined';
+}
+
+/**
+ * @param variable
+ * @returns {boolean}
+ */
+function isValidInt(variable) {
+    return isValid(variable) && typeof variable === 'number' && !isNaN(variable);
+}
+
+/**
+ * Most integer IDs in the system do not allow values <= 0
+ * @param variable
+ * @returns {boolean}
+ */
+function isValidIntID(variable) {
+    return isValidInt(variable) && variable > 0;
 }
 
 //</editor-fold>

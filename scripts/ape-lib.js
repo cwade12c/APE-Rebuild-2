@@ -92,7 +92,7 @@ function callAjax(requestType, parameters, callBackFunctions) {
 
     var errorFnc = setupCallback('error',
         function (jqXHR, status) {
-            logLine('Ajax call error');
+            errorLine('Ajax call error');
         }
     );
 
@@ -148,7 +148,7 @@ function callAPI(operationName, operationParameters, callBackFunctions) {
             logLine('API Success, data: ' + JSON.stringify(response.data));
             successFnc(response.message, response.data);
         } else {
-            errorLineNotification('API Failed, message: ' + response.message);
+            errorLine('API Failed, message: ' + response.message);
             failureFnc(response.message);
         }
     };
@@ -628,19 +628,19 @@ function deleteCategory(categoryId) {
 }
 
 /**
- * @param variable
+ * @param value
  * @returns {boolean}
  */
-function isValid(variable) {
-    return typeof variable !== 'undefined';
+function isValid(value) {
+    return typeof value !== 'undefined';
 }
 
 /**
- * @param variable
+ * @param value
  * @returns {boolean}
  */
-function isValidInt(variable) {
-    return isValid(variable) && typeof variable === 'number' && !isNaN(variable);
+function isValidInt(value) {
+    return isValid(value) && _.isNumber(value) && !isNaN(value);
 }
 
 /**
@@ -648,8 +648,8 @@ function isValidInt(variable) {
  * @param variable
  * @returns {boolean}
  */
-function isValidIntID(variable) {
-    return isValidInt(variable) && variable > 0;
+function isValidIntID(value) {
+    return isValidInt(value) && value > 0;
 }
 
 //</editor-fold>

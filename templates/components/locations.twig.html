@@ -19,7 +19,7 @@ var viewLocationDetails = function(id) {
           currentRoom.name + ' <span class="badge">' + currentRoom.seats +
           ' seats</span></span><br />';
         rooms += html;
-      })
+      });
 
         var locationID = parseInt(id);
         console.log(locationID);
@@ -38,7 +38,7 @@ var viewLocationDetails = function(id) {
         ];
       addRowToTable('location-table', tdCollection);
     })
-}
+};
 
 var removeLocation = function(id) {
     deleteLocation(id);

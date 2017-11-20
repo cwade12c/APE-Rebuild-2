@@ -1,0 +1,237 @@
+<script type="text/javascript">
+    var grader, exam, category, grades, pointsMax = 0, saved = false, submitted = false;
+
+    document.addEventListener("DOMContentLoaded",
+        function () {
+            document.getElementById('gradingError').style.visibility = 'hidden';
+            document.getElementById('gradingSection').style.visibility = 'hidden';
+
+            grader = '{{graderID}}';
+            exam = parseInt('{{examID}}');
+            category = parseInt('{{categoryID}}');
+
+            if (!isValidIntID(exam) || !isValidIntID(category)) {
+                setError('Invalid page, please contact an administrator');
+                errorLine('ERROR: Exam or category ID is invalid (missing from query string?)');
+                return;
+            }
+
+            getGraderProgress();
+        }
+    );
+
+    function setError(msg) {
+        errorLineNotification(msg);
+        document.getElementById('gradingErrorLabel').textContent = msg;
+        document.getElementById('gradingError').style.visibility = 'visible';
+    }
+
+    function getGraderProgress() {
+        var params = {
+            graderID: grader,
+            examID: exam,
+            categoryID: category
+        };
+
+        var callbacks = {
+            success: getProgressSuccess,
+            failure: getProgressFailure,
+            error: getProgressError
+        };
+
+        return callAPI('GraderProgress', params, callbacks);
+    }
+
+    function getProgressSuccess(message, data) {
+        logLine("Progress success: " + message);
+        logLine("Progress data: " + JSON.stringify(data));
+
+        grades = data.grades;
+        _.each(grades,
+            function (grade) {
+                grade.points = parseInt(grade.points);
+            }
+        );
+
+        pointsMax = parseInt(data.categoryPoints);
+        fillInfo(exam, data.categoryName, data.categoryPoints);
+        fillTable();
+
+        document.getElementById('gradingSection').style.visibility = 'visible';
+    }
+
+    function getProgressFailure(message) {
+        setError('Failed to get grader progress: ' + message);
+    }
+
+    function getProgressError() {
+        setError('Error while retrieving progress, please try again later');
+    }
+
+    function fillInfo(examID, categoryName, points) {
+        document.getElementById('labelExamID').textContent = 'Exam #' + examID;
+        document.getElementById('labelCategoryName').textContent = categoryName;
+        document.getElementById('labelCategoryPoints').textContent = points;
+    }
+
+    function fillTable() {
+        // wipe table
+        $('#gradingTable').find("tr:gt(0)").remove();
+
+        _.each(grades,
+            function (grade) {
+                var studentID = grade.studentID;
+                var points = grade.points;
+
+                var inputID = 'inputPoints' + studentID;
+                var pointsInput = "<input type=\'number\' class=\'form-control\' id=\'" + inputID + "\'>";
+                addRowToTable('gradingTable', [studentID, pointsInput]);
+
+                var input = document.getElementById(inputID);
+
+                input.value = points < 0 ? '' : points;
+
+                input.onchange = function () {
+                    var newPoints = parseInt(input.value);
+                    if (validPoints(newPoints)) {
+                        grade.points = newPoints;
+                        setGradesSaved(false);
+                    } else {
+                        notification('Invalid points value', 'danger');
+                        input.value = 'N/A';
+                    }
+                };
+            }
+        );
+
+        setGradesSaved(true);
+    }
+
+    function validPoints(points) {
+        return points && isValidInt(points) && points >= 0 && points <= pointsMax;
+    }
+
+    function saveProgress(successHandler) {
+        successHandler = successHandler || emptyFunction;
+
+        notification('Saving...', 'info');
+        setGraderProgress(grader, exam, category, grades, successHandler);
+    }
+
+    function setGraderProgress(grader, exam, category, grades, successHandler) {
+        successHandler = successHandler || emptyFunction;
+
+        var params = {
+            graderID: grader,
+            examID: exam,
+            categoryID: category,
+            grades: grades
+        };
+
+        var callbacks = {
+            success: function () {
+                logLineNotification("Successfully saved grades");
+                setGradesSaved(true);
+                successHandler();
+            },
+            failure: function (message) {
+                errorLineNotification("Error while saving: " + message);
+            },
+            error: function () {
+                errorLineNotification("Error while saving, try again later");
+            }
+        };
+
+        return callAPI('SetGraderProgress', params, callbacks);
+    }
+
+    function submitProgress() {
+        if (submitted) {
+            notification('Already submitted', 'warning');
+            return;
+        }
+        if (saved) {
+            if (confirm('Once submitted you cannot make further edits, are you sure?')) {
+                submitProgressExt();
+            }
+        } else {
+            if (confirm('You must save first, save and submit? Edits cannot be made after submitting')) {
+                saveProgress(submitProgressExt);
+            }
+        }
+    }
+
+    function submitProgressExt() {
+        notification('Submitting...', 'info');
+        submitGraderProgress(grader, exam, category);
+    }
+
+    function submitGraderProgress(grader, exam, category) {
+        var params = {
+            graderID: grader,
+            examID: exam,
+            categoryID: category,
+            grades: grades
+        };
+
+        var callbacks = {
+            success: function () {
+                logLineNotification("Submitted grades");
+                disableSubmit();
+                setGradesSaved(true);
+            },
+            failure: function (message) {
+                errorLineNotification("Submission failed: " + message);
+            },
+            error: function () {
+                errorLineNotification("Error while submitting, try again later");
+            }
+        };
+
+        return callAPI('SubmitGraderProgress', params, callbacks);
+    }
+
+    function setGradesSaved(isSaved) {
+        if (submitted) {
+            isSaved = true;
+        }
+
+        saved = isSaved;
+        document.getElementById('buttonSaveProgress').disabled = isSaved;
+    }
+
+    function disableSubmit() {
+        submitted = true;
+        document.getElementById('buttonSubmitProgress').disabled = submitted;
+    }
+
+</script>
+
+<div class='row' id='gradingError'>
+    <span class='label label-danger'>Error</span>
+    <label id='gradingErrorLabel'>Hey</label>
+</div>
+
+<div class='row' id='gradingSection'>
+    <span class='label label-info' id='labelExamID'>Exam #ID</span>
+    <br>
+    <span class='label label-info'>Category</span>
+    <label id='labelCategoryName'>Category Name</label>
+    <br>
+    <span class='label label-info'>Max points</span>
+    <label id='labelCategoryPoints'>Category Points</label>
+    <br>
+    <br>
+    <table class='table table-striped' id='gradingTable'>
+        <thead>
+        <tr>
+            <th>Student</th>
+            <th>Grade</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <button class='btn btn-primary' id='buttonSaveProgress' onclick='saveProgress()'>Save</button>
+    <button class='btn btn-primary' id='buttonSubmitProgress' onclick='submitProgress()'>Submit</button>
+</div>

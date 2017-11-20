@@ -109,13 +109,25 @@ function getCategoryInfo(int $id)
 }
 
 /**
+ * Get name of category
+ *
+ * @param int $id
+ *
+ * @return string
+ */
+function getCategoryName(int $id)
+{
+    return getCategoryNameQuery($id);
+}
+
+/**
  * Get a list of all categories
  *
- * @return mixed
+ * @return array of category info
+ *               'name', 'points'
  */
 function getCategories()
 {
-    // TODO: convert return to non - associative array (just int ids)?
     return getCategoriesQuery();
 }
 

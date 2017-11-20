@@ -167,6 +167,26 @@ function getCategoryInfoQuery(int $id)
 }
 
 /**
+ * Query to get name for category
+ *
+ * @param int $id
+ *
+ * @return mixed
+ */
+function getCategoryNameQuery(int $id)
+{
+    $query = "SELECT `name` FROM `categories` "
+        . " WHERE `id` = :id;";
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $id, PDO::PARAM_INT)
+        )
+    );
+
+    return getQueryResult($sql);
+}
+
+/**
  * Query to get all category IDs
  *
  * @return mixed

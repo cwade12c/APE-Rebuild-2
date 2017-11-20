@@ -38,15 +38,19 @@
     };
   });
 
+  var addLocation = function() {
+    loadModal('templates/modals/create-location-modal.twig.html', 'locationModal');
+  };
+
+  var editLocation = function() {
+    loadModal('templates/modals/edit-location-modal.twig.html', 'locationModal');
+  };
+
   var removeLocation = function() {
     var table = $('#location-table').DataTable();
     var id = parseInt(getSelectedRowByIndex(table, 0));
     deleteLocation(id);
     removeRowFromTable('location-table', 'row-' + id);
-  }
-
-  var editLocation = function() {
-
   };
 
   setConfirmationModal('action-delete', removeLocation);
@@ -65,3 +69,13 @@
     <tbody>
     </tbody>
   </table>
+
+<!-- Modal -->
+<div class="modal fade" id="locationModal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+
+    </div>
+  </div>
+</div>

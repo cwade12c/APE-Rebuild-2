@@ -1107,7 +1107,7 @@ function toggleSelectorActions (enabled) {
   });
 }
 
-function setConfirmationModal(elementIdToWatch, deleteCallback, cancelCallback) {
+function setConfirmationModal (elementIdToWatch, deleteCallback, cancelCallback) {
   var deleteCallbackFnc = deleteCallback || function () {};
   var cancelCallbackFnc = cancelCallback || function () {};
 
@@ -1118,6 +1118,12 @@ function setConfirmationModal(elementIdToWatch, deleteCallback, cancelCallback) 
     btn_cancel_label: 'Cancel',
     delete_callback: deleteCallbackFnc,
     cancel_callback: cancelCallbackFnc
+  });
+}
+
+function loadModal (templateUrl, modalId) {
+  $('.modal-content').load(templateUrl, function() {
+    $('#' + modalId).modal({show:true});
   });
 }
 

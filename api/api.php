@@ -52,17 +52,7 @@ function processRequest($args)
 
 function isValidOperation($operation)
 {
-
-    $validOperations = file("operations.txt");
-    $result = false;
-
-    foreach ($validOperations as $op) {
-        if (trim($op) == $operation) {
-            $result = true;
-        }
-    }
-
-    return $result;
+    return is_subclass_of($operation, 'Operation');
 }
 
 function convertToError(string $message) {

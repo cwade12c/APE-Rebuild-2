@@ -395,8 +395,10 @@ function setGraderCategoryGrades(int $examID, int $categoryID, string $graderID,
         $studentID = $studentPoints['studentID'];
         $pointsSet = $studentPoints['points'];
         if ($pointsSet < 0) {
-            $pointsSet = null;
+            continue;
         }
+
+        error_log("Saving($examID, $categoryID, $graderID): $studentID, $pointsSet");
 
         setGraderCategoryStudentGradeQuery(
             $examID, $categoryID, $graderID, $studentID, $pointsSet

@@ -83,17 +83,13 @@ function setSessionVariables()
         $_SESSION['userGroup'] = getAccountType($id);
     }
 
-    global $params;
-    $params = array(
-        'isLoggedIn' => true,
-        'firstName' => $_SESSION['firstName'],
-        'lastName' => $_SESSION['lastName'],
-        'type' => getAccountType((string)$_SESSION['ewuid']),
-        'id' => $_SESSION['ewuid'],
-        'email' => $_SESSION['email'],
-        'availableNavLinks' => getAvailableNavigationLinks()
-    );
-
+    setParam('isLoggedIn', true);
+    setParam('firstName', $_SESSION['firstName']);
+    setParam('lastName', $_SESSION['lastName']);
+    setParam('type', getAccountType((string)$_SESSION['ewuid']));
+    setParam('id', $_SESSION['ewuid']);
+    setParam('email', $_SESSION['email']);
+    setParam('availableNavLinks', getAvailableNavigationLinks());
 }
 
 function getAvailableNavigationLinks()

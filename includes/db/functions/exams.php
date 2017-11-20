@@ -216,33 +216,25 @@ function getExamCategories(int $id)
 {
     $categories = getExamCategoriesQuery($id);
 
-    normalizeExamCategoriesArray($categories);
+    foreach ($categories as &$category) {
+        $category['id'] = $category['category_id'];
+        unset($category['category_id']);
+    }
 
     return $categories;
 }
 
 /**
- * Helper function for getExamCategories()
- * Transforms category array format
- * Resulting array element format
- *  array(
- *  'id' => category id,
- *  'points' => category points
- *  )
+ * Get points for exam/category
  *
- * @param array $categories category array from getExamCategoriesQuery()
- *                          element format of
- *                          array(
- *                          'category_id' => category id,
- *                          'points' => category points
- *                          )
+ * @param int $examID
+ * @param int $categoryID
+ *
+ * @return int
  */
-function normalizeExamCategoriesArray(array &$categories)
+function getExamCategoryPoints(int $examID, int $categoryID)
 {
-    foreach ($categories as &$category) {
-        $category['id'] = $category['category_id'];
-        unset($category['category_id']);
-    }
+    return getExamCategoryPointsQuery($examID, $categoryID);
 }
 
 /**

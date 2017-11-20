@@ -291,6 +291,28 @@ function getExamCategoriesQuery(int $id)
 }
 
 /**
+ * Get points for exam/category
+ *
+ * @param int $examID
+ * @param int $categoryID
+ *
+ * @return int
+ */
+function getExamCategoryPointsQuery(int $examID, int $categoryID)
+{
+    $query
+        = "SELECT `points` "
+        . " FROM `exam_categories` WHERE  "
+        . " (`id` = :examID) AND (`category_id` = :categoryID)";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':categoryID', $categoryID, PDO::PARAM_INT))
+    );
+
+    return getQueryResult($sql);
+}
+
+/**
  * Get teacher id for an in class exam
  *
  * @param int $id
@@ -643,8 +665,9 @@ function updateExamQuery(int $id, DateTime $start, DateTime $cutoff,
  * @param DateTime $cutoff
  * @param int      $length
  */
-function updateExamTimeQuery(int $examID, DateTime $start, DateTime $cutoff, int $length)
-{
+function updateExamTimeQuery(int $examID, DateTime $start, DateTime $cutoff,
+    int $length
+) {
     $query = "UPDATE `exams` "
         . " SET `start` = :start, `cutoff` = :cutoff, `length` = :len "
         . " WHERE `id` = :id";

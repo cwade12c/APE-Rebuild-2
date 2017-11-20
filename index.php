@@ -1,13 +1,14 @@
 <?php
 
-require_once("config.php");
+require_once('config.php');
 initCAS();
 
 if (userIsLoggedIn()) {
     $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
         && !in_array(strtolower($_SERVER['HTTPS']), array("off", "no")))
         ? "https" : "http";
-    $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    $uri = strtok($_SERVER["REQUEST_URI"],'?');
+    $url = $protocol . "://" . $_SERVER['HTTP_HOST'] . $uri;
     $difference = strlen($url) - strlen(DOMAIN);
     $page = substr($url, -$difference);
 

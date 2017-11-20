@@ -3,8 +3,8 @@
 $actions = array();
 
 registerAction($actions, ACTION_CREATE, "Add", "addLocation()");
-registerAction($actions, ACTION_UPDATE, "Edit", "editLocation(locationId)");
-registerAction($actions, ACTION_DELETE, "Delete", "removeLocation(locationId)");
+registerAction($actions, ACTION_UPDATE, "Edit", "editLocation()");
+registerAction($actions, ACTION_DELETE, "Delete", "");
 
 $parameters = array(
     "actions" => $actions

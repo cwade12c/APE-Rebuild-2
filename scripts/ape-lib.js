@@ -998,4 +998,127 @@ function setDateTimePicker (elementId, options, selectDateCallbackFunction) {
   jQuery('#' + elementId).datetimepicker(options);
 }
 
+/**
+ * Initializes a table as a DataTable (sorting, downloading, filtering,
+ * selecting)
+ * @param tableId The id attribute associated with the target table
+ * @param dataTableOptions A JSON object of DataTable options
+ * @param overrideOptions If true, will override all default options
+ */
+function initializeDataTableById (tableId, dataTableOptions, overrideOptions) {
+  var dataTable;
+
+  if(!dataTableOptions || !_.isObject(dataTableOptions)) {
+    dataTable = $('#' + tableId).DataTable(getDataTableOptions());
+  }
+  else {
+    if(overrideOptions) {
+      dataTable = $('#' + tableId).DataTable(dataTableOptions);
+    }
+    else {
+      var customOptions = getDataTableOptions();
+      customOptions = _.extend(customOptions, dataTableOptions);
+      dataTable =  $('#' + tableId).DataTable(customOptions);
+    }
+  }
+  dataTable.on('select', function() {
+    toggleSelectorActions(true);
+  });
+  dataTable.on('deselect', function() {
+    toggleSelectorActions(false);
+  });
+  return dataTable;
+}
+
+function isRowSelected (dataTableReference) {
+  return dataTableReference.rows('.selected').any();
+}
+
+function getSelectedRowByIndex (dataTableReference, columnIndex) {
+  if(isRowSelected(dataTableReference)) {
+    return dataTableReference.row('.selected').data()[columnIndex];
+  }
+  return null;
+}
+
+/**
+ * Internal function to get the default DataTable options
+ * @returns {{columnDefs: [*], select: string, dom: string, buttons: [*,*,*,*,*]}}
+ */
+function getDataTableOptions () {
+  var getFileName = function() {
+    var d = new Date();
+    var n = d.getTime();
+    return 'export' + n;
+  };
+
+  return {
+    columnDefs: [
+      {
+        'className': 'dt-center', 'targets': '_all'
+      }
+    ],
+    select: 'single',
+    dom: 'Bfrtip',
+    buttons: [
+      {
+        extend: 'copy',
+        text: '<i class="fa fa-files-o"></i> Copy',
+        filename: getFileName()
+      },
+      {
+        extend: 'csv',
+        text: '<i class="fa fa-file-text-o"></i> CSV',
+        filename: getFileName()
+      },
+      {
+        extend: 'excel',
+        text: '<i class="fa fa-file-excel-o"></i> XLSX',
+        filename: getFileName()
+      },
+      {
+        extend: 'pdf',
+        text: '<i class="fa fa-file-pdf-o"></i> PDF',
+        filename: getFileName()
+      },
+      {
+        extend: 'print',
+        text: '<i class="fa fa-print"></i> Print'
+      }
+    ],
+    pageLength: 10
+  };
+}
+
+/**
+ * Enable or disable all action buttons that have a className of "action-select"
+ * @param enabled A boolean that determines if the buttons are enabled/disabled
+ */
+function toggleSelectorActions (enabled) {
+  var selectorActions = document.getElementsByClassName('action-select');
+  _.each(selectorActions, function(currentSelectorAction) {
+    if(enabled) {
+      currentSelectorAction.classList.remove('disabled');
+      currentSelectorAction.disabled = false;
+    }
+    else {
+      currentSelectorAction.classList.add('disabled');
+      currentSelectorAction.disabled = true;    }
+  });
+}
+
+function setConfirmationModal(elementIdToWatch, deleteCallback, cancelCallback) {
+  var deleteCallbackFnc = deleteCallback || function () {};
+  var cancelCallbackFnc = cancelCallback || function () {};
+
+  $('#' + elementIdToWatch).bootstrap_confirm_delete({
+    heading: 'WARNING',
+    message: 'Are you sure that you want to delete the selected item?',
+    btn_ok_label: 'Delete',
+    btn_cancel_label: 'Cancel',
+    delete_callback: deleteCallbackFnc,
+    cancel_callback: cancelCallbackFnc
+  });
+}
+
 //</editor-fold>

@@ -1,65 +1,67 @@
 <script type="text/javascript">
-  getLocations().then(function (response) {
-    if(response) {
-      var options = [];
+  $(document).ready(function () {
+    getLocations().then(function (response) {
+      var promises = [];
+      if(response) {
+        _.each(response.data.locations, function (currentLocation, index) {
+          promises.push(viewLocationDetails(parseInt(currentLocation.id)));
+          if(index === response.data.locations.length - 1) {
+            Promise.all(promises).then(function() {
+              //only init the dataTable after all of the data is populated (need to wait for all promises)
+              initializeDataTableById('location-table');
+            });
+          }
+        });
+      }
+    });
 
-      _.each(response.data.locations, function (currentLocation) {
-        viewLocationDetails(parseInt(currentLocation.id));
-      });
-
-      addOptionToSelect('locations', options);
-    }
-  });
-
-var viewLocationDetails = function(id) {
-    getLocation(id).then(function (response) {
-      var rooms = '';
-      _.each(response.data.location.rooms, function (currentRoom) {
-        var html = '<span class="label label-primary">' +
-          currentRoom.name + ' <span class="badge">' + currentRoom.seats +
-          ' seats</span></span><br />';
-        rooms += html;
-      })
-
-        var locationID = parseInt(id);
-        console.log(locationID);
-
-        var htmlButton_edit ='<button class="btn btn-primary">Edit</button>';
-        var htmlButton_delete ='<button class="btn btn-danger" onclick="removeLocation(' + locationID + ')">Delete</button>';
+    var viewLocationDetails = function(id) {
+      return getLocation(id).then(function (response) {
+        var rooms = '';
+        _.each(response.data.location.rooms, function (currentRoom) {
+          var html = '<span class="label label-primary">' +
+            currentRoom.name + ' <span class="badge">' + currentRoom.seats +
+            ' seats</span></span><br />';
+          rooms += html;
+        });
 
         var tdCollection = [
-            response.data.location.id,
-            response.data.location.name,
-            rooms,
-            response.data.location.limited_seats,
-            response.data.location.reserved_seats,
-            htmlButton_edit,
-            htmlButton_delete
+          response.data.location.id,
+          response.data.location.name,
+          rooms,
+          response.data.location.limited_seats,
+          response.data.location.reserved_seats
         ];
-      addRowToTable('location-table', tdCollection);
-    })
-}
+        addRowToTable('location-table', tdCollection);
+        return true;
+      });
+    };
+  });
 
-var removeLocation = function(id) {
+  var removeLocation = function() {
+    var table = $('#location-table').DataTable();
+    var id = parseInt(getSelectedRowByIndex(table, 0));
     deleteLocation(id);
     removeRowFromTable('location-table', 'row-' + id);
-}
+  }
+
+  var editLocation = function() {
+
+  };
+
+  setConfirmationModal('action-delete', removeLocation);
 </script>
 
-<div class="table-responsive">
-  <table id="location-table" class="table table-striped">
+  <table id="location-table" class="data-table">
     <thead>
-    <tr>
-      <th>ID</th>
-      <th>Building</th>
-      <th>Rooms</th>
-      <th>Total Seats</th>
-      <th>Reserved Seats</th>
-      <th></th>
-      <th></th>
-    </tr>
+      <tr>
+        <th>ID</th>
+        <th>Building</th>
+        <th>Rooms</th>
+        <th>Total Seats</th>
+        <th>Reserved Seats</th>
+      </tr>
     </thead>
     <tbody>
     </tbody>
   </table>
-</div>

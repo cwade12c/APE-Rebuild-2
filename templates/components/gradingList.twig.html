@@ -1,0 +1,66 @@
+<script type="text/javascript">
+    var grader;
+
+    document.addEventListener("DOMContentLoaded",
+        function () {
+            document.getElementById('gradingListError').style.visibility = 'hidden';
+            document.getElementById('assignedSection').style.visibility = 'hidden';
+
+            grader = '{{graderID}}';
+
+            getAssigned();
+        }
+    );
+
+    function setError(msg) {
+        errorLineNotification(msg);
+        document.getElementById('gradingErrorLabel').textContent = msg;
+        document.getElementById('gradingListError').style.visibility = 'visible';
+    }
+
+    function getAssigned() {
+        var params = {
+            graderID: grader
+        };
+
+        var callbacks = {
+            success: getAssignedSuccess,
+            failure: function (message) {
+                setError('Failed to get assigned exams: ' + message);
+            },
+            error: function () {
+                setError('Error while retrieving progress, please try again later');
+            }
+        };
+
+        return callAPI('GraderAssignedExams', params, callbacks);
+    }
+
+    function getAssignedSuccess(message, data) {
+        logLine("Get assigned success: " + message);
+        logLine("assigned data: " + JSON.stringify(data));
+
+        document.getElementById('assignedSection').style.visibility = 'visible';
+    }
+
+</script>
+
+<div class='row' id='gradingListError'>
+    <span class='label label-danger'>Error</span>
+    <label id='gradingErrorLabel'></label>
+</div>
+
+<div class='row' id='assignedSection'>
+    <table class='table table-striped' id='assignedTable'>
+        <thead>
+        <tr>
+            <th><span class='label label-info'>Exam</span></th>
+            <th><span class='label label-info'>Category</span></th>
+            <th><span class='label label-info'>Grades Set / Total</span></th>
+            <th><span class='label label-info'>Submitted</span></th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>

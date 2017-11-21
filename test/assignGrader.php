@@ -24,7 +24,10 @@ function testAssignGrader($graderID, $examID, $categoryID) {
 
 $graderID = '00798787';
 
-testAssignGrader($graderID, 3, 1);
+//testAssignGrader($graderID, 3, 1);
+testAssignGrader($graderID, 3, 2);
+testAssignGrader($graderID, 3, 3);
+testAssignGrader($graderID, 3, 4);
 
 
 echo "</br></br>completed test</br>";

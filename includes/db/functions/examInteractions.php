@@ -268,9 +268,6 @@ function deregisterStudentFromAllExams(string $studentID)
  */
 function getAssignedSeat(string $studentID, int $examID)
 {
-    validateExamID($examID);
-    validateStudentIsRegisteredFor($studentID, $examID);
-
     return getAssignedSeatQuery($studentID, $examID);
 }
 
@@ -552,7 +549,7 @@ function examLocationAvailable(int $examID)
  */
 function isSeatSet(int $roomID, int $seat)
 {
+    // TODO: check if seat number is within the room seat max
     return !(is_null($roomID) || is_null($seat) || ($roomID <= 0)
         || ($seat <= 0));
-    // TODO: check if seat number is within the room seat max
 }

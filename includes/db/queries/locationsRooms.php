@@ -484,3 +484,18 @@ function getRoomInformationQuery(int $id)
     $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
     return getQueryResultRow($sql);
 }
+
+/**
+ * Query to get room name
+ *
+ * @param int $id
+ *
+ * @return string
+ */
+function getRoomNameQuery(int $id)
+{
+    $query = "SELECT `name` "
+        . " FROM `rooms` WHERE `id` = :id";
+    $sql = executeQuery($query, array(array(':id', $id, PDO::PARAM_INT)));
+    return getQueryResult($sql);
+}

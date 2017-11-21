@@ -511,7 +511,7 @@ function doesMinimumNumberOfAdminsExist()
 }
 
 /**
- * Hash a given account ID according to the set algorithm
+ * Hash a given account ID according to the set algorithm and length
  *
  * @param string $accountID
  *
@@ -519,5 +519,7 @@ function doesMinimumNumberOfAdminsExist()
  */
 function hashAccountID(string $accountID)
 {
-    return hash(HASHING_ALGORITHM, $accountID);
+    $hash = hash(ACCOUNT_ID_HASH_ALGORITHM, $accountID);
+    $hash = substr($hash, 0, ACCOUNT_ID_HASH_LENGTH);
+    return $hash;
 }

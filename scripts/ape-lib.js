@@ -148,6 +148,7 @@ function callAPI(operationName, operationParameters, callBackFunctions) {
             logLine('API Success, data: ' + JSON.stringify(response.data));
             successFnc(response.message, response.data);
         } else {
+            notification(response.message);
             errorLine('API Failed, message: ' + response.message);
             failureFnc(response.message);
         }
@@ -502,21 +503,15 @@ function createLocation(name, reservedSeats, limitedSeats, rooms) {
         name: name,
         seatsReserved: reservedSeats,
         limitedSeats: limitedSeats,
-        rooms: rooms || [
-            {
-                id: 1,
-                seats: 33
-            },
-            {
-                id: 2,
-                seats: 33
-            }
-        ]
+        rooms: rooms
     };
 
     var callbacks = {
         success: function () {
-            notification('Successfully created Location "' + params.name + '".');
+          notification('Successfully created Location "' + params.name + '".', 'success');
+        },
+        failure: function () {
+          notification()
         }
     };
 
@@ -698,7 +693,14 @@ function addRowToTable(tableElementId, tdCollection) {
 function addOptionToSelect(selectElementId, optionCollection) {
     var options = [];
     _.each(optionCollection, function (currentOption) {
+      if(currentOption.badgeText) {
+        var badgeText = currentOption.badgeText;
+        var badgeType = currentOption.badgeType || 'primary';
+        options.push('<option data-content="' + currentOption.text + ' <span class=\'label label-' + badgeType + ' pull-right\' style=\'margin-top:3px;margin-right:12px;\'>' + currentOption.badgeText + '</span>" value="' + currentOption.value + '">' + currentOption.text + '</option>');
+      }
+      else {
         options.push('<option value="' + currentOption.value + '">' + currentOption.text + '</option>');
+      }
     })
     $('#' + selectElementId).html(options.join(''));
 }
@@ -725,10 +727,15 @@ function removeRowFromTable(tableElementId, rowElementId) {
  * @param canClose a boolean that, if false, is not able to be exited out of
  */
 function notification(message, type, url, canClose) {
-    var notificationMessage = message || 'Unable to generate notification message';
+    var notificationMessage = message;
     var notificationType = type || 'danger';
     var notificationUrl = url || '';
     var notificationCanClose = canClose || true;
+
+    if(!notificationMessage) {
+      logLine('Unable to generate error message');
+      return;
+    }
 
     var options = {
         icon: 'glyphicon glyphicon-ok',
@@ -969,6 +976,16 @@ function loadModal (modalName, modalId) {
   $('.modal-content').load('api/modal.php?modalName=' + modalName, function() {
     $('#' + modalId).modal({show:true});
   });
+}
+
+/**
+ * Return all of the selected values from a <select multiple></select> ele
+ * by id value
+ * @param selectId The id value associated with the select element
+ * @returns {*|jQuery} An array of option values
+ */
+function getSelectValues (selectId) {
+  return $('#' + selectId).val();
 }
 
 //</editor-fold>

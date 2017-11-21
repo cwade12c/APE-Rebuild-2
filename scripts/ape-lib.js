@@ -934,6 +934,15 @@ function toggleSelectorActions (enabled) {
   });
 }
 
+/**
+ * Sets up a watcher on an elementId such that when the element is clicked,
+ * a confirmation will popup asking the user if they wish to delete the item.
+ * If the user selects "Delete", then the passed deleteCallback function is
+ * invoked. Else, the passed cancelCallback function is invoked.
+ * @param elementIdToWatch The id of the element to watch for a click event
+ * @param deleteCallback The function to invoke when delete is selected
+ * @param cancelCallback The function to invoke when cancel is selected
+ */
 function setConfirmationModal (elementIdToWatch, deleteCallback, cancelCallback) {
   var deleteCallbackFnc = deleteCallback || function () {};
   var cancelCallbackFnc = cancelCallback || function () {};
@@ -948,8 +957,16 @@ function setConfirmationModal (elementIdToWatch, deleteCallback, cancelCallback)
   });
 }
 
-function loadModal (templateUrl, modalId) {
-  $('.modal-content').load(templateUrl, function() {
+/**
+ * Pops a modal based on the fileName of the modal-body and the id of the
+ * modal container
+ * @param modalName The filename (no extension) of the modal-body located in
+ *        ./templates/modals/
+ * @param modalId The id associated with the modal container as defined by
+ *        {% include 'modals/modal.twig.html' with {'modalId': 'modalName'} %}
+ */
+function loadModal (modalName, modalId) {
+  $('.modal-content').load('api/modal.php?modalName=' + modalName, function() {
     $('#' + modalId).modal({show:true});
   });
 }

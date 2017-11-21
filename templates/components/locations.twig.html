@@ -39,11 +39,11 @@
   });
 
   var addLocation = function() {
-    loadModal('templates/modals/create-location-modal.twig.html', 'locationModal');
+    loadModal('create-location-modal', 'locationModal');
   };
 
   var editLocation = function() {
-    loadModal('templates/modals/edit-location-modal.twig.html', 'locationModal');
+    loadModal('edit-location-modal', 'locationModal');
   };
 
   var removeLocation = function() {
@@ -70,12 +70,13 @@
   </tbody>
 </table>
 
-<!-- Modal -->
-<div class="modal fade" id="locationModal" role="dialog">
+
+{#<div class="modal fade" id="locationModal" role="dialog">
   <div class="modal-dialog">
-    <!-- Modal content-->
     <div class="modal-content">
 
     </div>
   </div>
-</div>
+</div>#}
+
+{% include 'modals/modal.twig.html' with {'modalId': 'locationModal'} %}

@@ -59,11 +59,11 @@
                             {% if action.type == constant('ACTION_CREATE') %}
                                 <button class="{{ action.type }}" id="action-create" onclick="{{ action.funcSignature}}">{{ action.text | raw}}</button>
                             {% elseif action.type == constant('ACTION_UPDATE') %}
-                                <button class="{{ action.type }} action-select disabled" id="action-update" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
+                                <button class="{{ action.type }} action-select disabled" disabled id="action-update" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
                             {% elseif action.type == constant('ACTION_DELETE') %}
-                                <button class="{{ action.type }} action-select disabled" id="action-delete" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
+                                <button class="{{ action.type }} action-select disabled" disabled id="action-delete" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
                             {% elseif action.type == constant('ACTION_ARCHIVE') %}
-                                <button class="{{ action.type }} action-select disabled" id="action-archive" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
+                                <button class="{{ action.type }} action-select disabled" disabled id="action-archive" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
                             {% else %}
                                 <button class="{{ action.type }} action-select" id="action-generic" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
                             {% endif %}

@@ -14,7 +14,7 @@ function sanitize(string $input)
     $cleanInput = preg_replace("/%3c/", "", $cleanInput);
     $cleanInput = preg_replace("/%3E/", "", $cleanInput);
     $cleanInput = preg_replace("/%3e/", "", $cleanInput);
-    $cleanInput = preg_replace('/[^A-Za-z0-9]+/', '', $cleanInput);
+    $cleanInput = preg_replace('/[^A-Za-z0-9\-]+/', '', $cleanInput);
 
     return htmlentities($cleanInput);
 }

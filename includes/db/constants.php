@@ -64,6 +64,8 @@ define('REPORT_TYPE_STUDENT_EMAIL', 4);
 define('REPORT_TYPE_STUDENT_GRADE', 5);
 define('REPORT_TYPE_STUDENT_PASSED', 6);
 define('REPORT_TYPE_STUDENT_CATEGORY_GRADES', 7);
+define('REPORT_TYPE_STUDENT_HASH', 8);
+define('REPORT_TYPE_STUDENT_SEATING', 9);
 
 /* header name/key for a report type */
 define('REPORT_COLUMN_NONE', 'invalid');
@@ -74,6 +76,8 @@ define('REPORT_COLUMN_STUDENT_EMAIL', 'studentEmail');
 define('REPORT_COLUMN_STUDENT_GRADE', 'studentGrade');
 define('REPORT_COLUMN_STUDENT_PASSED', 'studentPassed');
 define('REPORT_COLUMN_STUDENT_CATEGORY_GRADES', null);
+define('REPORT_COLUMN_STUDENT_HASH', 'studentHash');
+define('REPORT_COLUMN_STUDENT_SEATING', 'studentSeating');
 
 /* for general queries, datetime to/from php and mysql */
 /* php.net/manual/en/function.date.php */

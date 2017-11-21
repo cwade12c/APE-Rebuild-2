@@ -433,6 +433,18 @@ function getRoomInformation(int $id)
 }
 
 /**
+ * Get name for room ID
+ *
+ * @param int $id
+ *
+ * @return string
+ */
+function getRoomName(int $id)
+{
+    return getRoomNameQuery($id);
+}
+
+/**
  * Check if location has the given room
  *
  * @param int $locationID Location ID

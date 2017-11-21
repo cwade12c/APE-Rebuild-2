@@ -96,11 +96,12 @@ function wipeReportRows(int $id)
 /**
  * Update the name and rows of a report ID
  *
- * @param int $id
+ * @param int    $id
  * @param string $name
  * @param array  $rows
  */
-function updateReport(int $id, string $name, array $rows) {
+function updateReport(int $id, string $name, array $rows)
+{
     updateReportNameQuery($id, $name);
     updateReportTypesQuery($id, $rows);
 }
@@ -147,6 +148,8 @@ function isValidRows(array $rows)
  *                          'studentEmail'
  *                          'studentGrade'
  *                          'studentPassed'
+ *                          'studentHash'
+ *                          'studentSeating'
  *                      if 'REPORT_TYPE_STUDENT_CATEGORY_GRADES' included
  *                          key format:
  *                          '{category name}Grade'
@@ -162,11 +165,15 @@ function generateReport(int $examID, array $types)
     $getStudentCategories = in_array(
         REPORT_TYPE_STUDENT_CATEGORY_GRADES, $types
     );
+    $getStudentHash = in_array(REPORT_TYPE_STUDENT_HASH, $types);
+    $getStudentSeating = in_array(REPORT_TYPE_STUDENT_SEATING, $types);
 
     $getStudentInfo = $getStudentID || $getStudentFirstName
         || $getStudentLastName
-        || $getStudentEmail;
-    $getStudentGrading = $getStudentGrade || $getStudentPassed
+        || $getStudentEmail
+        || $getStudentHash;
+    $getStudentGrading = $getStudentSeating || $getStudentGrade
+        || $getStudentPassed
         || $getStudentCategories;
 
 
@@ -174,7 +181,8 @@ function generateReport(int $examID, array $types)
 
     $header = getReportHeader(
         $getStudentID, $getStudentFirstName, $getStudentLastName,
-        $getStudentEmail, $getStudentGrade, $getStudentPassed,
+        $getStudentEmail, $getStudentHash, $getStudentSeating,
+        $getStudentGrade, $getStudentPassed,
         $getStudentCategories, $categories
     );
 
@@ -186,13 +194,13 @@ function generateReport(int $examID, array $types)
         if ($getStudentInfo) {
             getReportStudentInfo(
                 $row, $studentID, $getStudentID, $getStudentFirstName,
-                $getStudentLastName, $getStudentEmail
+                $getStudentLastName, $getStudentEmail, $getStudentHash
             );
         }
         if ($getStudentGrading) {
             getReportGradeInfo(
-                $row, $examID, $studentID, $categories, $getStudentPassed,
-                $getStudentGrade, $getStudentCategories
+                $row, $examID, $studentID, $categories, $getStudentSeating,
+                $getStudentPassed, $getStudentGrade, $getStudentCategories
             );
         }
         array_push($report, $row);
@@ -244,7 +252,8 @@ function getReportCategoryInfo(int $examID, bool $getStudentCategories)
  * @return array
  */
 function getReportHeader(bool $getStudentID, bool $getStudentFirstName,
-    bool $getStudentLastName, bool $getStudentEmail, bool $getStudentGrade,
+    bool $getStudentLastName, bool $getStudentEmail, bool $getStudentHash,
+    bool $getStudentSeating, bool $getStudentGrade,
     bool $getStudentPassed, bool $getStudentCategories, array $categories = null
 ) {
     $header = array();
@@ -259,11 +268,13 @@ function getReportHeader(bool $getStudentID, bool $getStudentFirstName,
     $cheapPush($header, $getStudentFirstName, REPORT_COLUMN_STUDENT_FIRST_NAME);
     $cheapPush($header, $getStudentLastName, REPORT_COLUMN_STUDENT_LAST_NAME);
     $cheapPush($header, $getStudentEmail, REPORT_COLUMN_STUDENT_EMAIL);
+    $cheapPush($header, $getStudentHash, REPORT_COLUMN_STUDENT_HASH);
+    $cheapPush($header, $getStudentSeating, REPORT_COLUMN_STUDENT_SEATING);
     $cheapPush($header, $getStudentGrade, REPORT_COLUMN_STUDENT_GRADE);
     $cheapPush($header, $getStudentPassed, REPORT_COLUMN_STUDENT_PASSED);
 
     if ($getStudentCategories && $categories) {
-        foreach($categories as $category) {
+        foreach ($categories as $category) {
             $name = $category['name'];
             array_push($header, "$name Grade");
         }
@@ -285,13 +296,18 @@ function getReportHeader(bool $getStudentID, bool $getStudentFirstName,
  */
 function getReportStudentInfo(array &$row, string $studentID,
     bool $getStudentID, bool $getStudentFirstName,
-    bool $getStudentLastName, bool $getStudentEmail
+    bool $getStudentLastName, bool $getStudentEmail, bool $getStudentHash
 ) {
     $info = getAccountInfo($studentID);
-    $row['studentID'] = $getStudentID ? $studentID : null;
-    $row['studentFirstName'] = $getStudentFirstName ? $info['firstName'] : null;
-    $row['studentLastName'] = $getStudentLastName ? $info['lastName'] : null;
-    $row['studentEmail'] = $getStudentEmail ? $info['email'] : null;
+    $row[REPORT_COLUMN_STUDENT_ID] = $getStudentID ? $studentID : null;
+    $row[REPORT_COLUMN_STUDENT_FIRST_NAME] =
+        $getStudentFirstName ? $info['firstName'] : null;
+    $row[REPORT_COLUMN_STUDENT_LAST_NAME] =
+        $getStudentLastName ? $info['lastName'] : null;
+    $row[REPORT_COLUMN_STUDENT_EMAIL] =
+        $getStudentEmail ? $info['email'] : null;
+    $row[REPORT_COLUMN_STUDENT_HASH] =
+        $getStudentHash ? hashAccountID($studentID) : null;
 }
 
 /**
@@ -307,12 +323,16 @@ function getReportStudentInfo(array &$row, string $studentID,
  * @param bool   $getStudentCategories
  */
 function getReportGradeInfo(array &$row, int $examID, string $studentID,
-    $categories, bool $getStudentPassed,
+    $categories, bool $getStudentSeating, bool $getStudentPassed,
     bool $getStudentGrade, bool $getStudentCategories
 ) {
     $info = getStudentExamGradeDetails($examID, $studentID);
-    $row['studentGrade'] = $getStudentGrade ? $info['grade'] : null;
-    $row['studentPassed'] = $getStudentPassed ? $info['passed'] : null;
+    $row[REPORT_COLUMN_STUDENT_SEATING] =
+        $getStudentSeating ? getStudentSeating($studentID, $examID) : null;
+    $row[REPORT_COLUMN_STUDENT_GRADE] =
+        $getStudentGrade ? $info['grade'] : null;
+    $row[REPORT_COLUMN_STUDENT_PASSED] =
+        $getStudentPassed ? $info['passed'] : null;
     if ($getStudentCategories && $categories) {
         foreach ($categories as $category) {
             $name = $category['name'];
@@ -323,6 +343,27 @@ function getReportGradeInfo(array &$row, int $examID, string $studentID,
             $row[$key] = $grade;
         }
     }
+}
+
+/**
+ * Helper function for getReportGradeInfo()
+ * Gets assigned seating for a student, N/A if does not exist
+ *
+ * @param string $studentID
+ *
+ * @return string
+ */
+function getStudentSeating(string $studentID, int $examID)
+{
+    $seating = getAssignedSeat($studentID, $examID);
+    $roomID = $seating['room_id'];
+    $seat = $seating['seat'];
+    if (!isSeatSet($roomID, $seat)) {
+        return 'N/A';
+    }
+
+    $name = getRoomName($roomID);
+    return "$name #$seat";
 }
 
 /**

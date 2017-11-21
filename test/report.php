@@ -42,6 +42,8 @@ testReport(1, array(1,5,6));
 testReport(2, array(1,5,6,7));
 testReport(14, array(1));
 testReport(7, array(1));
+testReport(2, array(1,5,6,7,8,9));
+testReport(3, array(1,5,6,7,8,9));
 
 
 

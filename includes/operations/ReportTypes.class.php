@@ -43,6 +43,14 @@ class ReportTypes extends Operation
                     'name' => 'Last Name'
                 ],
                 [
+                    'id' => REPORT_TYPE_STUDENT_HASH,
+                    'name' => 'ID Hash'
+                ],
+                [
+                    'id' => REPORT_TYPE_STUDENT_SEATING,
+                    'name' => 'Seat'
+                ],
+                [
                     'id' => REPORT_TYPE_STUDENT_GRADE,
                     'name' => 'Grade'
                 ],

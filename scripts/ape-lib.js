@@ -327,6 +327,12 @@ function getGraderExamDetails(examId) {
     return callAPI('GraderAssignedExamDetails', params);
 }
 
+function getAccounts() {
+    var params = {};
+
+    return callAPI('Accounts', params);
+}
+
 function createAccount(id, firstName, lastName, email, type) {
     var params = {
         id: id,
@@ -1029,6 +1035,82 @@ function setElementValueById (elementId, value) {
  */
 function setSelectPickerValues (valueCollection) {
   $('.selectpicker').selectpicker('val', valueCollection);
+}
+
+/**
+ * Converts an account type value (int) to its corresponding text value
+ * @param accountTypeValue An int that represents the account type
+ * @returns {*} A text value that is associated with the accountTypeValue
+ */
+function accountTypeValueToText (accountTypeValue) {
+    switch(accountTypeValue) {
+        case 0:
+            return 'None';
+        break;
+        case 1:
+            return 'Temporary';
+        break;
+        case 2:
+            return 'Student';
+        break;
+        case 4:
+            return 'Grader';
+        break;
+        case 8:
+            return 'Teacher';
+        break;
+        case 16:
+            return 'Administrator';
+        break;
+        case 17:
+            return 'Administrator, Temporary';
+        break;
+        case 18:
+            return 'Administrator, Student';
+        break;
+        case 19:
+            return 'Administrator, Student, Temporary';
+        break;
+        case 20:
+            return 'Administrator, Grader';
+        break;
+        case 21:
+            return 'Administrator, Grader, Temporary';
+        break;
+        case 22:
+            return 'Administrator, Grader, Student';
+        break;
+        case 23:
+            return 'Administrator, Grader, Student, Temporary';
+        break;
+        case 24:
+            return 'Administrator, Teacher';
+        break;
+        case 25:
+            return 'Administrator, Teacher, Temporary';
+        break;
+        case 26:
+            return 'Administrator, Teacher, Student';
+        break;
+        case 27:
+            return 'Administrator, Teacher, Student, Temporary';
+        break;
+        case 28:
+            return 'Administrator, Teacher, Grader';
+        break;
+        case 29:
+            return 'Administrator, Teacher, Grader, Temporary';
+        break;
+        case 30:
+            return 'Administrator, Teacher, Grader, Student';
+        break;
+        case 31:
+            return 'Administrator, Teacher, Grader, Student, Temporary';
+        break;
+        default:
+            return 'Unknown';
+        break;
+    }
 }
 
 //</editor-fold>

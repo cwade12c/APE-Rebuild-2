@@ -1,0 +1,36 @@
+<script type="text/javascript">
+    $(document).ready(function () {
+        getAccounts().then(function(response) {
+            _.each(response.data.accounts, function(account, index) {
+                var accountId = account.id;
+                var lastName = account.l_name;
+                var firstName = account.f_name;
+                var email = account.email;
+                var type = accountTypeValueToText(parseInt(account.type));
+                var tdCollection = [accountId, lastName, firstName, email, type];
+
+                addRowToTable('accounts-table', tdCollection);
+
+                if(index === response.data.accounts.length - 1) {
+                    initializeDataTableById('accounts-table');
+                }
+            })
+        });
+    });
+</script>
+
+<table id="accounts-table" class="data-table">
+  <thead>
+  <tr>
+    <th>Account ID</th>
+    <th>Last Name</th>
+    <th>First Name</th>
+    <th>Email</th>
+    <th>Type</th>
+  </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+{% include 'modals/modal.twig.html' with {'modalId': 'locationModal'} %}

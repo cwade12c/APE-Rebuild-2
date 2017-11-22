@@ -64,7 +64,7 @@ DEFINE("STUDENT_LINKS", array(
 DEFINE("GRADER_LINKS", array(
     array(
         'url' => 'home',
-        'title' => 'Student Home',
+        'title' => 'Grader Home',
         'text' => 'Home'
     ),
 
@@ -83,23 +83,9 @@ DEFINE("GRADER_LINKS", array(
     ),
 
     array(
-        'url' => '',
-        'title' => '',
-        'text' => 'Grades',
-        'children' => true,
-        'childLinks' => array(
-            array(
-                'url' => 'gradeExams.php',
-                'title' => 'Grade Exams',
-                'text' => 'Grade Exams'
-            ),
-
-            array(
-                'url' => 'gradeSubmissions.php',
-                'title' => 'View Your Submissions',
-                'text' => 'Submitted Grades'
-            )
-        )
+        'url' => 'grading',
+        'title' => 'Assigned Exam Categories',
+        'text' => 'Grading'
     ),
 
     array(

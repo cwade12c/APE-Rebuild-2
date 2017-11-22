@@ -1,0 +1,58 @@
+<script type="text/javascript">
+  $(document).ready(function () {
+    getRooms().then(function (response) {
+      var options = [];
+      _.each(response.data.rooms, function(currentRoom) {
+        var option = {
+          value: currentRoom.id + '†' + currentRoom.seats,
+          text: currentRoom.name,
+          badgeText: currentRoom.seats + ' Seats'
+        };
+        options.push(option);
+      });
+      options = _.uniqBy(options, 'value');
+
+      addOptionToSelect('roomsSelect', options);
+      $('.selectpicker').selectpicker();
+    });
+  });
+
+  var save = function() {
+    var selections = getSelectValues('roomsSelect');
+    var rooms = [];
+    _.each(selections, function(currentSelection) {
+      var valSet = currentSelection.split('†');
+      rooms.push({
+        id: parseInt(valSet[0]),
+        seats: parseInt(valSet[1])
+      });
+    });
+
+    var locationName = getElementValue('name');
+    var reservedSeats = parseInt(getElementValue('reservedSeats'));
+    var limitedSeats = parseInt(getElementValue('limitedSeats'));
+
+    createLocation(locationName, reservedSeats, limitedSeats, rooms);
+
+    addRowToTable('location-table', [
+      '', locationName, '<a href="javascript:location.reload();">Refresh the page</a>', limitedSeats, reservedSeats
+    ]);
+  };
+
+</script>
+
+<label for="name">Name</label>
+<input type="text" class="form-control" id="name" name="name" placeholder="Location Name" />
+<br />
+<label for="reservedSeats">Reserved Seats</label>
+<input type="number" class="form-control" id="reservedSeats" name="reservedSeats" placeholder="Reserved Seats" />
+<br />
+<label for="limitedSeats">Limited Seats</label>
+<input type="number" class="form-control" id="limitedSeats" name="limitedSeats" placeholder="Limited Seats" />
+<br />
+<label for="roomsSelect">Reserved Seats</label>
+<br />
+<select class="selectpicker" id="roomsSelect" name="roomsSelect" multiple title="Add Rooms..." data-selected-text-format="count">
+
+</select>
+

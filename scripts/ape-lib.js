@@ -484,7 +484,15 @@ function updateLocationName(locationId, locationName) {
         name: locationName
     };
 
-    return callAPI('UpdateLocationName', params);
+  var callbacks = {
+    success: function (message, data) {
+      if(message === 'OK') {
+        notification('Successfully updated the location name! Please refresh the page to view the changes.', 'success');
+      }
+    }
+  };
+
+    return callAPI('UpdateLocationName', params, callbacks);
 }
 
 function updateLocationRooms(locationId, reservedSeats, limitedSeats, rooms) {
@@ -495,7 +503,15 @@ function updateLocationRooms(locationId, reservedSeats, limitedSeats, rooms) {
         rooms: rooms || []
     };
 
-    return callAPI('UpdateLocationRooms', params);
+  var callbacks = {
+    success: function (message, data) {
+      if(message === 'OK') {
+        notification('Successfully updated the location rooms! Please refresh the page to view the changes.', 'success');
+      }
+    }
+  };
+
+    return callAPI('UpdateLocationRooms', params, callbacks);
 }
 
 function createLocation(name, reservedSeats, limitedSeats, rooms) {
@@ -994,6 +1010,25 @@ function loadModal (modalName, modalId, modalParams) {
  */
 function getSelectValues (selectId) {
   return $('#' + selectId).val();
+}
+
+/**
+ * Set the value of an element based on the element's ID
+ * @param elementId The ID attribute of the element whose value you wish to
+ *        set/modify
+ * @param value The value that you wish to assign to the element
+ */
+function setElementValueById (elementId, value) {
+  $('#' + elementId).val(value);
+}
+
+/**
+ * Select the default selected values of a select tag that is using the
+ * selectpicker class with a multiple attribute
+ * @param valueCollection An array of values to be selected
+ */
+function setSelectPickerValues (valueCollection) {
+  $('.selectpicker').selectpicker('val', valueCollection);
 }
 
 //</editor-fold>

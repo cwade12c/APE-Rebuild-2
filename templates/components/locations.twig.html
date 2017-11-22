@@ -43,7 +43,11 @@
   };
 
   var editLocation = function() {
-    loadModal('edit-location-modal', 'locationModal');
+    var table = $('#location-table').DataTable();
+    var params = {
+      locationId: parseInt(getSelectedRowByIndex(table, 0))
+    };
+    loadModal('edit-location-modal', 'locationModal', params);
   };
 
   var removeLocation = function() {

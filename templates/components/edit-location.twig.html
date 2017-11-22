@@ -1,0 +1,82 @@
+<script type="text/javascript">
+  $(document).ready(function () {
+    getRooms().then(function (response) {
+      var options = [];
+      _.each(response.data.rooms, function(currentRoom) {
+        var option = {
+          value: currentRoom.id + '†' + currentRoom.seats,
+          text: currentRoom.name,
+          badgeText: currentRoom.seats + ' Seats'
+        };
+        options.push(option);
+      });
+      options = _.uniqBy(options, 'value');
+
+      addOptionToSelect('roomsSelect', options);
+      $('.selectpicker').selectpicker();
+    });
+    getLocation({{ locationId }}).then(function (response) {
+      setElementValueById('name', response.data.location.name);
+      setElementValueById('reservedSeats', response.data.location.reserved_seats);
+      setElementValueById('limitedSeats', response.data.location.limited_seats);
+
+      var values = [];
+      _.each(response.data.location.rooms, function (room, index) {
+        var id = room.id;
+        var seats = room.seats;
+        var value = id + '†' + seats;
+
+        values.push(value);
+
+        if(index === response.data.location.rooms.length - 1) {
+          setSelectPickerValues(values);
+        }
+      });
+    });
+  });
+
+  var save = function() {
+    var selections = getSelectValues('roomsSelect');
+    var rooms = [];
+    _.each(selections, function(currentSelection) {
+      var valSet = currentSelection.split('†');
+      rooms.push({
+        id: parseInt(valSet[0]),
+        seats: parseInt(valSet[1])
+      });
+    });
+
+    var locationName = getElementValue('name');
+    var reservedSeats = parseInt(getElementValue('reservedSeats'));
+    var limitedSeats = parseInt(getElementValue('limitedSeats'));
+
+    var promises = [];
+
+    updateLocationName({{ locationId }}, locationName);
+    updateLocationRooms({{ locationId }}, reservedSeats, limitedSeats, rooms);
+
+/*    promises.push(updateLocationName({{ locationId }}, locationName));
+    promises.push(updateLocationRooms({{ locationId }}, reservedSeats, limitedSeats, rooms));
+
+    Promise.all(promises).then(function() {
+      notification('The location was successfully updated! Please refresh the page to view the changes.', 'success');
+    }).catch(function() {
+      notification('Failed to update the location! See the console logs for more information.');
+    });*/
+  };
+</script>
+
+<label for="name">Name</label>
+<input type="text" class="form-control" id="name" name="name" placeholder="Location Name" value="{{ locationName }}" />
+<br />
+<label for="limitedSeats">Limited Seats</label>
+<input type="number" class="form-control" id="limitedSeats" name="limitedSeats" placeholder="Limited Seats" value="{{ limitedSeats }}" />
+<br />
+<label for="reservedSeats">Reserved Seats</label>
+<input type="number" class="form-control" id="reservedSeats" name="reservedSeats" placeholder="Reserved Seats" value="{{ reservedSeats }}" />
+<br />
+<label for="roomsSelect">Rooms</label>
+<br />
+<select class="selectpicker" id="roomsSelect" name="roomsSelect" multiple title="Add Rooms..." data-selected-text-format="count">
+
+</select>

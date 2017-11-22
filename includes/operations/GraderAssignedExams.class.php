@@ -26,6 +26,26 @@ class GraderAssignedExams extends Operation
         return parent::execute($args, $accountID);
     }
 
+    /**
+     * Gets details about assigned exams for a grader
+     *
+     * @param string $graderID
+     *
+     * @return array            assigned exams data
+     *                          'assignedInfo' =>
+     *                          assigned info, array of info
+     *                          info format
+     *                              'state'
+     *                              'examID'
+     *                              'categories' => array of category info
+     *                              'submitted'
+     *                          categories format
+     *                              'categoryName'
+     *                              'categoryID'
+     *                              'submitted'
+     *                              'gradesTotal'
+     *                              'gradesSet'
+     */
     public static function getAssignedExams(string $graderID)
     {
         $examCategoryIDs = getAssignedExamsCategories($graderID);
@@ -54,7 +74,8 @@ class GraderAssignedExams extends Operation
         $info['examID'] = $examID;
         $categories = array();
         foreach ($categoryIDs as $categoryID) {
-            $categoryInfo = getCategoryInfo($categoryID);
+            $categoryInfo = array();
+            $categoryInfo['categoryName'] = getCategoryName($categoryID);
             $categoryInfo['categoryID'] = $categoryID;
             $submitted = isGraderCategorySubmitted(
                 $examID, $categoryID, $graderID

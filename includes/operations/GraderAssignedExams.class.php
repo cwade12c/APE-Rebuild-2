@@ -51,7 +51,10 @@ class GraderAssignedExams extends Operation
         $examCategoryIDs = getAssignedExamsCategories($graderID);
         $assignedInfo = array();
         foreach ($examCategoryIDs as $ids) {
-            array_push($assignedInfo, self::getAssignedInfo($ids, $graderID));
+            $info = self::getAssignedInfo($ids, $graderID);
+            if ($info['state'] == EXAM_STATE_GRADING) {
+                array_push($assignedInfo, $info);
+            }
         }
 
         return array('assignedInfo' => $assignedInfo);
@@ -95,9 +98,10 @@ class GraderAssignedExams extends Operation
                 $gradesTotal = count($grades);
                 $gradesSet = count(
                     array_filter(
-                        $grades, function ($grade) {
-                        return ($grade['points'] != true);
-                    }
+                        $grades,
+                        function ($grade) {
+                            return isset($grade['points']);
+                        }
                     )
                 );
             }

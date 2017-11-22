@@ -40,7 +40,50 @@
         logLine("Get assigned success: " + message);
         logLine("assigned data: " + JSON.stringify(data));
 
+        var info = data.assignedInfo;
+        if (info.length === 0) {
+            setError("Nothing assigned to grade");
+            return;
+        }
+
+        fillInfo(info);
         document.getElementById('assignedSection').style.visibility = 'visible';
+    }
+
+    function fillInfo(exams) {
+        // wipe table
+        $('#assignedTable').find("tr:gt(0)").remove();
+
+        _.each(exams, fillExam);
+    }
+
+    function fillExam(examInfo) {
+        var examID = examInfo.examID;
+        var categories = examInfo.categories;
+
+        _.each(categories,
+            function (category) {
+                var $row = buildExamRow(examID, category);
+                addRowToTable('assignedTable', $row);
+            }
+        )
+    }
+
+    function buildExamRow(examID, category) {
+        var categoryID = category.categoryID;
+        var categoryName = category.categoryName;
+        var submitted = parseInt(category.submitted);
+        var gradesSet = category.gradesSet;
+        var gradesTotal = category.gradesTotal;
+
+        var grades = gradesSet + ' / ' + gradesTotal;
+
+        var status = 'submitted';
+        if (!submitted) {
+            status = "<a href='examCategoryGrading?exam=" + examID + "&category=" + categoryID + "'>grading</a>";
+        }
+
+        return [examID, categoryName, grades, status];
     }
 
 </script>
@@ -57,7 +100,7 @@
             <th><span class='label label-info'>Exam</span></th>
             <th><span class='label label-info'>Category</span></th>
             <th><span class='label label-info'>Grades Set / Total</span></th>
-            <th><span class='label label-info'>Submitted</span></th>
+            <th><span class='label label-info'>Status</span></th>
         </tr>
         </thead>
         <tbody>

@@ -96,20 +96,13 @@ function getAvailableNavigationLinks()
 {
     if (accountIsStudent((string)$_SESSION['ewuid'])) {
         return STUDENT_LINKS;
-    } else {
-        if (accountIsGrader((string)$_SESSION['ewuid'])) {
-            return GRADER_LINKS;
-        } else {
-            if (accountIsTeacher((string)$_SESSION['ewuid'])) {
-                return TEACHER_LINKS;
-            } else {
-                if (accountIsAdmin((string)$_SESSION['ewuid'])) {
-                    return ADMIN_LINKS;
-                }
-            }
-        }
+    } elseif (accountIsGrader((string)$_SESSION['ewuid'])) {
+        return GRADER_LINKS;
+    } elseif (accountIsTeacher((string)$_SESSION['ewuid'])) {
+        return TEACHER_LINKS;
+    } elseif (accountIsAdmin((string)$_SESSION['ewuid'])) {
+        return ADMIN_LINKS;
     }
-
     return GUEST_LINKS;
 }
 

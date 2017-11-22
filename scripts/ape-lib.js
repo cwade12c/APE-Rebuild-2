@@ -975,7 +975,7 @@ function setConfirmationModal (elementIdToWatch, deleteCallback, cancelCallback)
  *        passed so that the modal's Twig template can interpolate them
  */
 function loadModal (modalName, modalId, modalParams) {
-  var query = _.isObject(modalParams) ? 'modalName=' + modalName : '';
+  var query = 'modalName=' + modalName;
 
   _.forEach(modalParams, function (value, key) {
       query += '&' + key + '=' + value;

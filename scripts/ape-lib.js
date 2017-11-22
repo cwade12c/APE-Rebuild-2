@@ -971,9 +971,17 @@ function setConfirmationModal (elementIdToWatch, deleteCallback, cancelCallback)
  *        ./templates/modals/
  * @param modalId The id associated with the modal container as defined by
  *        {% include 'modals/modal.twig.html' with {'modalId': 'modalName'} %}
+ * @param modalParams An optional Object containing parameters that you want
+ *        passed so that the modal's Twig template can interpolate them
  */
-function loadModal (modalName, modalId) {
-  $('.modal-content').load('api/modal.php?modalName=' + modalName, function() {
+function loadModal (modalName, modalId, modalParams) {
+  var query = _.isObject(modalParams) ? 'modalName=' + modalName : '';
+
+  _.forEach(modalParams, function (value, key) {
+      query += '&' + key + '=' + value;
+  });
+
+  $('.modal-content').load('api/modal.php?' + query, function() {
     $('#' + modalId).modal({show:true});
   });
 }

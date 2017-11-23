@@ -446,6 +446,23 @@ function validateAccountHasType(string $id, int $type)
     return true;
 }
 
+function validateAccountType(int $type) {
+    $max = ACCOUNT_TYPE_NONE +
+           ACCOUNT_TYPE_TEMP +
+           ACCOUNT_TYPE_STUDENT +
+           ACCOUNT_TYPE_GRADER +
+           ACCOUNT_TYPE_TEACHER +
+           ACCOUNT_TYPE_ADMIN;
+
+    if(!is_int($type) || $type < ACCOUNT_TYPE_NONE || $type > $max) {
+        throw new InvalidArgumentException(
+            "Account Type({$type}) is invalid!", ERROR_CODE_ARG
+        );
+    }
+
+    return true;
+}
+
 /**
  * Validates that at least one field is available for a temp student
  * And any given value is valid

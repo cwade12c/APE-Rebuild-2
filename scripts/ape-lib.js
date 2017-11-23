@@ -1056,8 +1056,38 @@ function accountTypeValueToText (accountTypeValue) {
         case 4:
             return 'Grader';
         break;
+        case 5:
+            return 'Grader, Temporary';
+        break;
+        case 6:
+            return 'Grader, Student';
+        break;
+        case 7:
+            return 'Grader, Student, Temporary';
+        break;
         case 8:
             return 'Teacher';
+        break;
+        case 9:
+            return 'Teacher, Temporary';
+        break;
+        case 10:
+            return 'Teacher,  Student';
+        break;
+        case 11:
+            return 'Teacher, Student, Temporary';
+        break;
+        case 12:
+            return 'Teacher, Grader';
+        break;
+        case 13:
+            return 'Teacher, Grader, Temporary';
+        break;
+        case 14:
+            return 'Teacher, Grader, Student';
+        break;
+        case 15:
+            return 'Teacher, Grader, Student, Temporary';
         break;
         case 16:
             return 'Administrator';
@@ -1111,6 +1141,13 @@ function accountTypeValueToText (accountTypeValue) {
             return 'Unknown';
         break;
     }
+}
+
+/**
+ * A helper function to initialize a selectPicker on the DOM
+ */
+function initializeSelectPicker() {
+    $('.selectpicker').selectpicker();
 }
 
 //</editor-fold>

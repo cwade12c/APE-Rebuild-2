@@ -17,6 +17,10 @@
             })
         });
     });
+
+    var addAccount = function() {
+        loadModal('create-account-modal', 'createAccountModal');
+    };
 </script>
 
 <table id="accounts-table" class="data-table">
@@ -33,4 +37,4 @@
   </tbody>
 </table>
 
-{% include 'modals/modal.twig.html' with {'modalId': 'locationModal'} %}
+{% include 'modals/modal.twig.html' with {'modalId': 'createAccountModal'} %}

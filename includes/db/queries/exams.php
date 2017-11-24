@@ -363,14 +363,14 @@ function createExamQuery(DateTime $start, DateTime $cutoff, int $length,
  * @param int $id
  * @param int $teacherID
  */
-function createExamInClassQuery(int $id, int $teacherID)
+function createExamInClassQuery(int $id, string $teacherID)
 {
     $query = "INSERT INTO `in_class_exams`(`id`,`teacher_id`) "
         . " VALUES (:id, :teacherID);";
     $sql = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT),
-            array(':teacherID', $teacherID, PDO::PARAM_INT)
+            array(':teacherID', $teacherID, PDO::PARAM_STR)
         )
     );
 }

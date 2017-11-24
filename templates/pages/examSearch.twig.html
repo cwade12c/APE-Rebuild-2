@@ -1,0 +1,13 @@
+{% extends "layout/base.twig.html" %}
+
+{% block title %}Exam Search{% endblock %}
+
+{% block head %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+<div id='exam-full-search-component'>
+    {% include 'components/exam-full-search.twig.html' %}
+</div>
+{% endblock %}

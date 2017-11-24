@@ -1,11 +1,6 @@
 <?php
 /**
- * file for testing queries
- *
- * @author         Mathew McCain
- * @category       APE
- * @package        APE_test
- * @subpackage     Blank
+ * To assign a grader without using queries for testing
  */
 
 require_once '../config.php';

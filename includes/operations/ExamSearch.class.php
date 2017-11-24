@@ -13,9 +13,8 @@ class ExamSearch extends Operation
 {
     function __construct()
     {
-        parent::setAllowedAccountTypes(
-            array(ACCOUNT_TYPE_TEACHER, ACCOUNT_TYPE_ADMIN)
-        );
+        // only public/safe information returned
+        parent::requireLogin(false);
 
         parent::registerExecution(array($this, 'search'));
 
@@ -54,15 +53,15 @@ class ExamSearch extends Operation
      *                          search by teacher ID
      *
      * @return array            'exams' => resulting exams, details
-     *                          check 'ExamDetailsBasic' for keys
+     *                          check 'ExamDetails' for keys
      *
      *
      */
     public static function search(int $states, int $types, string $teacherID = null)
     {
         $ids = getExamsExtended($states, $types, $teacherID);
-        $exams = array_map(array(new ExamDetailsBasic(), 'getExamInformation'), $ids);
-        return array('exams', $exams);
+        $exams = array_map(array(new ExamDetails(), 'getExamInformation'), $ids);
+        return array('exams' => $exams);
     }
 
     public static function validateTeacherID(string $teacherID = null) {

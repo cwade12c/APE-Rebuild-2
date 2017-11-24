@@ -26,6 +26,29 @@ class ExamDetails extends Operation
         return parent::execute($args, $accountID);
     }
 
+    /**
+     * Performs operation
+     *
+     * @param int $examID
+     *
+     * @return array      (public) details for an exam
+     *                    'examID'
+     *                    'start'           start datetime
+     *                    'cutoff'          registration cutoff datetime
+     *                    'length'          length in minutes of exam
+     *                    'locationName'    'N/A' if does not exist
+     *                    'totalSeats'      the max amount of seats
+     *                                      minus the amount of reserved
+     *                                      and any max cap set
+     *                                      '-1' if issue
+     *                    'takenSeats'      seats currently assigned
+     *                                      '-1' if issue
+     *                    'stateStr'        string representation
+     *                                      of exam state
+     *                    'isRegular'       if exam is regular/in-class
+     *                     'teacherID'      ID of teacher if in-class
+     *                                      null otherwise
+     */
     public static function getExamInformation(int $examID)
     {
         // get start/cutoff datetime, location name, space taken/total, state
@@ -46,15 +69,22 @@ class ExamDetails extends Operation
             $seatsTaken = getAssignedSeatCount($examID);
         }
 
+        list(
+            $isRegular, $teacherID
+            )
+            = ExamDetailsFull::getExamInClassInformation($info);
+
         return array(
             'examID' => $examID,
             'start' => $info['start'],
             'cutoff' => $info['cutoff'],
+            'length' => $info['length'],
             'locationName' => $locationName,
             'totalSeats' => $totalSeats,
             'takenSeats' => $seatsTaken,
-            'state' => $info['state'],
-            'stateStr' => examStateToString($info['state'])
+            'stateStr' => examStateToString($info['state']),
+            'isRegular' => $isRegular,
+            'teacherID' => $teacherID
         );
     }
 }

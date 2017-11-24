@@ -63,7 +63,7 @@ DEFINE("STUDENT_LINKS", array(
 //<editor-fold desc="Grader Links">
 DEFINE("GRADER_LINKS", array(
     array(
-        'url' => 'home',
+        'url' => 'graderHome',
         'title' => 'Grader Home',
         'text' => 'Home'
     ),
@@ -114,6 +114,12 @@ DEFINE("TEACHER_LINKS", array(
                 'url' => 'viewUpcomingApes.php',
                 'title' => 'View Upcoming Apes',
                 'text' => 'Upcoming'
+            ),
+
+            array(
+                'url' => 'teacherExams.php',
+                'title' => 'Teachers Exams',
+                'text' => 'My exams'
             ),
 
             array(

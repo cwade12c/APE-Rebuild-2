@@ -1,55 +1,55 @@
+// <editor-fold desc="Constants">
+
+// Constants for exam search
+
+function GET_EXAMS_ALL() { return 0; }
+function GET_EXAMS_OPEN() { return 1; }
+function GET_EXAMS_UPCOMING() { return 2; }
+function GET_EXAMS_GRADING() { return 3; }
+function GET_EXAMS_FINALIZING() { return 4; }
+function GET_EXAMS_NON_ARCHIVED() { return 5; }
+function GET_EXAMS_ARCHIVED() { return 6; }
+
+function GET_EXAMS_TYPE_BOTH() { return 0; }
+function GET_EXAMS_TYPE_REGULAR() { return 1; }
+function GET_EXAMS_TYPE_IN_CLASS() { return 2; }
+
+/**
+ * Parses exam search states string to constants value
+ * @param str
+ * @returns {undefined}
+ */
+function parseGetExamStates(str) {
+    switch (str) {
+        case 'GET_EXAMS_ALL': return GET_EXAMS_ALL();
+        case 'GET_EXAMS_OPEN': return GET_EXAMS_OPEN();
+        case 'GET_EXAMS_UPCOMING': return GET_EXAMS_UPCOMING();
+        case 'GET_EXAMS_GRADING': return GET_EXAMS_GRADING();
+        case 'GET_EXAMS_FINALIZING': return GET_EXAMS_FINALIZING();
+        case 'GET_EXAMS_NON_ARCHIVED': return GET_EXAMS_NON_ARCHIVED();
+        case 'GET_EXAMS_ARCHIVED': return GET_EXAMS_ARCHIVED();
+        default: return undefined;
+    }
+}
+
+/**
+ * Parses exam search types string to constants value
+ * @param str
+ * @returns {undefined}
+ */
+function parseGetExamsType(str) {
+    switch (str) {
+        case 'GET_EXAMS_TYPE_BOTH': return GET_EXAMS_TYPE_BOTH();
+        case 'GET_EXAMS_TYPE_REGULAR': return GET_EXAMS_TYPE_REGULAR();
+        case 'GET_EXAMS_TYPE_IN_CLASS': return GET_EXAMS_TYPE_IN_CLASS();
+        default: return undefined;
+    }
+}
+
+// </editor-fold>
+
+
 // <editor-fold desc="API Functions">
-
-/**
- * used in place of just defining an empty function
- */
-var emptyFunction = function () {
-};
-
-/**
- * Log helper
- * @param str
- */
-function logLine(str) {
-    console.log(str + '\n');
-}
-
-/**
- * Log helper
- * @param str
- */
-function errorLine(str) {
-    console.error(str + '\n');
-}
-
-/**
- * Helper to log error and notification
- * @param str
- */
-function errorLineNotification(str) {
-    errorLine(str);
-    notification(str);
-}
-
-/**
- * Helper function to log line and notification
- * @param str
- */
-function logLineNotification(str) {
-    logLine(str);
-    notification(str, 'info');
-}
-
-/**
- * Check if property exists in object and return, else return default value
- * @param obj
- * @param property
- * @param defaultValue
- * @returns {*}
- */
-function getProperty(obj, property, defaultValue) {
-    return obj.hasOwnProperty(property) ? obj[property] : defaultValue;
-}
 
 /**
  * Wrapper for an ajax call
@@ -644,29 +644,18 @@ function deleteCategory(categoryId) {
     return callAPI('DeleteCategory', params, callbacks);
 }
 
-/**
- * @param value
- * @returns {boolean}
- */
-function isValid(value) {
-    return typeof value !== 'undefined';
-}
+function searchExams(states, types, teacherID, callbacks) {
+    if (_.isUndefined(teacherID)) {
+        teacherID = null;
+    }
 
-/**
- * @param value
- * @returns {boolean}
- */
-function isValidInt(value) {
-    return isValid(value) && _.isNumber(value) && !isNaN(value);
-}
+    var params = {
+        states: states,
+        types: types,
+        teacherID: teacherID
+    };
 
-/**
- * Most integer IDs in the system do not allow values <= 0
- * @param variable
- * @returns {boolean}
- */
-function isValidIntID(value) {
-    return isValidInt(value) && value > 0;
+    return callAPI('ExamSearch', params, callbacks);
 }
 
 //</editor-fold>
@@ -1148,6 +1137,128 @@ function accountTypeValueToText (accountTypeValue) {
  */
 function initializeSelectPicker() {
     $('.selectpicker').selectpicker();
+}
+
+//<editor-fold>
+
+//</editor-fold desc="Utility functions">
+
+/**
+ * used in place of just defining an empty function
+ */
+var emptyFunction = function () {
+};
+
+/**
+ * Log helper
+ * @param str
+ */
+function logLine(str) {
+    console.log(str + '\n');
+}
+
+/**
+ * Log helper
+ * @param str
+ */
+function errorLine(str) {
+    console.error(str + '\n');
+}
+
+/**
+ * Helper to log error and notification
+ * @param str
+ */
+function errorLineNotification(str) {
+    errorLine(str);
+    notification(str);
+}
+
+/**
+ * Helper function to log line and notification
+ * @param str
+ */
+function logLineNotification(str) {
+    logLine(str);
+    notification(str, 'info');
+}
+
+/**
+ * Check if property exists in object and return, else return default value
+ * @param obj
+ * @param property
+ * @param defaultValue
+ * @returns {*}
+ */
+function getProperty(obj, property, defaultValue) {
+    return obj.hasOwnProperty(property) ? obj[property] : defaultValue;
+}
+
+/**
+ * @param value
+ * @returns {boolean}
+ */
+function isValid(value) {
+    return typeof value !== 'undefined';
+}
+
+/**
+ * @param value
+ * @returns {boolean}
+ */
+function isValidInt(value) {
+    return isValid(value) && _.isNumber(value) && !isNaN(value);
+}
+
+/**
+ * Most integer IDs in the system do not allow values <= 0
+ * @param variable
+ * @returns {boolean}
+ */
+function isValidIntID(value) {
+    return isValidInt(value) && value > 0;
+}
+
+function buildExamDatesTimes(start, cutoff, length) {
+    var cutoffStr = datetimeString(cutoff);
+    var startStr = datetimeString(start);
+
+    var end = new Date(start.getTime() + minutesAsMS(length));
+    var endStr = datetimeString(end);
+
+    var timesStr = startStr + ' - ' + endStr + ' (' + length + ' minutes)';
+
+    return {
+        cutoff: cutoffStr,
+        times: timesStr
+    };
+}
+
+function datetimeString(datetime) {
+    var year = datetime.getFullYear();
+    var month = datetime.getMonth() + 1;
+    var day = datetime.getDay() + 1;
+    var hours = datetime.getHours();
+    var minutes = datetime.getMinutes();
+
+    if (month < 10) {
+        month = '0' + month;
+    }
+    if (day < 10) {
+        day = '0' + day;
+    }
+    if (hours < 10) {
+        hours = '0' + hours;
+    }
+    if (minutes < 10) {
+        minutes = '0' + minutes;
+    }
+
+    return year + '/' + month + '/' + day + ' ' + hours + ':' + minutes;
+}
+
+function minutesAsMS(min) {
+    return (min * (1000 * 60));
 }
 
 //</editor-fold>

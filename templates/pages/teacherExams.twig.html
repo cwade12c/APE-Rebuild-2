@@ -1,0 +1,13 @@
+{% extends "layout/base.twig.html" %}
+
+{% block title %}Exam Search{% endblock %}
+
+{% block head %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+<div id='exam-search-component'>
+    {% include 'components/exam-search.twig.html' with {'teacherID' : teacherID, 'states' : 'GET_EXAMS_ALL', 'types' : 'GET_EXAMS_TYPE_IN_CLASS'} %}
+</div>
+{% endblock %}

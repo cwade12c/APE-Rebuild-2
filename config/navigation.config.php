@@ -126,6 +126,12 @@ DEFINE("TEACHER_LINKS", array(
                 'url' => 'archivedExams.php',
                 'title' => 'View Archived Apes',
                 'text' => 'Archived'
+            ),
+
+            array(
+                'url' => 'examSearch.php',
+                'title' => 'Exam Search',
+                'text' => 'Search Exams'
             )
         )
     ),
@@ -185,9 +191,15 @@ DEFINE("ADMIN_LINKS", array(
             ),
 
             array(
-                'url' => 'viewArchivesExams.php',
+                'url' => 'archivedExams.php',
                 'title' => 'View Archived Apes',
                 'text' => 'Archived'
+            ),
+
+            array(
+                'url' => 'examSearch.php',
+                'title' => 'Exam Search',
+                'text' => 'Search Exams'
             )
         )
     ),

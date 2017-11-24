@@ -1,3 +1,3 @@
 <?php
 
-// TODO 'exam-full-search' component, page
+renderPage('pages/examSearch.twig.html');

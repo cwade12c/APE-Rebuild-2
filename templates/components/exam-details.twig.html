@@ -1,0 +1,58 @@
+<script type="text/javascript">
+    var grader, exam;
+
+    document.addEventListener("DOMContentLoaded",
+        function () {
+            document.getElementById('gradingError').style.visibility = 'hidden';
+            document.getElementById('gradingSection').style.visibility = 'hidden';
+
+            grader = '{{graderID}}';
+            exam = parseInt('{{examID}}');
+            category = parseInt('{{categoryID}}');
+
+            if (!isValidIntID(exam) || !isValidIntID(category)) {
+                setError('Invalid page, please contact an administrator');
+                errorLine('ERROR: Exam or category ID is invalid (missing from query string?)');
+                return;
+            }
+
+            getGraderProgress();
+        }
+    );
+
+    function setError(msg) {
+        errorLineNotification(msg);
+        document.getElementById('gradingErrorLabel').textContent = msg;
+        document.getElementById('gradingError').style.visibility = 'visible';
+    }
+
+</script>
+
+<div class='row' id='examDetailsError'>
+    <span class='label label-danger'>Error</span>
+    <label id='gradingErrorLabel'></label>
+</div>
+
+<div class='row' id='examSection'>
+    <span class='label label-info' id='labelExamID'>Exam #ID</span>
+    <br>
+    <span class='label label-info'>Category</span>
+    <label id='labelCategoryName'>Category Name</label>
+    <br>
+    <span class='label label-info'>Max points</span>
+    <label id='labelCategoryPoints'>Category Points</label>
+    <br>
+    <br>
+    <table class='table table-striped' id='gradingTable'>
+        <thead>
+        <tr>
+            <th>Student</th>
+            <th>Grade</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <button class='btn btn-primary' id='buttonSaveProgress' onclick='saveProgress()'>Save</button>
+    <button class='btn btn-primary' id='buttonSubmitProgress' onclick='submitProgress()'>Submit</button>
+</div>

@@ -1,0 +1,13 @@
+{% extends "layout/base.twig.html" %}
+
+{% block title %}Exam Details{% endblock %}
+
+{% block head %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+<div id='exam-details-component'>
+    {% include 'components/exam-details.twig.html' with {'accountID' : accountID, 'examID' : examID} %}
+</div>
+{% endblock %}

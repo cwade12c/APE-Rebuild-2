@@ -94,6 +94,8 @@
         var totalSeats = examInfo.totalSeats;
         var takenSeats = examInfo.takenSeats;
 
+        var examLink = "<a href='examDetails?exam=" + examID + "'>" + examID + "</a>";
+
         var times = buildExamDatesTimes(start, cutoff, length);
 
         var space;
@@ -103,7 +105,7 @@
             space = takenSeats + "/" + totalSeats;
         }
 
-        var $row = [examID, stateStr, times.cutoff, times.times, locationName, space];
+        var $row = [examLink, stateStr, times.cutoff, times.times, locationName, space];
         addRowToTable('examsTable', $row);
     }
 

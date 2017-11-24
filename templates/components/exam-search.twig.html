@@ -84,19 +84,31 @@
 
     function fillExam(examInfo) {
         var examID = examInfo.examID;
+        var stateStr = examInfo.stateStr;
+
         var start = new Date(Date.parse(examInfo.start.date));
         var cutoff = new Date(Date.parse(examInfo.cutoff.date));
         var length = examInfo.length;
         var locationName = examInfo.locationName;
+
         var totalSeats = examInfo.totalSeats;
         var takenSeats = examInfo.takenSeats;
-        var stateStr = examInfo.stateStr;
 
         var times = buildExamDatesTimes(start, cutoff, length);
-        var space = takenSeats + "/" + totalSeats;
+
+        var space;
+        if (!validSeatAmount(takenSeats) || !validSeatAmount(totalSeats)) {
+            space = "N/A";
+        }else{
+            space = takenSeats + "/" + totalSeats;
+        }
 
         var $row = [examID, stateStr, times.cutoff, times.times, locationName, space];
         addRowToTable('examsTable', $row);
+    }
+
+    function validSeatAmount(seats) {
+        return !_.isUndefined(seats) && _.isNumber(seats) && seats >= 0;
     }
 
 </script>

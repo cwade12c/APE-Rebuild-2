@@ -182,7 +182,7 @@ function buildFindExamStateString(int $state)
     } elseif ($state == GET_EXAMS_ARCHIVED) {
         // archived state
         // comparison
-        array_push($stateCompares, "`state` != :state_archived");
+        array_push($stateCompares, "`state` = :state_archived");
         // params
         array_push(
             $params,

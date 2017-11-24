@@ -123,7 +123,7 @@ DEFINE("TEACHER_LINKS", array(
             ),
 
             array(
-                'url' => 'viewArchivesExams.php',
+                'url' => 'archivedExams.php',
                 'title' => 'View Archived Apes',
                 'text' => 'Archived'
             )

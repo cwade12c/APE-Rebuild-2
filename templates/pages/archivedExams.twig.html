@@ -1,0 +1,13 @@
+{% extends "layout/base.twig.html" %}
+
+{% block title %}Archived Exams{% endblock %}
+
+{% block head %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+<div id='exam-search-component'>
+    {% include 'components/exam-search.twig.html' with {'states' : 'GET_EXAMS_ARCHIVED', 'types' : 'GET_EXAMS_TYPE_BOTH'} %}
+</div>
+{% endblock %}

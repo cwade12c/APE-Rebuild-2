@@ -333,6 +333,22 @@ function getAccounts() {
     return callAPI('Accounts', params);
 }
 
+function getAccountDetails(accountID) {
+    var params = {
+        accountID: accountID
+    };
+
+    return callAPI('AccountDetails', params);
+}
+
+function getAccountInfo(accountID) {
+    var params = {
+        accountID: accountID
+    };
+
+    return callAPI('AccountGeneralInfo', params);
+}
+
 function createAccount(id, firstName, lastName, email, type) {
     var params = {
         id: id,

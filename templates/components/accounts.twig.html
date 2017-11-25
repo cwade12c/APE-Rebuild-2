@@ -19,7 +19,16 @@
     });
 
     var addAccount = function() {
-        loadModal('create-account-modal', 'createAccountModal');
+        loadModal('create-account-modal', 'accountModal');
+    };
+
+    var editAccount = function() {
+        var table = $('#accounts-table').DataTable();
+        var params = {
+            accountId: getSelectedRowByIndex(table, 0) + ''
+        };
+
+        loadModal('edit-account-modal', 'accountModal', params);
     };
 </script>
 
@@ -37,4 +46,4 @@
   </tbody>
 </table>
 
-{% include 'modals/modal.twig.html' with {'modalId': 'createAccountModal'} %}
+{% include 'modals/modal.twig.html' with {'modalId': 'accountModal'} %}

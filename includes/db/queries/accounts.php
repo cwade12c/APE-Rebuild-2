@@ -107,6 +107,7 @@ function updateAccountInfoQuery(string $accountID,
 
     // get set string and params
     $ret = buildUpdateAccountParamStringArr($firstName, $lastName, $email);
+
     if (!$ret) {
         return;
     }
@@ -119,6 +120,7 @@ function updateAccountInfoQuery(string $accountID,
         . " SET %s "
         . " WHERE `id`=:id;", $setStr
     );
+
     $sql = executeQuery($query, $params);
 
     // TODO: check for success (PDO->rowCount()) ?
@@ -143,22 +145,22 @@ function buildUpdateAccountParamStringArr(
     $updateLName = is_null($lastName);
     $updateEmail = is_null($email);
 
-    if (!$updateFName && !$updateLName && !$updateEmail) {
+    if ($updateFName && !$updateLName && !$updateEmail) {
         return false;
     }
 
     // build query set string, and param array
     $params = array();
     $setArr = array();
-    if ($updateFName) {
+    if (!$updateFName) {
         array_push($setArr, array('f_name', ':fName'));
         array_push($params, array(':fName', $firstName, PDO::PARAM_STR));
     }
-    if ($updateLName) {
+    if (!$updateLName) {
         array_push($setArr, array('l_name', ':lName'));
         array_push($params, array(':lName', $lastName, PDO::PARAM_STR));
     }
-    if ($updateEmail) {
+    if (!$updateEmail) {
         array_push($setArr, array('email', ':email'));
         array_push($params, array(':email', $email, PDO::PARAM_STR));
     }

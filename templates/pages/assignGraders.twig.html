@@ -1,0 +1,13 @@
+{% extends "layout/base.twig.html" %}
+
+{% block title %}Assign Graders{% endblock %}
+
+{% block head %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+<div id='assign-graders-component'>
+    {% include 'components/assign-graders.twig.html' with {'accountID' : accountID, 'examID' : examID} %}
+</div>
+{% endblock %}

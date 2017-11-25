@@ -1,0 +1,37 @@
+<script type="text/javascript">
+    var account, exam;
+
+    document.addEventListener("DOMContentLoaded",
+        function () {
+            document.getElementById('registerStudentsSection').style.visibility = 'hidden';
+            document.getElementById('registerStudentsSection').style.visibility = 'hidden';
+
+            account = '{{accountID}}';
+            exam = parseInt('{{examID}}');
+
+            if (!isValidIntID(exam)) {
+                setError('Invalid exam ID');
+                return;
+            }
+
+            setError("TODO: component (register students)");
+        }
+    );
+
+    function setError(msg) {
+        errorLineNotification(msg);
+        document.getElementById('labelRegisterStudentsError').textContent = msg;
+        document.getElementById('registerStudentsError').style.visibility = 'visible';
+    }
+
+</script>
+
+<div class='row' id='registerStudentsError'>
+    <span class='label label-danger'>Error</span>
+    <label id='labelRegisterStudentsError'></label>
+</div>
+
+<div class='row' id='registerStudentsSection'>
+    <button class='btn btn-primary' onclick="location.href='examDetails?exam={{examID}}'" >Exam Details</button>
+    <br>
+</div>

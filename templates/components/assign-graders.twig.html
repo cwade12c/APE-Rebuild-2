@@ -1,0 +1,37 @@
+<script type="text/javascript">
+    var account, exam;
+
+    document.addEventListener("DOMContentLoaded",
+        function () {
+            document.getElementById('assignGradersError').style.visibility = 'hidden';
+            document.getElementById('assignGradersSection').style.visibility = 'hidden';
+
+            account = '{{accountID}}';
+            exam = parseInt('{{examID}}');
+
+            if (!isValidIntID(exam)) {
+                setError('Invalid exam ID');
+                return;
+            }
+
+            setError("TODO: component (assign graders)");
+        }
+    );
+
+    function setError(msg) {
+        errorLineNotification(msg);
+        document.getElementById('labelAssignGraderError').textContent = msg;
+        document.getElementById('assignGradersError').style.visibility = 'visible';
+    }
+
+</script>
+
+<div class='row' id='assignGradersError'>
+    <span class='label label-danger'>Error</span>
+    <label id='labelAssignGraderError'></label>
+</div>
+
+<div class='row' id='assignGradersSection'>
+    <button class='btn btn-primary' onclick="location.href='examDetails?exam={{examID}}'" >Exam Details</button>
+    <br>
+</div>

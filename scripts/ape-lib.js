@@ -1,18 +1,104 @@
 // <editor-fold desc="Constants">
 
+// exam state constants
+
+function EXAM_STATE_INVALID() {
+    return 0;
+}
+
+function EXAM_STATE_HIDDEN() {
+    return 1;
+}
+
+function EXAM_STATE_OPEN() {
+    return 2;
+}
+
+function EXAM_STATE_CLOSED() {
+    return 3;
+}
+
+function EXAM_STATE_IN_PROGRESS() {
+    return 4;
+}
+
+function EXAM_STATE_GRADING() {
+    return 5;
+}
+
+function EXAM_STATE_FINALIZING() {
+    return 6;
+}
+
+function EXAM_STATE_ARCHIVED() {
+    return 7;
+}
+
+function examStateAllowed(state, allowed) {
+    return (state > EXAM_STATE_INVALID()) && ($.inArray(state, allowed) > -1);
+}
+
+function examStateCanEdit(state) {
+    var allowedStates = [EXAM_STATE_HIDDEN(), EXAM_STATE_OPEN(), EXAM_STATE_CLOSED(),
+        EXAM_STATE_IN_PROGRESS(), EXAM_STATE_GRADING(), EXAM_STATE_FINALIZING(), EXAM_STATE_ARCHIVED()];
+    return examStateAllowed(state, allowedStates);
+}
+
+function examStateCanAssign(state) {
+    var allowedStates = [EXAM_STATE_HIDDEN(), EXAM_STATE_OPEN(), EXAM_STATE_CLOSED(),
+        EXAM_STATE_IN_PROGRESS(), EXAM_STATE_GRADING()];
+    return examStateAllowed(state, allowedStates);
+}
+
+function examStateCanRegister(state) {
+    var allowedStates = [EXAM_STATE_HIDDEN(), EXAM_STATE_OPEN(), EXAM_STATE_CLOSED(),
+        EXAM_STATE_IN_PROGRESS(), EXAM_STATE_GRADING()];
+    return examStateAllowed(state, allowedStates);
+}
+
 // Constants for exam search
 
-function GET_EXAMS_ALL() { return 0; }
-function GET_EXAMS_OPEN() { return 1; }
-function GET_EXAMS_UPCOMING() { return 2; }
-function GET_EXAMS_GRADING() { return 3; }
-function GET_EXAMS_FINALIZING() { return 4; }
-function GET_EXAMS_NON_ARCHIVED() { return 5; }
-function GET_EXAMS_ARCHIVED() { return 6; }
+// get exam states
+function GET_EXAMS_ALL() {
+    return 0;
+}
 
-function GET_EXAMS_TYPE_BOTH() { return 0; }
-function GET_EXAMS_TYPE_REGULAR() { return 1; }
-function GET_EXAMS_TYPE_IN_CLASS() { return 2; }
+function GET_EXAMS_OPEN() {
+    return 1;
+}
+
+function GET_EXAMS_UPCOMING() {
+    return 2;
+}
+
+function GET_EXAMS_GRADING() {
+    return 3;
+}
+
+function GET_EXAMS_FINALIZING() {
+    return 4;
+}
+
+function GET_EXAMS_NON_ARCHIVED() {
+    return 5;
+}
+
+function GET_EXAMS_ARCHIVED() {
+    return 6;
+}
+
+// get exam types
+function GET_EXAMS_TYPE_BOTH() {
+    return 0;
+}
+
+function GET_EXAMS_TYPE_REGULAR() {
+    return 1;
+}
+
+function GET_EXAMS_TYPE_IN_CLASS() {
+    return 2;
+}
 
 /**
  * Parses exam search states string to constants value
@@ -21,14 +107,22 @@ function GET_EXAMS_TYPE_IN_CLASS() { return 2; }
  */
 function parseGetExamStates(str) {
     switch (str) {
-        case 'GET_EXAMS_ALL': return GET_EXAMS_ALL();
-        case 'GET_EXAMS_OPEN': return GET_EXAMS_OPEN();
-        case 'GET_EXAMS_UPCOMING': return GET_EXAMS_UPCOMING();
-        case 'GET_EXAMS_GRADING': return GET_EXAMS_GRADING();
-        case 'GET_EXAMS_FINALIZING': return GET_EXAMS_FINALIZING();
-        case 'GET_EXAMS_NON_ARCHIVED': return GET_EXAMS_NON_ARCHIVED();
-        case 'GET_EXAMS_ARCHIVED': return GET_EXAMS_ARCHIVED();
-        default: return undefined;
+        case 'GET_EXAMS_ALL':
+            return GET_EXAMS_ALL();
+        case 'GET_EXAMS_OPEN':
+            return GET_EXAMS_OPEN();
+        case 'GET_EXAMS_UPCOMING':
+            return GET_EXAMS_UPCOMING();
+        case 'GET_EXAMS_GRADING':
+            return GET_EXAMS_GRADING();
+        case 'GET_EXAMS_FINALIZING':
+            return GET_EXAMS_FINALIZING();
+        case 'GET_EXAMS_NON_ARCHIVED':
+            return GET_EXAMS_NON_ARCHIVED();
+        case 'GET_EXAMS_ARCHIVED':
+            return GET_EXAMS_ARCHIVED();
+        default:
+            return undefined;
     }
 }
 
@@ -39,10 +133,14 @@ function parseGetExamStates(str) {
  */
 function parseGetExamsType(str) {
     switch (str) {
-        case 'GET_EXAMS_TYPE_BOTH': return GET_EXAMS_TYPE_BOTH();
-        case 'GET_EXAMS_TYPE_REGULAR': return GET_EXAMS_TYPE_REGULAR();
-        case 'GET_EXAMS_TYPE_IN_CLASS': return GET_EXAMS_TYPE_IN_CLASS();
-        default: return undefined;
+        case 'GET_EXAMS_TYPE_BOTH':
+            return GET_EXAMS_TYPE_BOTH();
+        case 'GET_EXAMS_TYPE_REGULAR':
+            return GET_EXAMS_TYPE_REGULAR();
+        case 'GET_EXAMS_TYPE_IN_CLASS':
+            return GET_EXAMS_TYPE_IN_CLASS();
+        default:
+            return undefined;
     }
 }
 
@@ -506,13 +604,13 @@ function updateLocationName(locationId, locationName) {
         name: locationName
     };
 
-  var callbacks = {
-    success: function (message, data) {
-      if(message === 'OK') {
-        notification('Successfully updated the location name! Please refresh the page to view the changes.', 'success');
-      }
-    }
-  };
+    var callbacks = {
+        success: function (message, data) {
+            if (message === 'OK') {
+                notification('Successfully updated the location name! Please refresh the page to view the changes.', 'success');
+            }
+        }
+    };
 
     return callAPI('UpdateLocationName', params, callbacks);
 }
@@ -525,13 +623,13 @@ function updateLocationRooms(locationId, reservedSeats, limitedSeats, rooms) {
         rooms: rooms || []
     };
 
-  var callbacks = {
-    success: function (message, data) {
-      if(message === 'OK') {
-        notification('Successfully updated the location rooms! Please refresh the page to view the changes.', 'success');
-      }
-    }
-  };
+    var callbacks = {
+        success: function (message, data) {
+            if (message === 'OK') {
+                notification('Successfully updated the location rooms! Please refresh the page to view the changes.', 'success');
+            }
+        }
+    };
 
     return callAPI('UpdateLocationRooms', params, callbacks);
 }
@@ -546,10 +644,10 @@ function createLocation(name, reservedSeats, limitedSeats, rooms) {
 
     var callbacks = {
         success: function () {
-          notification('Successfully created Location "' + params.name + '".', 'success');
+            notification('Successfully created Location "' + params.name + '".', 'success');
         },
         failure: function () {
-          notification()
+            notification()
         }
     };
 
@@ -720,14 +818,14 @@ function addRowToTable(tableElementId, tdCollection) {
 function addOptionToSelect(selectElementId, optionCollection) {
     var options = [];
     _.each(optionCollection, function (currentOption) {
-      if(currentOption.badgeText) {
-        var badgeText = currentOption.badgeText;
-        var badgeType = currentOption.badgeType || 'primary';
-        options.push('<option data-content="' + currentOption.text + ' <span class=\'label label-' + badgeType + ' pull-right\' style=\'margin-top:3px;margin-right:12px;\'>' + currentOption.badgeText + '</span>" value="' + currentOption.value + '">' + currentOption.text + '</option>');
-      }
-      else {
-        options.push('<option value="' + currentOption.value + '">' + currentOption.text + '</option>');
-      }
+        if (currentOption.badgeText) {
+            var badgeText = currentOption.badgeText;
+            var badgeType = currentOption.badgeType || 'primary';
+            options.push('<option data-content="' + currentOption.text + ' <span class=\'label label-' + badgeType + ' pull-right\' style=\'margin-top:3px;margin-right:12px;\'>' + currentOption.badgeText + '</span>" value="' + currentOption.value + '">' + currentOption.text + '</option>');
+        }
+        else {
+            options.push('<option value="' + currentOption.value + '">' + currentOption.text + '</option>');
+        }
     })
     $('#' + selectElementId).html(options.join(''));
 }
@@ -759,9 +857,9 @@ function notification(message, type, url, canClose) {
     var notificationUrl = url || '';
     var notificationCanClose = canClose || true;
 
-    if(!notificationMessage) {
-      logLine('Unable to generate error message');
-      return;
+    if (!notificationMessage) {
+        logLine('Unable to generate error message');
+        return;
     }
 
     var options = {
@@ -866,106 +964,107 @@ function setDateTimePicker(elementId, options, selectDateCallbackFunction) {
  * @param dataTableOptions A JSON object of DataTable options
  * @param overrideOptions If true, will override all default options
  */
-function initializeDataTableById (tableId, dataTableOptions, overrideOptions) {
-  var dataTable;
+function initializeDataTableById(tableId, dataTableOptions, overrideOptions) {
+    var dataTable;
 
-  if(!dataTableOptions || !_.isObject(dataTableOptions)) {
-    dataTable = $('#' + tableId).DataTable(getDataTableOptions());
-  }
-  else {
-    if(overrideOptions) {
-      dataTable = $('#' + tableId).DataTable(dataTableOptions);
+    if (!dataTableOptions || !_.isObject(dataTableOptions)) {
+        dataTable = $('#' + tableId).DataTable(getDataTableOptions());
     }
     else {
-      var customOptions = getDataTableOptions();
-      customOptions = _.extend(customOptions, dataTableOptions);
-      dataTable =  $('#' + tableId).DataTable(customOptions);
+        if (overrideOptions) {
+            dataTable = $('#' + tableId).DataTable(dataTableOptions);
+        }
+        else {
+            var customOptions = getDataTableOptions();
+            customOptions = _.extend(customOptions, dataTableOptions);
+            dataTable = $('#' + tableId).DataTable(customOptions);
+        }
     }
-  }
-  dataTable.on('select', function() {
-    toggleSelectorActions(true);
-  });
-  dataTable.on('deselect', function() {
-    toggleSelectorActions(false);
-  });
-  return dataTable;
+    dataTable.on('select', function () {
+        toggleSelectorActions(true);
+    });
+    dataTable.on('deselect', function () {
+        toggleSelectorActions(false);
+    });
+    return dataTable;
 }
 
-function isRowSelected (dataTableReference) {
-  return dataTableReference.rows('.selected').any();
+function isRowSelected(dataTableReference) {
+    return dataTableReference.rows('.selected').any();
 }
 
-function getSelectedRowByIndex (dataTableReference, columnIndex) {
-  if(isRowSelected(dataTableReference)) {
-    return dataTableReference.row('.selected').data()[columnIndex];
-  }
-  return null;
+function getSelectedRowByIndex(dataTableReference, columnIndex) {
+    if (isRowSelected(dataTableReference)) {
+        return dataTableReference.row('.selected').data()[columnIndex];
+    }
+    return null;
 }
 
 /**
  * Internal function to get the default DataTable options
  * @returns {{columnDefs: [*], select: string, dom: string, buttons: [*,*,*,*,*]}}
  */
-function getDataTableOptions () {
-  var getFileName = function() {
-    var d = new Date();
-    var n = d.getTime();
-    return 'export' + n;
-  };
+function getDataTableOptions() {
+    var getFileName = function () {
+        var d = new Date();
+        var n = d.getTime();
+        return 'export' + n;
+    };
 
-  return {
-    columnDefs: [
-      {
-        'className': 'dt-center', 'targets': '_all'
-      }
-    ],
-    select: 'single',
-    dom: 'Bfrtip',
-    buttons: [
-      {
-        extend: 'copy',
-        text: '<i class="fa fa-files-o"></i> Copy',
-        filename: getFileName()
-      },
-      {
-        extend: 'csv',
-        text: '<i class="fa fa-file-text-o"></i> CSV',
-        filename: getFileName()
-      },
-      {
-        extend: 'excel',
-        text: '<i class="fa fa-file-excel-o"></i> XLSX',
-        filename: getFileName()
-      },
-      {
-        extend: 'pdf',
-        text: '<i class="fa fa-file-pdf-o"></i> PDF',
-        filename: getFileName()
-      },
-      {
-        extend: 'print',
-        text: '<i class="fa fa-print"></i> Print'
-      }
-    ],
-    pageLength: 10
-  };
+    return {
+        columnDefs: [
+            {
+                'className': 'dt-center', 'targets': '_all'
+            }
+        ],
+        select: 'single',
+        dom: 'Bfrtip',
+        buttons: [
+            {
+                extend: 'copy',
+                text: '<i class="fa fa-files-o"></i> Copy',
+                filename: getFileName()
+            },
+            {
+                extend: 'csv',
+                text: '<i class="fa fa-file-text-o"></i> CSV',
+                filename: getFileName()
+            },
+            {
+                extend: 'excel',
+                text: '<i class="fa fa-file-excel-o"></i> XLSX',
+                filename: getFileName()
+            },
+            {
+                extend: 'pdf',
+                text: '<i class="fa fa-file-pdf-o"></i> PDF',
+                filename: getFileName()
+            },
+            {
+                extend: 'print',
+                text: '<i class="fa fa-print"></i> Print'
+            }
+        ],
+        pageLength: 10
+    };
 }
 
 /**
  * Enable or disable all action buttons that have a className of "action-select"
  * @param enabled A boolean that determines if the buttons are enabled/disabled
  */
-function toggleSelectorActions (enabled) {
-  var selectorActions = document.getElementsByClassName('action-select');
-  _.each(selectorActions, function(currentSelectorAction) {
-    if(enabled) {
-      currentSelectorAction.classList.remove('disabled');
-      currentSelectorAction.disabled = false;
-    }
-    else {
-      currentSelectorAction.classList.add('disabled');
-      currentSelectorAction.disabled = true;    }
-  });
+function toggleSelectorActions(enabled) {
+    var selectorActions = document.getElementsByClassName('action-select');
+    _.each(selectorActions, function (currentSelectorAction) {
+        if (enabled) {
+            currentSelectorAction.classList.remove('disabled');
+            currentSelectorAction.disabled = false;
+        }
+        else {
+            currentSelectorAction.classList.add('disabled');
+            currentSelectorAction.disabled = true;
+        }
+    });
 }
 
 /**
@@ -977,18 +1076,20 @@ function toggleSelectorActions (enabled) {
  * @param deleteCallback The function to invoke when delete is selected
  * @param cancelCallback The function to invoke when cancel is selected
  */
-function setConfirmationModal (elementIdToWatch, deleteCallback, cancelCallback) {
-  var deleteCallbackFnc = deleteCallback || function () {};
-  var cancelCallbackFnc = cancelCallback || function () {};
+function setConfirmationModal(elementIdToWatch, deleteCallback, cancelCallback) {
+    var deleteCallbackFnc = deleteCallback || function () {
+    };
+    var cancelCallbackFnc = cancelCallback || function () {
+    };
 
-  $('#' + elementIdToWatch).bootstrap_confirm_delete({
-    heading: 'WARNING',
-    message: 'Are you sure that you want to delete the selected item?',
-    btn_ok_label: 'Delete',
-    btn_cancel_label: 'Cancel',
-    delete_callback: deleteCallbackFnc,
-    cancel_callback: cancelCallbackFnc
-  });
+    $('#' + elementIdToWatch).bootstrap_confirm_delete({
+        heading: 'WARNING',
+        message: 'Are you sure that you want to delete the selected item?',
+        btn_ok_label: 'Delete',
+        btn_cancel_label: 'Cancel',
+        delete_callback: deleteCallbackFnc,
+        cancel_callback: cancelCallbackFnc
+    });
 }
 
 /**
@@ -1001,16 +1102,16 @@ function setConfirmationModal (elementIdToWatch, deleteCallback, cancelCallback)
  * @param modalParams An optional Object containing parameters that you want
  *        passed so that the modal's Twig template can interpolate them
  */
-function loadModal (modalName, modalId, modalParams) {
-  var query = 'modalName=' + modalName;
+function loadModal(modalName, modalId, modalParams) {
+    var query = 'modalName=' + modalName;
 
-  _.forEach(modalParams, function (value, key) {
-      query += '&' + key + '=' + value;
-  });
+    _.forEach(modalParams, function (value, key) {
+        query += '&' + key + '=' + value;
+    });
 
-  $('.modal-content').load('api/modal.php?' + query, function() {
-    $('#' + modalId).modal({show:true});
-  });
+    $('.modal-content').load('api/modal.php?' + query, function () {
+        $('#' + modalId).modal({show: true});
+    });
 }
 
 /**
@@ -1019,8 +1120,8 @@ function loadModal (modalName, modalId, modalParams) {
  * @param selectId The id value associated with the select element
  * @returns {*|jQuery} An array of option values
  */
-function getSelectValues (selectId) {
-  return $('#' + selectId).val();
+function getSelectValues(selectId) {
+    return $('#' + selectId).val();
 }
 
 /**
@@ -1029,8 +1130,8 @@ function getSelectValues (selectId) {
  *        set/modify
  * @param value The value that you wish to assign to the element
  */
-function setElementValueById (elementId, value) {
-  $('#' + elementId).val(value);
+function setElementValueById(elementId, value) {
+    $('#' + elementId).val(value);
 }
 
 /**
@@ -1038,8 +1139,8 @@ function setElementValueById (elementId, value) {
  * selectpicker class with a multiple attribute
  * @param valueCollection An array of values to be selected
  */
-function setSelectPickerValues (valueCollection) {
-  $('.selectpicker').selectpicker('val', valueCollection);
+function setSelectPickerValues(valueCollection) {
+    $('.selectpicker').selectpicker('val', valueCollection);
 }
 
 /**
@@ -1047,104 +1148,104 @@ function setSelectPickerValues (valueCollection) {
  * @param accountTypeValue An int that represents the account type
  * @returns {*} A text value that is associated with the accountTypeValue
  */
-function accountTypeValueToText (accountTypeValue) {
-    switch(accountTypeValue) {
+function accountTypeValueToText(accountTypeValue) {
+    switch (accountTypeValue) {
         case 0:
             return 'None';
-        break;
+            break;
         case 1:
             return 'Temporary';
-        break;
+            break;
         case 2:
             return 'Student';
-        break;
+            break;
         case 4:
             return 'Grader';
-        break;
+            break;
         case 5:
             return 'Grader, Temporary';
-        break;
+            break;
         case 6:
             return 'Grader, Student';
-        break;
+            break;
         case 7:
             return 'Grader, Student, Temporary';
-        break;
+            break;
         case 8:
             return 'Teacher';
-        break;
+            break;
         case 9:
             return 'Teacher, Temporary';
-        break;
+            break;
         case 10:
             return 'Teacher,  Student';
-        break;
+            break;
         case 11:
             return 'Teacher, Student, Temporary';
-        break;
+            break;
         case 12:
             return 'Teacher, Grader';
-        break;
+            break;
         case 13:
             return 'Teacher, Grader, Temporary';
-        break;
+            break;
         case 14:
             return 'Teacher, Grader, Student';
-        break;
+            break;
         case 15:
             return 'Teacher, Grader, Student, Temporary';
-        break;
+            break;
         case 16:
             return 'Administrator';
-        break;
+            break;
         case 17:
             return 'Administrator, Temporary';
-        break;
+            break;
         case 18:
             return 'Administrator, Student';
-        break;
+            break;
         case 19:
             return 'Administrator, Student, Temporary';
-        break;
+            break;
         case 20:
             return 'Administrator, Grader';
-        break;
+            break;
         case 21:
             return 'Administrator, Grader, Temporary';
-        break;
+            break;
         case 22:
             return 'Administrator, Grader, Student';
-        break;
+            break;
         case 23:
             return 'Administrator, Grader, Student, Temporary';
-        break;
+            break;
         case 24:
             return 'Administrator, Teacher';
-        break;
+            break;
         case 25:
             return 'Administrator, Teacher, Temporary';
-        break;
+            break;
         case 26:
             return 'Administrator, Teacher, Student';
-        break;
+            break;
         case 27:
             return 'Administrator, Teacher, Student, Temporary';
-        break;
+            break;
         case 28:
             return 'Administrator, Teacher, Grader';
-        break;
+            break;
         case 29:
             return 'Administrator, Teacher, Grader, Temporary';
-        break;
+            break;
         case 30:
             return 'Administrator, Teacher, Grader, Student';
-        break;
+            break;
         case 31:
             return 'Administrator, Teacher, Grader, Student, Temporary';
-        break;
+            break;
         default:
             return 'Unknown';
-        break;
+            break;
     }
 }
 

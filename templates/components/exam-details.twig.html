@@ -86,6 +86,11 @@
         var times = buildExamDatesTimes(start, cutoff, length);
         document.getElementById('labelCutoff').textContent = times.cutoff;
         document.getElementById('labelTimes').textContent = times.times;
+
+        state = parseInt(state);
+        document.getElementById('buttonEditExam').disabled = !examStateCanEdit(state);
+        document.getElementById('buttonAssignGraders').disabled = !examStateCanAssign(state);
+        document.getElementById('buttonRegisterStudents').disabled = !examStateCanRegister(state);
     }
 
     function fillInfoCategoriesGrades(passingGrade, categories) {
@@ -239,6 +244,7 @@
     <span class='label label-info'>Time</span>
     <label id='labelTimes'>time</label>
     <br>
+    <button class='btn btn-primary' onclick="location.href='editExam?exam={{examID}}'" id='buttonEditExam' >Edit</button>
     <!-- Categories, grades -->
     <table class='table table-striped' id='categoriesTable'>
         <thead>
@@ -257,6 +263,7 @@
     <span class='label label-danger' id='spanGradersError'>Error</span>
     <label id='labelGradersError'>grader error</label>
     <br>
+    <button class='btn btn-primary' onclick="location.href='assignGraders?exam={{examID}}'" id='buttonAssignGraders' >Assign Graders</button>
     <table class='table table-striped' id='gradersTable'>
         <thead>
         <tr>
@@ -297,6 +304,8 @@
     <!-- Registrations -->
     <span class='label label-danger' id='spanRegistrationsError'>Error</span>
     <label id='labelRegistrationsError'>registrations error</label>
+    <br>
+    <button class='btn btn-primary' onclick="location.href='registerStudents?exam={{examID}}'" id='buttonRegisterStudents' >Register Students</button>
     <br>
     <span class='label label-info' id='spanRegistrationsCount'>Registrations</span>
     <label id='labelRegistrationsCount'>registrations</label>

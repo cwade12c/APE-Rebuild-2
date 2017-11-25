@@ -1,0 +1,37 @@
+<script type="text/javascript">
+    var account, exam;
+
+    document.addEventListener("DOMContentLoaded",
+        function () {
+            document.getElementById('editExamError').style.visibility = 'hidden';
+            document.getElementById('examSection').style.visibility = 'hidden';
+
+            account = '{{accountID}}';
+            exam = parseInt('{{examID}}');
+
+            if (!isValidIntID(exam)) {
+                setError('Invalid exam ID');
+                return;
+            }
+
+            setError("TODO: component (edit exam)");
+        }
+    );
+
+    function setError(msg) {
+        errorLineNotification(msg);
+        document.getElementById('labelEditExamError').textContent = msg;
+        document.getElementById('editExamError').style.visibility = 'visible';
+    }
+
+</script>
+
+<div class='row' id='editExamError'>
+    <span class='label label-danger'>Error</span>
+    <label id='labelEditExamError'></label>
+</div>
+
+<div class='row' id='examSection'>
+    <button class='btn btn-primary' onclick="location.href='examDetails?exam={{examID}}'" >Exam Details</button>
+    <br>
+</div>

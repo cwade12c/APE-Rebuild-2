@@ -144,10 +144,10 @@ function getAssignedExamGradersCategories(int $examID)
     $graders = getAssignedExamGraders($examID);
     foreach ($graders as $graderID) {
         $assignedCategories = array();
-        $assignedCategories["graderID"] = $graderID;
+        $assignedCategories['graderID'] = $graderID;
 
         $categories = getAssignedExamCategories($graderID, $examID);
-        $assignedCategories["categories"] = $categories;
+        $assignedCategories['categories'] = $categories;
 
         array_push($assigned, $assignedCategories);
     }

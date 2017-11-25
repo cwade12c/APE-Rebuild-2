@@ -42,12 +42,16 @@ class ExamDetailsFull extends Operation
 
         $registrations = self::getRegistrationInformation($examID);
 
+        $graders = self::getGraderInformation($examID);
+
         list($isRegular, $teacherID) = self::getExamInClassInformation($info);
 
         return array(
             'examID'        => $examID,
             'start'         => $info['start'],
             'cutoff'        => $info['cutoff'],
+            'length'        => $info['length'],
+            'passingGrade'  => $info['passingGrade'],
             'locationID'    => $locationID,
             'locationName'  => $locationName,
             'maxSeats'      => $maxSeats,
@@ -57,6 +61,7 @@ class ExamDetailsFull extends Operation
             'rooms'         => $rooms,
             'categories'    => $categories,
             'registrations' => $registrations,
+            'graders'       => $graders,
             'state'         => $info['state'],
             'stateStr'      => examStateToString($info['state']),
             'teacherID'     => $teacherID,
@@ -96,7 +101,7 @@ class ExamDetailsFull extends Operation
     public static function getLocationRoomsInformation(int $locationID)
     {
         $rooms = getLocationRooms($locationID);
-        foreach($rooms as &$room) {
+        foreach ($rooms as &$room) {
             $info = getRoomInformation($room['id']);
             $room['name'] = $info['name'];
         }
@@ -106,9 +111,11 @@ class ExamDetailsFull extends Operation
     public static function getCategoryInformation(int $examID)
     {
         $categories = getExamCategories($examID);
-        foreach($categories as &$category) {
-            $info = getCategoryInfo($category['id']);
+        foreach ($categories as &$category) {
+            $categoryID = $category['id'];
+            $info = getCategoryInfo($categoryID);
             $category['name'] = $info['name'];
+            $category['points'] = $info['points'];
         }
 
         return $categories;
@@ -118,7 +125,7 @@ class ExamDetailsFull extends Operation
     {
         $registeredIDs = getExamRegistrations($examID);
         $registrations = array();
-        foreach($registeredIDs as $studentID) {
+        foreach ($registeredIDs as $studentID) {
             $info = getAccountInfo($studentID);
             $info['studentID'] = $studentID;
             array_push($registrations, $info);
@@ -127,7 +134,38 @@ class ExamDetailsFull extends Operation
         return $registrations;
     }
 
-    public static function getExamInClassInformation(array $examInfo) {
+    public static function getGraderInformation(int $examID)
+    {
+        $graderInfo = array();
+        $graderCategories = getAssignedExamGradersCategories($examID);
+        foreach ($graderCategories as $grader) {
+            $graderID = $grader['graderID'];
+
+            $accountInfo = getAccountInfo($graderID);
+            $grader['firstName'] = $accountInfo['firstName'];
+            $grader['lastName'] = $accountInfo['lastName'];
+
+            $categories = array();
+            foreach ($grader['categories'] as $categoryID) {
+                $category = array();
+                $category['categoryID'] = $categoryID;
+                $category['name'] = getCategoryName($categoryID);
+                $category['submitted'] = isGraderCategorySubmitted(
+                    $examID,
+                    $categoryID, $graderID
+                );
+                array_push($categories, $category);
+            }
+            $grader['categories'] = $categories;
+
+            array_push($graderInfo, $grader);
+        }
+
+        return $graderInfo;
+    }
+
+    public static function getExamInClassInformation(array $examInfo)
+    {
         $isRegular = $examInfo['isRegular'];
         $teacherID = $isRegular ? null : getInClassExamTeacher($examInfo['id']);
 

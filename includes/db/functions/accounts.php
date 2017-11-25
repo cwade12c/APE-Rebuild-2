@@ -9,6 +9,16 @@
  * @subpackage     Database
  */
 
+/**
+ * Get basic account info
+ *
+ * @param string $accountID
+ *
+ * @return array            associative array of info
+ *                          'firstName'
+ *                          'lastName'
+ *                          'email'
+ */
 function getAccountInfo(string $accountID)
 {
     $info = getAccountInfoQuery($accountID);

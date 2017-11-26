@@ -20,7 +20,7 @@
             </li>
         {% endfor %}
     {% else %}
-        {% for link in params.availableNavLinks %}
+        {% for link in params.availableNavLinks|first %}
             <li>
                 <a href="{{ link.url }}" title="{{ link.title }}">{{ link.text }}</a>
             </li>

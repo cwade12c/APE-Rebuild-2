@@ -946,7 +946,7 @@ function setDateTimePicker(elementId, options, selectDateCallbackFunction) {
         todayButton: true,
         defaultSelect: true,
         allowBlank: false,
-        onSelectDate: selectDateCallbackFunction
+        onSelect: selectDateCallbackFunction
     };
     options = options || defaultOptions;
 
@@ -1347,6 +1347,7 @@ function buildExamDatesTimes(start, cutoff, length) {
 
     return {
         cutoff: cutoffStr,
+        start: startStr,
         times: timesStr
     };
 }
@@ -1354,7 +1355,7 @@ function buildExamDatesTimes(start, cutoff, length) {
 function datetimeString(datetime) {
     var year = datetime.getFullYear();
     var month = datetime.getMonth() + 1;
-    var day = datetime.getDay() + 1;
+    var day = datetime.getDate();
     var hours = datetime.getHours();
     var minutes = datetime.getMinutes();
 
@@ -1371,7 +1372,8 @@ function datetimeString(datetime) {
         minutes = '0' + minutes;
     }
 
-    return year + '/' + month + '/' + day + ' ' + hours + ':' + minutes;
+    // ':00' for php side
+    return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':00';
 }
 
 function minutesAsMS(min) {

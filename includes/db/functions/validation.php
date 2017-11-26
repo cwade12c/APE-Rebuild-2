@@ -60,9 +60,15 @@ function validateDates($start, $cutoff)
 {
     if (gettype($start) == 'string') {
         $start = DateTime::createFromFormat(DATETIME_FORMAT, $start);
+        if (!$start) {
+            throw new InvalidArgumentException('Invalid start given');
+        }
     }
     if (gettype($cutoff) == 'string') {
         $cutoff = DateTime::createFromFormat(DATETIME_FORMAT, $cutoff);
+        if (!$cutoff) {
+            throw new InvalidArgumentException('Invalid cutoff given');
+        }
     }
 
     $unixStart = $start->getTimestamp();
@@ -1656,7 +1662,10 @@ function validateIsType($value, string $type, string $msg)
 function validateStringIsDateTime(string $value)
 {
     try {
-        DateTime::createFromFormat(DATETIME_FORMAT, $value);
+        $date = DateTime::createFromFormat(DATETIME_FORMAT, $value);
+        if (!$date) {
+            throw new LogicException("Failed to parse");
+        }
     } catch (Exception $e) {
         throw new InvalidArgumentException(
             'Failed to parse datetime from string'

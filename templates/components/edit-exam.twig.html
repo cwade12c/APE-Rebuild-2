@@ -1,5 +1,7 @@
 <script type="text/javascript">
     var account, exam;
+    var selectedState;
+    var selectedStart, selectedCutoff;
 
     document.addEventListener("DOMContentLoaded",
         function () {
@@ -14,7 +16,7 @@
                 return;
             }
 
-            setError("TODO: component (edit exam)");
+            getExamDetails();
         }
     );
 
@@ -22,6 +24,230 @@
         errorLineNotification(msg);
         document.getElementById('labelEditExamError').textContent = msg;
         document.getElementById('editExamError').style.visibility = 'visible';
+    }
+
+    function getExamDetails() {
+        logLineNotification("Retrieving exam details ...");
+
+        var params = {
+            id: exam
+        };
+
+        var callbacks = {
+            success: getDetailsSuccess,
+            failure: function (message) {
+                setError("Failed to get exam details: " + message);
+            },
+            error: function () {
+                setError("Error retrieving exam details, please try again later");
+            }
+        };
+
+        return callAPI('ExamDetailsFull', params, callbacks);
+    }
+
+    function getDetailsSuccess(message, data) {
+        logLine("Got exam details: " + message);
+
+        fillInfo(data);
+
+        logLineNotification("Finished loading exam details");
+    }
+
+    function fillInfo(data) {
+        fillInfoBasics(data.examID, data.state, data.stateStr,
+            data.isRegular, data.teacherID);
+        fillInfoTimes(data.start, data.cutoff, data.length);
+        /*
+        fillInfoCategoriesGrades(data.passingGrade, data.categories);
+        fillInfoLocation(data.locationID, data.locationName,
+            data.maxSeats, data.reservedSeats, data.totalSeats,
+            data.takenSeats, data.rooms);
+        */
+        document.getElementById('examSection').style.visibility = 'visible';
+    }
+
+    function fillInfoBasics(examID, state, stateStr, isRegular, teacherID) {
+        document.getElementById('labelExamID').textContent = 'Exam #' + examID;
+        document.getElementById('labelExamState').textContent = stateStr;
+
+        isRegular = parseInt(isRegular);
+        if (isValidInt(isRegular) && isRegular === 1) {
+            document.getElementById('labelExamType').textContent = 'Regular Exam';
+            document.getElementById('spanExamTeacherID').style.visibility = 'hidden';
+            document.getElementById('labelExamTeacherID').style.visibility = 'hidden';
+        } else {
+            document.getElementById('labelExamType').textContent = 'In-Class Exam';
+            document.getElementById('labelExamTeacherID').textContent = teacherID;
+        }
+
+        state = parseInt(state);
+        // TODO disable any changes due to state
+    }
+
+    function fillInfoTimes(start, cutoff, length) {
+        start = start.date;
+        cutoff = cutoff.date;
+
+        logLine('fill start: ' + start);
+        logLine('fill cutoff: ' + cutoff);
+
+        start = new Date(Date.parse(start));
+        cutoff = new Date(Date.parse(cutoff));
+
+        logLine('parsed start: ' + datetimeString(start));
+        logLine('parsed cutoff: ' + datetimeString(cutoff));
+
+        selectedStart = start;
+        selectedCutoff = cutoff;
+        determineTimes(start, cutoff, length);
+
+        // editable values
+        setDateTimePicker('pickerCutoff');
+        $('#pickerCutoff').on('change.dp',
+            function (e) {
+                selectedCutoff = $('#pickerCutoff').val();
+                logLine('Selected cutoff: ' + selectedCutoff);
+                updateDeterminedTimes();
+            });
+
+        setDateTimePicker('pickerStart');
+        $('#pickerStart').on('change.dp',
+            function (e) {
+                selectedStart = $('#pickerStart').val();
+                logLine('Selected start: ' + selectedStart);
+                updateDeterminedTimes();
+            });
+
+        document.getElementById('inputLength').value = length;
+        document.getElementById('inputLength').onchange = updateDeterminedTimes;
+
+        updateDeterminedTimes();
+
+        document.getElementById('buttonUpdateTimes').disabled = true;
+    }
+
+    function updateDeterminedTimes() {
+        var cutoff = new Date(Date.parse(selectedCutoff));
+        var start = new Date(Date.parse(selectedStart));
+
+        var length = document.getElementById('inputLength').value;
+        length = parseInt(length);
+        if (!isValidInt(length)) {
+            errorLineNotification('Invalid length');
+            return;
+        }
+
+        determineTimes(start, cutoff, length);
+        document.getElementById('buttonUpdateTimes').disabled = false;
+    }
+
+    function determineTimes(start, cutoff, length) {
+        var times = buildExamDatesTimes(start, cutoff, length);
+
+        document.getElementById('labelCutoff').textContent = times.cutoff;
+        document.getElementById('labelTimes').textContent = times.times;
+        document.getElementById('pickerCutoff').value = times.cutoff;
+        document.getElementById('pickerStart').value = times.start;
+    }
+
+    function fillInfoCategoriesGrades(passingGrade, categories) {
+        passingGrade = parseInt(passingGrade);
+
+        _.forEach(categories,
+            function (category) {
+                var categoryName = '(' + category.id + ') ' + category.name;
+                var points = parseInt(category.points);
+
+                var row = [categoryName, points];
+
+                addRowToTable('categoriesTable', row);
+            });
+
+        document.getElementById('labelPassingGrade').textContent = passingGrade;
+    }
+
+    function fillInfoLocation(locationID, locationName, maxSeats,
+                              reservedSeats, totalSeats, takenSeats, rooms) {
+        locationID = parseInt(locationID);
+        if (!isValidInt(locationID)) {
+            document.getElementById('labelLocationError').textContent = 'No Location set';
+            document.getElementById('spanLocationIDName').style.visibility = 'hidden';
+            document.getElementById('labelLocationIDName').style.visibility = 'hidden';
+            document.getElementById('spanLocationSeatsTotal').style.visibility = 'hidden';
+            document.getElementById('labelLocationSeatsTotal').style.visibility = 'hidden';
+            document.getElementById('spanLocationSeatsReserved').style.visibility = 'hidden';
+            document.getElementById('labelLocationSeatsReserved').style.visibility = 'hidden';
+            document.getElementById('spanLocationSeatsMax').style.visibility = 'hidden';
+            document.getElementById('labelLocationSeatsMax').style.visibility = 'hidden';
+            document.getElementById('roomsTable').style.visibility = 'hidden';
+            return;
+        }
+
+        document.getElementById('spanLocationError').style.visibility = 'hidden';
+        document.getElementById('labelLocationError').style.visibility = 'hidden';
+
+
+        document.getElementById('labelLocationIDName').textContent = '(' + locationID + ') ' + locationName;
+
+        document.getElementById('labelLocationSeatsTotal').textContent = totalSeats;
+
+        document.getElementById('labelLocationSeatsReserved').textContent = reservedSeats;
+
+        document.getElementById('labelLocationSeatsMax').textContent = maxSeats;
+
+        _.each(rooms,
+            function (room) {
+                var id = room.id;
+                var name = room.name;
+                var seats = room.seats;
+                var roomName = '(' + id + ') ' + name;
+                var row = [roomName, seats];
+                addRowToTable('roomsTable', row);
+            });
+    }
+
+    function updateTimePress() {
+        var cutoff = selectedCutoff;
+        var start = selectedStart;
+
+        var length = document.getElementById('inputLength').value;
+        length = parseInt(length);
+        if (!isValidInt(length)) {
+            errorLineNotification('Invalid length');
+            return;
+        }
+
+        logLine('cutoff: ' + cutoff + ', type: ' + typeof cutoff);
+        logLine('start: ' + start + ', type: ' + typeof start);
+
+        updateTime(start, cutoff, length);
+    }
+
+    function updateTime(start, cutoff, length) {
+        logLineNotification("Updating exam times...");
+
+        var params = {
+            examID: exam,
+            start: start,
+            cutoff: cutoff,
+            length: length
+        };
+
+        var callbacks = {
+            success: function (message, data) {
+                logLineNotification("Successfully updated exam time");
+                document.getElementById('buttonUpdateTimes').disabled = true;
+            },
+            failure: function (message) {
+                errorLineNotification("Failed to update times: " + message);
+            },
+            error: function () {
+                errorLineNotification("Error updating times, please try again later");
+            }
+        };
+
+        return callAPI('UpdateExamTime', params, callbacks);
     }
 
 </script>
@@ -32,6 +258,41 @@
 </div>
 
 <div class='row' id='examSection'>
-    <button class='btn btn-primary' onclick="location.href='examDetails?exam={{examID}}'" >Exam Details</button>
+    <!-- general -->
+    <button class='btn btn-primary' onclick="location.href='examDetails?exam={{examID}}'">Exam Details</button>
     <br>
+    <span class='label label-info' id='labelExamID'>Exam #ID</span>
+    <br>
+    <span class='label label-info'>State</span>
+    <label id='labelExamState'>ExamState</label>
+    <br>
+    <span class='label label-info' id='labelExamType'>Exam Type</span>
+    <br>
+    <span class='label label-info' id='spanExamTeacherID'>Teacher ID</span>
+    <label id='labelExamTeacherID'>TeacherID</label>
+    <br>
+    <!-- state change -->
+    <!-- TODO stretch goal -->
+    <!-- times -->
+    <!-- editable -->
+    <span class='label label-info'>Registration Cutoff</span>
+    <input id="pickerCutoff" type="text">
+    <br>
+    <span class='label label-info'>Start</span>
+    <input id="pickerStart" type="text">
+    <br>
+    <span class='label label-info'>Length (minutes)</span>
+    <input type='number' class='form-control' id='inputLength'>
+    <br>
+    <!-- determined times -->
+    <span class='label label-info'>Registration Cutoff</span>
+    <label id='labelCutoff'>cutoff</label>
+    <br>
+    <span class='label label-info'>Time</span>
+    <label id='labelTimes'>time</label>
+    <br>
+    <button class='btn btn-primary' onclick='updateTimePress()' id='buttonUpdateTimes'>Update Times</button>
+    <br>
+    <!-- grading / categories -->
+    <!-- location -->
 </div>

@@ -1,5 +1,54 @@
 // <editor-fold desc="Constants">
 
+// account type constants
+function ACCOUNT_TYPE_NONE() {
+    return 0;
+}
+
+function ACCOUNT_TYPE_TEMP() {
+    return 1;
+}
+
+function ACCOUNT_TYPE_STUDENT() {
+    return 2;
+}
+
+function ACCOUNT_TYPE_GRADER() {
+    return 4;
+}
+
+function ACCOUNT_TYPE_TEACHER() {
+    return 8;
+}
+
+function ACCOUNT_TYPE_ADMIN() {
+    return 16;
+}
+
+/**
+ * To parse account type string to actual value
+ * @param str
+ * @returns {undefined}
+ */
+function parseAccountType(str) {
+    switch (str) {
+        case 'ACCOUNT_TYPE_NONE':
+            return ACCOUNT_TYPE_NONE();
+        case 'ACCOUNT_TYPE_TEMP':
+            return ACCOUNT_TYPE_TEMP();
+        case 'ACCOUNT_TYPE_STUDENT':
+            return ACCOUNT_TYPE_STUDENT();
+        case 'ACCOUNT_TYPE_GRADER':
+            return ACCOUNT_TYPE_GRADER();
+        case 'ACCOUNT_TYPE_TEACHER':
+            return ACCOUNT_TYPE_TEACHER();
+        case 'ACCOUNT_TYPE_ADMIN':
+            return ACCOUNT_TYPE_ADMIN();
+        default:
+            return undefined;
+    }
+}
+
 // exam state constants
 
 function EXAM_STATE_INVALID() {

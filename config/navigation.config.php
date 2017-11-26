@@ -8,7 +8,7 @@ DEFINE("ACTION_GENERIC", "btn btn-secondary");
 
 //Manage Navigation Links
 
-//<editor-fold desc="Student Links">
+//<editor-fold desc="Guest Links">
 DEFINE("GUEST_LINKS", array(
     array(
         'url' => 'home',

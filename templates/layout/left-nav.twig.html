@@ -12,7 +12,7 @@
                     <ul class="nav nav-sidebar nav-child">
                         {% for link in linkSet %}
                             <li>
-                                <a href="{{ link.link }}" title="{{ link.title }}">{{ link.text }}</a>
+                                <a href="{{ link.url }}" title="{{ link.title }}">{{ link.text }}</a>
                             </li>
                         {% endfor %}
                     </ul>
@@ -20,7 +20,7 @@
             </li>
         {% endfor %}
     {% else %}
-        {% for link in params.availableNavLinks %}
+        {% for link in params.availableNavLinks|first %}
             <li>
                 <a href="{{ link.url }}" title="{{ link.title }}">{{ link.text }}</a>
             </li>

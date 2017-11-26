@@ -51,16 +51,16 @@
       var lastName = getElementValue('lastName');
       var email = getElementValue('email');
 
-/*      var selections = getSelectValues('accountTypeSelect');
+      var selections = getSelectValues('accountTypeSelect');
 
       var type = 0;
       _.each(selections, function(selection) {
           type += parseInt(selection);
       });
 
-      type = parseInt(type);*/
+      type = parseInt(type);
 
-      updateAccount(id.toString() + '', firstName, lastName, email);
+      updateAccount(id.toString() + '', firstName, lastName, email, type);
     };
 </script>
 
@@ -74,7 +74,7 @@
 <br />
 <label for="accountTypeSelect">Account Type: </label>
 <br />
-<select class="selectpicker disabled" disabled id="accountTypeSelect" name="accountTypeSelect" multiple title="Add Types..." data-selected-text-format="count">
+<select class="selectpicker" id="accountTypeSelect" name="accountTypeSelect" multiple title="Add Types..." data-selected-text-format="count">
   <option value="1">Temporary</option>
   <option value="2">Student</option>
   <option value="4">Grader</option>

@@ -36,7 +36,7 @@ try {
 }
 
 setParam('isLoggedIn', false);
-setParam('availableNavLinks', GUEST_LINKS);
+setParam('availableNavLinks', getAvailableNavigationLinks());
 setParam('query', getParseQuery());
 
 function displayDebugAlert() {

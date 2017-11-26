@@ -20,6 +20,7 @@ class UpdateAccount extends Operation
         parent::registerParameter('firstName', 'string');
         parent::registerParameter('lastName', 'string');
         parent::registerParameter('email', 'string');
+        parent::registerParameter('type', 'integer');
 
         parent::registerValidation('validateAccountFields', array(
             'id',
@@ -28,6 +29,7 @@ class UpdateAccount extends Operation
             'email'
         ));
         parent::registerValidation('validateAccountExists', 'id');
+        parent::registerValidation('validateAccountType', 'type');
     }
 
     public function execute(array $args, string $accountID = null)
@@ -36,9 +38,10 @@ class UpdateAccount extends Operation
     }
 
     public static function updateAccount(string $id, string $firstName, string $lastName, string
-    $email)
+    $email, $type)
     {
         updateAccountInfo($id, $firstName, $lastName, $email);
+        updateAccountType($id, $type);
 
         return array(true);
     }

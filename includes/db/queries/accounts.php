@@ -127,6 +127,23 @@ function updateAccountInfoQuery(string $accountID,
 }
 
 /**
+ * Update the type field for given account
+ * @param string $accountID
+ * @param int    $type
+ */
+function updateAccountTypeQuery(string $accountID, int $type) {
+    $query = "UPDATE `accounts` "
+        . " SET `type`=:type "
+        . " WHERE `id`=:accountID;";
+    $sql = executeQuery(
+        $query, array(
+            array(':accountID', $accountID, PDO::PARAM_STR),
+            array(':type', $type, PDO::PARAM_INT)
+        )
+    );
+}
+
+/**
  * Builds set string and param array for use in updateAccountInfoQuery()
  * Only intended for that function
  *

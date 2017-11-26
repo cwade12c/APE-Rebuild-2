@@ -219,6 +219,15 @@ function updateAccountInfo(string $accountID,
 }
 
 /**
+ * To update the account type
+ * @param string $accountID
+ * @param int    $type
+ */
+function updateAccountType(string $accountID, int $type) {
+    updateAccountTypeQuery($accountID, $type);
+}
+
+/**
  * Create a temp student w/ given information
  * At-least 1 field must be filled in
  *

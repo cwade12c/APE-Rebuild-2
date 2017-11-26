@@ -1,0 +1,21 @@
+<script type="text/javascript">
+
+</script>
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#upcoming">Upcoming Exams</a></li>
+  <li><a data-toggle="tab" href="#current">Current Exams</a></li>
+  <li><a data-toggle="tab" href="#archived">Archived Exams</a></li>
+</ul>
+
+<div class="tab-content">
+  <div id="upcoming" class="tab-pane fade in active">
+      {{ include('components/upcoming-exams.twig.html') }}
+  </div>
+  <div id="current" class="tab-pane fade">
+      {{ include('components/current-exams.twig.html') }}
+  </div>
+  <div id="archived" class="tab-pane fade">
+      {{ include('components/archived-exams.twig.html') }}
+  </div>
+</div>

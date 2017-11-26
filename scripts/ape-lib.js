@@ -368,6 +368,12 @@ function getExamInformation(examId) {
     return callAPI('ExamDetails', params);
 }
 
+function getUpcomingExams() {
+    var params = {};
+
+    return callAPI('UpcomingExams', params);
+}
+
 function getStudentState(studentId) {
     var params = {
         studentId: studentId

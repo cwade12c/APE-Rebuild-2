@@ -1,6 +1,6 @@
 <script type="text/javascript">
     $(document).ready(function () {
-        var accountId = '00' + {{ accountId }};
+        var accountId = '{{ accountId }}';
         var promises = [];
 
         var accountInfo = getAccountInfo(accountId.toString());
@@ -13,7 +13,7 @@
           accountInfo = accountInfo.responseJSON.data;
           accountDetails = accountDetails.responseJSON.data;
 
-          setElementValueById('accountID', {{ accountId }});
+          setElementValueById('accountID', '{{ accountId }}');
           setElementValueById('firstName', accountInfo.firstName);
           setElementValueById('lastName', accountInfo.lastName);
           setElementValueById('email', accountInfo.email);
@@ -46,24 +46,21 @@
     });
 
     var save = function() {
-        /*var selections = getSelectValues('roomsSelect');
-        var rooms = [];
-        _.each(selections, function(currentSelection) {
-            var valSet = currentSelection.split('†');
-            rooms.push({
-                id: parseInt(valSet[0]),
-                seats: parseInt(valSet[1])
-            });
-        });
+      var id = getElementValue('accountID');
+      var firstName = getElementValue('firstName');
+      var lastName = getElementValue('lastName');
+      var email = getElementValue('email');
 
-        var locationName = getElementValue('name');
-        var reservedSeats = parseInt(getElementValue('reservedSeats'));
-        var limitedSeats = parseInt(getElementValue('limitedSeats'));
+/*      var selections = getSelectValues('accountTypeSelect');
 
-        var promises = [];
+      var type = 0;
+      _.each(selections, function(selection) {
+          type += parseInt(selection);
+      });
 
-        updateLocationName({{ locationId }}, locationName);
-        updateLocationRooms({{ locationId }}, reservedSeats, limitedSeats, rooms);*/
+      type = parseInt(type);*/
+
+      updateAccount(id.toString() + '', firstName, lastName, email);
     };
 </script>
 
@@ -77,7 +74,7 @@
 <br />
 <label for="accountTypeSelect">Account Type: </label>
 <br />
-<select class="selectpicker" id="accountTypeSelect" name="accountTypeSelect" multiple title="Add Types..." data-selected-text-format="count">
+<select class="selectpicker disabled" disabled id="accountTypeSelect" name="accountTypeSelect" multiple title="Add Types..." data-selected-text-format="count">
   <option value="1">Temporary</option>
   <option value="2">Student</option>
   <option value="4">Grader</option>

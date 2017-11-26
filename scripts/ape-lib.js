@@ -479,6 +479,23 @@ function createAccounts(accounts) {
     return callAPI('CreateAccounts', params, callbacks);
 }
 
+function updateAccount(id, firstName, lastName, email) {
+    var params = {
+        id: id,
+        firstName: firstName,
+        lastName: lastName,
+        email: email
+    };
+
+    var callbacks = {
+        success: function () {
+            notification('Successfully updated ' + firstName + ' ' + lastName + '. Please refresh the page to see the changes.', 'success');
+        }
+    };
+
+    return callAPI('UpdateAccount', params, callbacks);
+}
+
 function getLocations() {
     var params = {};
 

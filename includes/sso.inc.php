@@ -115,14 +115,14 @@ function checkFirstTimeLogin()
 
     if ($_SESSION['userType'] == "Student") {
         if (accountExists($id)) {
-            updateAccountInfo($id, $firstName, $lastName, $email);
+            //updateAccountInfo($id, $firstName, $lastName, $email);
         } else {
             createStudent($id, $firstName, $lastName, $email);
         }
     } else {
         if ($_SESSION['userType'] == "Teacher") {
             if (accountExists($id)) {
-                updateAccountInfo($id, $firstName, $lastName, $email);
+                //updateAccountInfo($id, $firstName, $lastName, $email);
             } else {
                 createAccount(
                     $id, ACCOUNT_TYPE_NONE, $firstName, $lastName, $email

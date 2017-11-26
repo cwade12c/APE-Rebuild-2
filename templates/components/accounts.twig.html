@@ -25,7 +25,7 @@
     var editAccount = function() {
         var table = $('#accounts-table').DataTable();
         var params = {
-            accountId: getSelectedRowByIndex(table, 0) + ''
+            accountId: getSelectedRowByIndex(table, 0).toString() + ''
         };
 
         loadModal('edit-account-modal', 'accountModal', params);

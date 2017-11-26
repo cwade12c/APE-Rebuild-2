@@ -94,16 +94,26 @@ function setSessionVariables()
 
 function getAvailableNavigationLinks()
 {
+    $links = array();
+
     if (accountIsStudent((string)$_SESSION['ewuid'])) {
-        return STUDENT_LINKS;
-    } elseif (accountIsGrader((string)$_SESSION['ewuid'])) {
-        return GRADER_LINKS;
-    } elseif (accountIsTeacher((string)$_SESSION['ewuid'])) {
-        return TEACHER_LINKS;
-    } elseif (accountIsAdmin((string)$_SESSION['ewuid'])) {
-        return ADMIN_LINKS;
+        $links["Student"] = STUDENT_LINKS;
     }
-    return GUEST_LINKS;
+    if (accountIsGrader((string)$_SESSION['ewuid'])) {
+        $links["Grader"] = GRADER_LINKS;
+    }
+    if (accountIsTeacher((string)$_SESSION['ewuid'])) {
+        $links["Teacher"] = TEACHER_LINKS;
+    }
+    if (accountIsAdmin((string)$_SESSION['ewuid'])) {
+        $links["Admin"] = ADMIN_LINKS;
+    }
+
+    if(empty($links)) {
+        $links["Guest"] = GUEST_LINKS;
+    }
+
+    return $links;
 }
 
 function checkFirstTimeLogin()

@@ -1,24 +1,29 @@
 <ul class="nav nav-sidebar">
-    {% for link in params.availableNavLinks %}
-        {% if link.children == true %}
+    <li>
+        <a class="homeLogo" href="home"><img src="sources/images/ewu_logo.png"></a>
+    </li>
+    {% if params.availableNavLinks|length > 1 %}
+        {% for key,linkSet in params.availableNavLinks %}
             <li>
-                <a data-toggle="collapse" href="#{{link.text|lower}}-tree">{{link.text}}</a>
+                <a data-toggle="collapse" href="#{{key}}-tree">{{ key }}</a>
             </li>
             <li>
-                <div id="{{link.text|lower}}-tree" class="panel-collapse collapse">
+                <div id="{{key}}-tree" class="panel-collapse collapse">
                     <ul class="nav nav-sidebar nav-child">
-                        {% for child in link.childLinks %}
-                            <li class="fa fa-calendar">
-                                <a href="{{child.link}}" title="{{child.title}}">{{child.text}}</a>
+                        {% for link in linkSet %}
+                            <li>
+                                <a href="{{ link.link }}" title="{{ link.title }}">{{ link.text }}</a>
                             </li>
                         {% endfor %}
                     </ul>
                 </div>
             </li>
-        {% else %}
+        {% endfor %}
+    {% else %}
+        {% for link in params.availableNavLinks %}
             <li>
-                <a href="{{link.url}}" title="{{link.title}}">{{link.text}}</a>
+                <a href="{{ link.url }}" title="{{ link.title }}">{{ link.text }}</a>
             </li>
-        {% endif %}
-    {% endfor %}
+        {% endfor %}
+    {% endif %}
 </ul>

@@ -479,23 +479,6 @@ function createAccounts(accounts) {
     return callAPI('CreateAccounts', params, callbacks);
 }
 
-function updateAccount(id, firstName, lastName, email) {
-    var params = {
-        id: id,
-        firstName: firstName,
-        lastName: lastName,
-        email: email
-    };
-
-    var callbacks = {
-        success: function () {
-            notification('Successfully updated ' + firstName + ' ' + lastName + '. Please refresh the page to see the changes.', 'success');
-        }
-    };
-
-    return callAPI('UpdateAccount', params, callbacks);
-}
-
 function getLocations() {
     var params = {};
 
@@ -822,8 +805,10 @@ function updateAttribute(elementId, attr, value) {
     $('#' + elementId).attr(attr, value);
 }
 
-function addRowToTable(tableElementId, tdCollection) {
-    var html = '<tr id="row-' + _.first(tdCollection) + '">';
+function addRowToTable(tableElementId, tdCollection, rowID) {
+    rowID = rowID || ("row-" + _.first(tdCollection));
+
+    var html = '<tr id="' + rowID + '">';
     _.each(tdCollection, function (currentTd) {
         html += ('<td>' + currentTd + '</td>');
     });
@@ -843,7 +828,7 @@ function addOptionToSelect(selectElementId, optionCollection) {
         else {
             options.push('<option value="' + currentOption.value + '">' + currentOption.text + '</option>');
         }
-    })
+    });
     $('#' + selectElementId).html(options.join(''));
 }
 

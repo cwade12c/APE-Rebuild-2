@@ -12,8 +12,7 @@ class Categories extends Operation
 {
     function __construct()
     {
-        parent::setAllowedAccountTypes(array(ACCOUNT_TYPE_STUDENT, ACCOUNT_TYPE_GRADER,
-            ACCOUNT_TYPE_TEACHER, ACCOUNT_TYPE_ADMIN));
+        parent::requireLogin(false);
 
         parent::registerExecution(array($this, "getCategories"));
     }

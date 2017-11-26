@@ -115,7 +115,7 @@ class ExamDetailsFull extends Operation
             $categoryID = $category['id'];
             $info = getCategoryInfo($categoryID);
             $category['name'] = $info['name'];
-            $category['points'] = $info['points'];
+            //$category['points'] = $info['points'];
         }
 
         return $categories;

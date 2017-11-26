@@ -40,6 +40,18 @@ class UpdateExamGrades extends Operation
         return parent::execute($args, $accountID);
     }
 
+    /**
+     * Update exam passing grade / categories
+     *
+     * @param int   $examID
+     * @param int   $passingGrade
+     * @param array $categories   list of categories to add/update
+     *                            entry format:
+     *                            'id'
+     *                            'points'
+     *
+     * @return array
+     */
     public static function updateExamGrades(int $examID, int $passingGrade,
         array $categories
     ) {

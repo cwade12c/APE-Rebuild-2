@@ -1,22 +1,24 @@
 <script type="text/javascript">
     var account, exam;
+    var examData;
     var selectedState;
     var selectedStart, selectedCutoff;
+    var currentCategories, availableCategories;
+    var selectedCategoryID;
 
     document.addEventListener("DOMContentLoaded",
         function () {
-            document.getElementById('editExamError').style.visibility = 'hidden';
-            document.getElementById('examSection').style.visibility = 'hidden';
-
             account = '{{accountID}}';
             exam = parseInt('{{examID}}');
+
+            hidePage();
 
             if (!isValidIntID(exam)) {
                 setError('Invalid exam ID');
                 return;
             }
 
-            getExamDetails();
+            refreshPage();
         }
     );
 
@@ -24,6 +26,16 @@
         errorLineNotification(msg);
         document.getElementById('labelEditExamError').textContent = msg;
         document.getElementById('editExamError').style.visibility = 'visible';
+    }
+
+    function hidePage() {
+        document.getElementById('editExamError').style.visibility = 'hidden';
+        document.getElementById('examSection').style.visibility = 'hidden';
+    }
+
+    function refreshPage() {
+        hidePage();
+        getExamDetails();
     }
 
     function getExamDetails() {
@@ -49,21 +61,57 @@
     function getDetailsSuccess(message, data) {
         logLine("Got exam details: " + message);
 
-        fillInfo(data);
+        examData = data;
+        getAvailableCategories();
 
         logLineNotification("Finished loading exam details");
     }
 
-    function fillInfo(data) {
+    function getAvailableCategories() {
+        var callbacks = {
+            success: getAvailableCategoriesSuccess,
+            failure: function (message) {
+                setError("Failed to get available categories: " + message);
+            },
+            error: function () {
+                setError("Error retrieving available categories, please try again later");
+            }
+        };
+        callAPI('Categories', {}, callbacks);
+    }
+
+    function getAvailableCategoriesSuccess(message, data) {
+        availableCategories = [];
+        _.each(data.categories,
+            function (category) {
+                var id = parseInt(category.id);
+                var name = category.name;
+                var points = parseInt(category.points);
+
+                availableCategories.push({
+                    id: id,
+                    name: name,
+                    points: points
+                });
+            });
+
+        fillInfo();
+    }
+
+    function fillInfo() {
+        data = examData;
+
         fillInfoBasics(data.examID, data.state, data.stateStr,
             data.isRegular, data.teacherID);
+
         fillInfoTimes(data.start, data.cutoff, data.length);
-        /*
+
+
         fillInfoCategoriesGrades(data.passingGrade, data.categories);
-        fillInfoLocation(data.locationID, data.locationName,
+        /*fillInfoLocation(data.locationID, data.locationName,
             data.maxSeats, data.reservedSeats, data.totalSeats,
-            data.takenSeats, data.rooms);
-        */
+            data.takenSeats, data.rooms);*/
+
         document.getElementById('examSection').style.visibility = 'visible';
     }
 
@@ -89,14 +137,8 @@
         start = start.date;
         cutoff = cutoff.date;
 
-        logLine('fill start: ' + start);
-        logLine('fill cutoff: ' + cutoff);
-
         start = new Date(Date.parse(start));
         cutoff = new Date(Date.parse(cutoff));
-
-        logLine('parsed start: ' + datetimeString(start));
-        logLine('parsed cutoff: ' + datetimeString(cutoff));
 
         selectedStart = start;
         selectedCutoff = cutoff;
@@ -151,62 +193,6 @@
         document.getElementById('pickerStart').value = times.start;
     }
 
-    function fillInfoCategoriesGrades(passingGrade, categories) {
-        passingGrade = parseInt(passingGrade);
-
-        _.forEach(categories,
-            function (category) {
-                var categoryName = '(' + category.id + ') ' + category.name;
-                var points = parseInt(category.points);
-
-                var row = [categoryName, points];
-
-                addRowToTable('categoriesTable', row);
-            });
-
-        document.getElementById('labelPassingGrade').textContent = passingGrade;
-    }
-
-    function fillInfoLocation(locationID, locationName, maxSeats,
-                              reservedSeats, totalSeats, takenSeats, rooms) {
-        locationID = parseInt(locationID);
-        if (!isValidInt(locationID)) {
-            document.getElementById('labelLocationError').textContent = 'No Location set';
-            document.getElementById('spanLocationIDName').style.visibility = 'hidden';
-            document.getElementById('labelLocationIDName').style.visibility = 'hidden';
-            document.getElementById('spanLocationSeatsTotal').style.visibility = 'hidden';
-            document.getElementById('labelLocationSeatsTotal').style.visibility = 'hidden';
-            document.getElementById('spanLocationSeatsReserved').style.visibility = 'hidden';
-            document.getElementById('labelLocationSeatsReserved').style.visibility = 'hidden';
-            document.getElementById('spanLocationSeatsMax').style.visibility = 'hidden';
-            document.getElementById('labelLocationSeatsMax').style.visibility = 'hidden';
-            document.getElementById('roomsTable').style.visibility = 'hidden';
-            return;
-        }
-
-        document.getElementById('spanLocationError').style.visibility = 'hidden';
-        document.getElementById('labelLocationError').style.visibility = 'hidden';
-
-
-        document.getElementById('labelLocationIDName').textContent = '(' + locationID + ') ' + locationName;
-
-        document.getElementById('labelLocationSeatsTotal').textContent = totalSeats;
-
-        document.getElementById('labelLocationSeatsReserved').textContent = reservedSeats;
-
-        document.getElementById('labelLocationSeatsMax').textContent = maxSeats;
-
-        _.each(rooms,
-            function (room) {
-                var id = room.id;
-                var name = room.name;
-                var seats = room.seats;
-                var roomName = '(' + id + ') ' + name;
-                var row = [roomName, seats];
-                addRowToTable('roomsTable', row);
-            });
-    }
-
     function updateTimePress() {
         var cutoff = selectedCutoff;
         var start = selectedStart;
@@ -238,6 +224,7 @@
             success: function (message, data) {
                 logLineNotification("Successfully updated exam time");
                 document.getElementById('buttonUpdateTimes').disabled = true;
+                refreshPage();
             },
             failure: function (message) {
                 errorLineNotification("Failed to update times: " + message);
@@ -248,6 +235,252 @@
         };
 
         return callAPI('UpdateExamTime', params, callbacks);
+    }
+
+    function fillInfoCategoriesGrades(passingGrade, categories) {
+        passingGrade = parseInt(passingGrade);
+
+        // wipe table
+        $('#categoriesTable').find("tr:gt(0)").remove();
+
+        currentCategories = [];
+
+        _.forEach(categories, addCategory);
+
+        setupAddRow();
+
+        document.getElementById('inputPassingGrade').onchange = gradesChange;
+        document.getElementById('inputPassingGrade').value = passingGrade;
+
+        document.getElementById('buttonUpdateGrades').disabled = true;
+    }
+
+    function addCategory(category) {
+        var id = parseInt(category.id);
+        var categoryName = '(' + id + ') ' + category.name;
+        var points = parseInt(category.points);
+
+        var pointsInputID = getInputCategoryPointsID(id);
+        var pointsInput = "<input type='number' class='form-control' id='" + pointsInputID + "' "
+            + " onchange='gradesChange()' " + " value='" + points + "' " + ">";
+
+        var removeButton = "<button class='btn btn-primary' onclick='removeCategoryRow( "
+            + id + ")' >Remove</button>";
+
+        var rowID = getCategoryRowID(id);
+        var row = [categoryName, pointsInput, removeButton];
+
+        addRowToTable('categoriesTable', row, rowID);
+
+        var categoryInfo = {
+            id: id,
+            points: points
+        };
+        currentCategories.push(categoryInfo);
+    }
+
+    function setupAddRow() {
+        addCategoryAddRow();
+    }
+
+    function addCategoryAddRow() {
+        var categorySelect = buildCategorySelect();
+        var pointsInput = "<input type='number' class='form-control' id='" + getAddCategoryPointsID() + "' >";
+        var addButton = "<button class='btn btn-primary' onclick='addCategoryPress()'>Add</button>";
+
+        var id = getAddRowID();
+        var row = [categorySelect, pointsInput, addButton];
+
+        addRowToTable('categoriesTable', row, id);
+
+        selectedCategoryID = 1;
+        var picker = $('#' + getSelectCategoryID());
+
+        picker.change(
+            function () {
+                var selectedID = $('#' + getSelectCategoryID()).find("option:selected").val();
+                selectedCategoryID = parseInt(selectedID);
+
+                document.getElementById(getAddCategoryPointsID()).value = availableCategories.find(
+                    function (category) {
+                        return category.id === selectedCategoryID;
+                    }).points;
+            }
+        );
+
+        picker.val(selectedCategoryID).trigger('change');
+        picker.selectpicker("refresh");
+    }
+
+    function buildCategorySelect() {
+        var id = getSelectCategoryID();
+        var categorySelect = "";
+
+        categorySelect += "<div class='form-group'>";
+        categorySelect += "<select class='form-control' id='" + id + "'>";
+
+        _.each(availableCategories,
+            function (category) {
+                categorySelect += "<option value='" + category.id + "'>(" + category.id + ") " + category.name + "</option>";
+            });
+
+        categorySelect += "</select>";
+        categorySelect += "</div>";
+
+        return categorySelect;
+    }
+
+    function addCategoryPress() {
+        var id = selectedCategoryID;
+        if (!isValidIntID(id)) {
+            errorLineNotification('Invalid category selection');
+            return;
+        }
+
+        var name = availableCategories.find(
+            function (category) {
+                return category.id === id;
+            }).name;
+
+        var inputID = getAddCategoryPointsID();
+        var points = parseInt(document.getElementById(inputID).value);
+        if (!isValidInt(points)) {
+            errorLineNotification('Invalid points value');
+            return;
+        }
+
+        var category = {
+            id: id,
+            name: name,
+            points: points
+        };
+        addCategory(category);
+
+        $('#' + getAddRowID()).remove();
+        addCategoryAddRow();
+        gradesChange();
+    }
+
+    function getInputCategoryPointsID(id) {
+        return 'inputCategoryPoints' + id;
+    }
+
+    function getCategoryRowID(id) {
+        return 'categoryRow' + id;
+    }
+
+    function getAddRowID() {
+        return 'categoryAddRow';
+    }
+
+    function getSelectCategoryID() {
+        return 'categoryAddSelect'
+    }
+
+    function getAddCategoryPointsID() {
+        return 'categoryAddPoints';
+    }
+
+    function removeCategoryRow(id) {
+        var rowID = getCategoryRowID(id);
+
+        $('#' + rowID).remove();
+
+        var index = currentCategories.findIndex(
+            function (category) {
+                return (category.id === id);
+            });
+
+        currentCategories.splice(index, 1);
+
+        gradesChange();
+    }
+
+    function gradesChange() {
+        document.getElementById('buttonUpdateGrades').disabled = false;
+    }
+
+    function updateGradesPress() {
+        var passingGrade = parseInt(document.getElementById('inputPassingGrade').value);
+        if (!isValidInt(passingGrade)) {
+            errorLineNotification('Invalid passing grade value');
+            return;
+        }
+
+        var categories = _.map(currentCategories,
+            function (category) {
+                var id = category.id;
+                var inputID = getInputCategoryPointsID(id);
+                var points = parseInt(document.getElementById(inputID).value);
+                return {id: id, points: points};
+            });
+
+        updateGrades(passingGrade, categories);
+    }
+
+    function updateGrades(passingGrade, categories) {
+        logLineNotification("Updating exam times...");
+
+        var params = {
+            examID: exam,
+            passingGrade: passingGrade,
+            categories: categories
+        };
+
+        var callbacks = {
+            success: function (message, data) {
+                logLineNotification("Successfully updated exam grades");
+                document.getElementById('buttonUpdateGrades').disabled = true;
+                refreshPage();
+            },
+            failure: function (message) {
+                errorLineNotification("Failed to update grades: " + message);
+            },
+            error: function () {
+                errorLineNotification("Error updating grades, please try again later");
+            }
+        };
+
+        return callAPI('UpdateExamGrades', params, callbacks);
+    }
+
+    function fillInfoLocation(locationID, locationName, maxSeats,
+                              reservedSeats, totalSeats, takenSeats, rooms) {
+        locationID = parseInt(locationID);
+        if (!isValidInt(locationID)) {
+            document.getElementById('labelLocationError').textContent = 'No Location set';
+            document.getElementById('spanLocationIDName').style.visibility = 'hidden';
+            document.getElementById('labelLocationIDName').style.visibility = 'hidden';
+            document.getElementById('spanLocationSeatsTotal').style.visibility = 'hidden';
+            document.getElementById('labelLocationSeatsTotal').style.visibility = 'hidden';
+            document.getElementById('spanLocationSeatsReserved').style.visibility = 'hidden';
+            document.getElementById('labelLocationSeatsReserved').style.visibility = 'hidden';
+            document.getElementById('spanLocationSeatsMax').style.visibility = 'hidden';
+            document.getElementById('labelLocationSeatsMax').style.visibility = 'hidden';
+            document.getElementById('roomsTable').style.visibility = 'hidden';
+            return;
+        }
+
+        document.getElementById('spanLocationError').style.visibility = 'hidden';
+        document.getElementById('labelLocationError').style.visibility = 'hidden';
+
+        document.getElementById('labelLocationIDName').textContent = '(' + locationID + ') ' + locationName;
+
+        document.getElementById('labelLocationSeatsTotal').textContent = totalSeats;
+
+        document.getElementById('labelLocationSeatsReserved').textContent = reservedSeats;
+
+        document.getElementById('labelLocationSeatsMax').textContent = maxSeats;
+
+        _.each(rooms,
+            function (room) {
+                var id = room.id;
+                var name = room.name;
+                var seats = room.seats;
+                var roomName = '(' + id + ') ' + name;
+                var row = [roomName, seats];
+                addRowToTable('roomsTable', row);
+            });
     }
 
 </script>
@@ -294,5 +527,20 @@
     <button class='btn btn-primary' onclick='updateTimePress()' id='buttonUpdateTimes'>Update Times</button>
     <br>
     <!-- grading / categories -->
+    <span class='label label-info'>Passing Grade</span>
+    <input type='number' class='form-control' id='inputPassingGrade'>
+    <br>
+    <table class='table table-striped' id='categoriesTable'>
+        <thead>
+        <tr>
+            <th>Category</th>
+            <th>Points</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <button class='btn btn-primary' onclick='updateGradesPress()' id='buttonUpdateGrades'>Update Grades</button>
+    <br>
     <!-- location -->
 </div>

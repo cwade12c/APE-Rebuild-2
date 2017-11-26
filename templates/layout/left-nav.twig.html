@@ -1,4 +1,7 @@
 <ul class="nav nav-sidebar">
+    <li>
+        <a class="homeLogo" href="home"><img src="sources/images/ewu_logo.png"></a>
+    </li>
     {% if params.availableNavLinks|length > 1 %}
         {% for key,linkSet in params.availableNavLinks %}
             <li>
@@ -17,6 +20,10 @@
             </li>
         {% endfor %}
     {% else %}
-        <a href="#">Single</a>//
+        {% for link in params.availableNavLinks %}
+            <li>
+                <a href="{{ link.url }}" title="{{ link.title }}">{{ link.text }}</a>
+            </li>
+        {% endfor %}
     {% endif %}
 </ul>

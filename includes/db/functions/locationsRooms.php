@@ -39,7 +39,9 @@ function locationExists(int $id)
  */
 function getLocations()
 {
-    return getLocationsQuery();
+    $results = getLocationsQuery();
+    $ids = array_column($results, 'id');
+    return $ids;
 }
 
 /**
@@ -353,12 +355,20 @@ function deleteRoom(int $id)
  *
  * @return array    associative array w/ information
  *                  'name' => location name
- *                  'reserved_seats' => number of reserved seats
- *                  'limited_seats' => limit of maximum seats
+ *                  'reservedSeats' => number of reserved seats
+ *                  'limitedSeats' => limit of maximum seats
  */
 function getLocationInformation(int $id)
 {
-    return getLocationInformationQuery($id);
+    $info = getLocationInformationQuery($id);
+
+    $info['reservedSeats'] = $info['reserved_seats'];
+    unset($info['reserved_seats']);
+
+    $info['limitedSeats'] = $info['limited_seats'];
+    unset($info['limited_seats']);
+
+    return $info;
 }
 
 /**
@@ -411,8 +421,8 @@ function getLocationRoomsMaxSeats(int $id)
 
     // check for limited seating
     $info = getLocationInformation($id);
-    if ($info['limited_seats'] > 0) {
-        return min($roomsMax, $info['limited_seats']);
+    if ($info['limitedSeats'] > 0) {
+        return min($roomsMax, $info['limitedSeats']);
     }
 
     return $roomsMax;

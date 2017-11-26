@@ -84,7 +84,7 @@ class ExamDetailsFull extends Operation
         if ($locationID != null) {
             $locationInfo = getLocationInformation($locationID);
             $locationName = $locationInfo['name'];
-            $reservedSeats = $locationInfo['reserved_seats'];
+            $reservedSeats = $locationInfo['reservedSeats'];
 
             $maxSeats = getLocationRoomsMaxSeats($locationID);
             $totalSeats = $maxSeats - $reservedSeats;

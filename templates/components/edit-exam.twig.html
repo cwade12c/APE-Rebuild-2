@@ -5,6 +5,8 @@
     var selectedStart, selectedCutoff;
     var currentCategories, availableCategories;
     var selectedCategoryID;
+    var availableLocations;
+    var selectedLocationID;
 
     document.addEventListener("DOMContentLoaded",
         function () {
@@ -106,11 +108,11 @@
 
         fillInfoTimes(data.start, data.cutoff, data.length);
 
-
         fillInfoCategoriesGrades(data.passingGrade, data.categories);
-        /*fillInfoLocation(data.locationID, data.locationName,
+
+        fillInfoLocation(data.locationID, data.locationName,
             data.maxSeats, data.reservedSeats, data.totalSeats,
-            data.takenSeats, data.rooms);*/
+            data.takenSeats, data.rooms);
 
         document.getElementById('examSection').style.visibility = 'visible';
     }
@@ -447,7 +449,9 @@
     function fillInfoLocation(locationID, locationName, maxSeats,
                               reservedSeats, totalSeats, takenSeats, rooms) {
         locationID = parseInt(locationID);
-        if (!isValidInt(locationID)) {
+        if (!isValidIntID(locationID)) {
+            selectedLocationID = 0;
+
             document.getElementById('labelLocationError').textContent = 'No Location set';
             document.getElementById('spanLocationIDName').style.visibility = 'hidden';
             document.getElementById('labelLocationIDName').style.visibility = 'hidden';
@@ -458,29 +462,112 @@
             document.getElementById('spanLocationSeatsMax').style.visibility = 'hidden';
             document.getElementById('labelLocationSeatsMax').style.visibility = 'hidden';
             document.getElementById('roomsTable').style.visibility = 'hidden';
-            return;
+        } else {
+            selectedLocationID = locationID;
+
+            document.getElementById('spanLocationError').style.visibility = 'hidden';
+            document.getElementById('labelLocationError').style.visibility = 'hidden';
+
+            document.getElementById('labelLocationIDName').textContent = '(' + locationID + ') ' + locationName;
+
+            document.getElementById('labelLocationSeatsTotal').textContent = totalSeats;
+
+            document.getElementById('labelLocationSeatsReserved').textContent = reservedSeats;
+
+            document.getElementById('labelLocationSeatsMax').textContent = maxSeats;
+
+            $('#roomsTable').find("tr:gt(0)").remove();
+
+            _.each(rooms,
+                function (room) {
+                    var id = room.id;
+                    var name = room.name;
+                    var seats = room.seats;
+                    var roomName = '(' + id + ') ' + name;
+                    var row = [roomName, seats];
+                    addRowToTable('roomsTable', row);
+                });
         }
 
-        document.getElementById('spanLocationError').style.visibility = 'hidden';
-        document.getElementById('labelLocationError').style.visibility = 'hidden';
+        getAvailableLocations();
 
-        document.getElementById('labelLocationIDName').textContent = '(' + locationID + ') ' + locationName;
+        document.getElementById('buttonUpdateLocation').disabled = true;
+    }
 
-        document.getElementById('labelLocationSeatsTotal').textContent = totalSeats;
+    function getAvailableLocations() {
+        var callbacks = {
+            success: function (message, data) {
+                availableLocations = [];
+                _.each(data.locations,
+                    function (location) {
+                        location.id = parseInt(location.id);
+                        availableLocations.push(location);
+                    });
+                setupLocationSelect();
+            },
+            failure: function (message) {
+                setError('Failed to get available locations: ' + message);
+            },
+            error: function () {
+                setError('Error getting available locations, please try again later');
+            }
+        };
+        callAPI('Locations', {}, callbacks);
+    }
 
-        document.getElementById('labelLocationSeatsReserved').textContent = reservedSeats;
+    function setupLocationSelect() {
+        if (!isValidIntID(selectedLocationID)) {
+            selectedLocationID = availableLocations[0].id;
+        }
 
-        document.getElementById('labelLocationSeatsMax').textContent = maxSeats;
+        var picker = $('#locationChangeSelect');
 
-        _.each(rooms,
-            function (room) {
-                var id = room.id;
-                var name = room.name;
-                var seats = room.seats;
-                var roomName = '(' + id + ') ' + name;
-                var row = [roomName, seats];
-                addRowToTable('roomsTable', row);
+        $('#locationChangeSelect option').remove();
+
+        _.each(availableLocations,
+            function (location) {
+                var locationOption = "<option value='" + location.id + "'>(" + location.id + ") " + location.name + "</option>";
+                picker.append(locationOption);
             });
+
+        picker.change(
+            function () {
+                var selectedID = picker.find("option:selected").val();
+                selectedLocationID = parseInt(selectedID);
+                document.getElementById('buttonUpdateLocation').disabled = false;
+            }
+        );
+
+        picker.val(selectedLocationID);
+        picker.selectpicker("refresh");
+    }
+
+    function updateLocationPress() {
+        logLineNotification("updating location...");
+
+        updateLocation(selectedLocationID)
+    }
+
+    function updateLocation(id) {
+        var params = {
+            examID: exam,
+            locationID: id
+        };
+
+        var callbacks = {
+            success: function (message, data) {
+                logLineNotification('Successfully updated');
+                refreshPage();
+            },
+            failure: function (message) {
+                errorLineNotification('Failed to update location, message: ' + message);
+            },
+            error: function () {
+                errorLineNotification('Error while updating location, please try again later');
+            }
+        };
+
+        return callAPI('UpdateExamLocation', params, callbacks);
     }
 
 </script>
@@ -543,4 +630,36 @@
     <button class='btn btn-primary' onclick='updateGradesPress()' id='buttonUpdateGrades'>Update Grades</button>
     <br>
     <!-- location -->
+    <span class='label label-danger' id='spanLocationError'>Error</span>
+    <label id='labelLocationError'>location error</label>
+    <br>
+    <span class='label label-info' id='spanLocationIDName'>Location</span>
+    <label id='labelLocationIDName'>location</label>
+    <br>
+    <span class='label label-info' id='spanLocationSeatsTotal'>Registration Seats Cap</span>
+    <label id='labelLocationSeatsTotal'>total</label>
+    <br>
+    <span class='label label-info' id='spanLocationSeatsReserved'>Reserved Seats</span>
+    <label id='labelLocationSeatsReserved'>reserved</label>
+    <br>
+    <span class='label label-info' id='spanLocationSeatsMax'>Max Seats</span>
+    <label id='labelLocationSeatsMax'>max</label>
+    <br>
+    <table class='table table-striped' id='roomsTable'>
+        <thead>
+        <tr>
+            <th>Room</th>
+            <th>Seats</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class='form-group'>
+        <select class='form-control' id='locationChangeSelect'>
+        </select>
+    </div>
+    <button class='btn btn-primary' onclick='updateLocationPress()' id='buttonUpdateLocation'>Update Location</button>
+    <br>
+    <br>
 </div>

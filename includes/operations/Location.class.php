@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Location class to retrieve information about a particular location
  *

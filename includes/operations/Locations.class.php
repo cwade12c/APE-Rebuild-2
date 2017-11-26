@@ -4,6 +4,7 @@
  * Locations class to retrieve all of the locations
  *
  * @author         Curran Higgins
+ * @author         Mathew McCain
  * @category       APE
  * @package        APE_includes
  * @subpackage     Operation
@@ -12,8 +13,7 @@ class Locations extends Operation
 {
     function __construct()
     {
-        parent::setAllowedAccountTypes(array(ACCOUNT_TYPE_STUDENT, ACCOUNT_TYPE_GRADER,
-            ACCOUNT_TYPE_TEACHER, ACCOUNT_TYPE_ADMIN));
+        parent::requireLogin(false);
 
         parent::registerExecution(array($this, "getLocations"));
     }
@@ -28,14 +28,14 @@ class Locations extends Operation
         $locationIDs = getLocations();
         $locations = array();
 
-        foreach($locationIDs as $locationID) {
-            $location = getLocationInformation($locationID['id']);
-            $location['id'] = $locationID['id'];
+        foreach ($locationIDs as $locationID) {
+            $location = getLocationInformation($locationID);
+            $location['id'] = $locationID;
 
             $roomsInformation = getLocationRooms($locationID['id']);
             $rooms = array();
 
-            foreach($roomsInformation as $currentRoomInformation) {
+            foreach ($roomsInformation as $currentRoomInformation) {
                 $room = getRoomInformation($currentRoomInformation['id']);
                 $room['id'] = $currentRoomInformation['id'];
                 $room['seats'] = $currentRoomInformation['seats'];

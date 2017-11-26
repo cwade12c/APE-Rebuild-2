@@ -499,7 +499,7 @@ function examRegistrationSpaceAvailable(int $examID)
 {
     $info = getLocationInformation($examID);
     $maxSeats = getLocationRoomsMaxSeats($info['locationID']);
-    $reservedSeats = $info['reserved_seats'];
+    $reservedSeats = $info['reservedSeats'];
 
     $maxSeats -= $reservedSeats;
     $registeredAmount = getAssignedSeatCount($examID);

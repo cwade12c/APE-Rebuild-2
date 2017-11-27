@@ -1,9 +1,8 @@
 <script type="text/javascript">
 
-    document.addEventListener("DOMContentLoaded",
-        function () {
-            document.getElementById('examSearchError').style.visibility = 'hidden';
-            document.getElementById('examSearchResults').style.visibility = 'hidden';
+    $(function () {
+            document.getElementById('{% if tableID is defined %}{{tableID}}-error{% else %}examSearchError{% endif %}').style.visibility = 'hidden';
+            document.getElementById('{% if tableID is defined %}{{tableID}}-results{% else %}examSearchResults{% endif %}').style.visibility = 'hidden';
 
             /*
             search parameters
@@ -49,8 +48,8 @@
 
     function setError(msg) {
         errorLineNotification(msg);
-        document.getElementById('examSearchErrorLabel').textContent = msg;
-        document.getElementById('examSearchError').style.visibility = 'visible';
+        document.getElementById('{% if tableID is defined %}{{tableID}}-error-label{% else %}examSearchErrorLabel{% endif %}').textContent = msg;
+        document.getElementById('{% if tableID is defined %}{{tableID}}-error{% else %}examSearchError{% endif %}').style.visibility = 'visible';
     }
 
     function searchExamsSuccess(message, data) {
@@ -64,7 +63,8 @@
         }
 
         fillInfo(exams);
-        document.getElementById('examSearchResults').style.visibility = 'visible';
+        initializeDataTableById('{% if tableID is defined %}{{tableID}}{% else %}examsTable{% endif %}');
+        document.getElementById('{% if tableID is defined %}{{tableID}}-results{% else %}examSearchResults{% endif %}').style.visibility = 'visible';
     }
 
     function searchExamsFailure(message) {
@@ -77,7 +77,7 @@
 
     function fillInfo(exams) {
         // wipe table
-        $('#examsTable').find("tr:gt(0)").remove();
+        $('{% if tableID is defined %}{{tableID}}{% else %}examsTable{% endif %}').find("tr:gt(0)").remove();
 
         _.each(exams, fillExam);
     }
@@ -106,7 +106,7 @@
         }
 
         var $row = [examLink, stateStr, times.cutoff, times.times, locationName, space];
-        addRowToTable('examsTable', $row);
+        addRowToTable('{% if tableID is defined %}{{tableID}}{% else %}examsTable{% endif %}', $row);
     }
 
     function validSeatAmount(seats) {
@@ -115,13 +115,13 @@
 
 </script>
 
-<div class='row' id='examSearchError'>
+<div class='row' id='{% if tableID is defined %}{{tableID}}-error{% else %}examSearchError{% endif %}'>
     <span class='label label-danger'>Error</span>
-    <label id='examSearchErrorLabel'></label>
+    <label id='{% if tableID is defined %}{{tableID}}-error-label{% else %}examSearchErrorLabel{% endif %}'></label>
 </div>
 
-<div class='row' id='examSearchResults'>
-    <table class='table table-striped' id='examsTable'>
+<div class='row' id='{% if tableID is defined %}{{tableID}}-results{% else %}examSearchResults{% endif %}'>
+    <table class='table table-striped' id='{% if tableID is defined %}{{tableID}}{% else %}examsTable{% endif %}'>
         <thead>
         <tr>
             <th><span class='label label-info'>Exam</span></th>

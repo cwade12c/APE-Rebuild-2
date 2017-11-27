@@ -20,22 +20,8 @@ DEFINE("GUEST_LINKS", array(
 
 //<editor-fold desc="Student Links">
 DEFINE("STUDENT_LINKS", array(
-   array(
-        'url' => '',
-        'title' => '',
-        'text' => 'Apes',
-        'children' => true,
-        'childLinks' => array(
-            array(
-                'url' => 'viewUpcomingApes.php',
-                'title' => 'View Upcoming Apes',
-                'text' => 'Upcoming'
-            )
-        )
-    ),
-
     array(
-        'url' => 'grades.php',
+        'url' => 'myGrades',
         'title' => 'View Your APE Grades',
         'text' => 'Grades'
     )
@@ -44,20 +30,6 @@ DEFINE("STUDENT_LINKS", array(
 
 //<editor-fold desc="Grader Links">
 DEFINE("GRADER_LINKS", array(
-    array(
-        'url' => '',
-        'title' => '',
-        'text' => 'Apes',
-        'children' => true,
-        'childLinks' => array(
-            array(
-                'url' => 'viewUpcomingApes.php',
-                'title' => 'View Upcoming Apes',
-                'text' => 'Upcoming'
-            )
-        )
-    ),
-
     array(
         'url' => 'grading',
         'title' => 'Assigned Exam Categories',
@@ -70,55 +42,9 @@ DEFINE("GRADER_LINKS", array(
 //<editor-fold desc="Teacher Links">
 DEFINE("TEACHER_LINKS", array(
     array(
-        'url' => '',
-        'title' => '',
-        'text' => 'Apes',
-        'children' => true,
-        'childLinks' => array(
-            array(
-                'url' => 'viewUpcomingApes.php',
-                'title' => 'View Upcoming Apes',
-                'text' => 'Upcoming'
-            ),
-
-            array(
-                'url' => 'teacherExams.php',
-                'title' => 'Teachers Exams',
-                'text' => 'My exams'
-            ),
-
-            array(
-                'url' => 'archivedExams.php',
-                'title' => 'View Archived Apes',
-                'text' => 'Archived'
-            ),
-
-            array(
-                'url' => 'examSearch.php',
-                'title' => 'Exam Search',
-                'text' => 'Search Exams'
-            )
-        )
-    ),
-
-    array(
-        'url' => '',
-        'title' => '',
-        'text' => 'Tools',
-        'children' => true,
-        'childLinks' => array(
-            array(
-                'url' => 'reports.php',
-                'title' => 'Generate Reports',
-                'text' => 'Reports'
-            ),
-
-            array(
-                'url' => 'registerClass.php',
-                'title' => 'Register multiple students for an APE',
-                'text' => 'Register Class'
-            )
-        )
+        'url' => 'reports',
+        'title' => 'Generate Reports',
+        'text' => 'Reports'
     )
 ));
 //</editor-fold>
@@ -144,23 +70,9 @@ DEFINE("ADMIN_LINKS", array(
     ),
 
     array(
-        'url' => '',
-        'title' => '',
-        'text' => 'Tools',
-        'children' => true,
-        'childLinks' => array(
-            array(
-                'url' => 'reports.php',
-                'title' => 'Generate Reports',
-                'text' => 'Reports'
-            ),
-
-            array(
-                'url' => 'registerClass.php',
-                'title' => 'Register multiple students for an APE',
-                'text' => 'Register Class'
-            )
-        )
+        'url' => 'reports',
+        'title' => 'Generate Reports',
+        'text' => 'Reports'
     )
 ));
 //</editor-fold>

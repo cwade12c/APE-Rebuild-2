@@ -1,5 +1,7 @@
 <script type="text/javascript">
     var account, exam;
+    var registeredAccounts, availableAccounts;
+    var accountSearchPrefix = 'students';
 
     document.addEventListener("DOMContentLoaded",
         function () {
@@ -22,12 +24,136 @@
         document.getElementById('registerStudentsSection').style.visibility = 'hidden';
     }
 
+    function showPage() {
+        document.getElementById('registerStudentsSection').style.visibility = 'visible';
+    }
+
     function refreshPage() {
         hidePage();
 
         document.getElementById('labelExamID').textContent = 'Exam #' + exam;
 
-        document.getElementById('registerStudentsSection').style.visibility = 'visible';
+        getRegisteredAccounts();
+    }
+
+    function getRegisteredAccounts() {
+        var params = {
+            id: exam
+        };
+
+        var callbacks = {
+            success: function (message, data) {
+                logLine('Got registeredAccounts');
+                registeredAccounts = data.students;
+                setupAccountSearch();
+            },
+            failure: function (message) {
+                setError('Failed to get currently registered accounts: ' + message);
+            },
+            error: function () {
+                setError('Error getting currently registerd accounts, please try again later');
+            }
+        };
+
+        // registeredAccounts
+        return callAPI('ExamRegistrations', params, callbacks);
+    }
+
+    function setupAccountSearch() {
+        accountSearchSetFilter(accountSearchPrefix, studentSearchFilter);
+        accountSearchSetBuildExtraColumn(accountSearchPrefix, buildStudentRowExtraColumn);
+
+        // load up account search
+        accountSearchRefresh(accountSearchPrefix,
+            function () {
+                availableAccounts = accountSearchGetAccounts(accountSearchPrefix);
+                accountSearchFilterRefresh(accountSearchPrefix);
+            });
+    }
+
+    function studentSearchFilter(account) {
+        // TODO: check student state (has passed, is blocked, etc)
+        return false;
+    }
+
+    function buildStudentRowExtraColumn(account) {
+        // build register button
+        var registered = studentIsRegistered(account.id);
+        var buttonText = registered ? 'Unregister' : 'Register';
+        var buttonOnClick = registered ? 'unregisterStudent' : 'registerStudent';
+
+        return "<button class='btn btn-primary' onclick='" + buttonOnClick + "(\"" + account.id + "\")' >" + buttonText + "</button>";
+    }
+
+    function registerStudent(accountID) {
+        logLine('register student: ' + accountID);
+
+        var params = {
+            examID: exam,
+            studentID: accountID
+        };
+
+        var callbacks = {
+            success: function (message, data) {
+                logLineNotification('Successfully registered student');
+
+                var account = availableAccounts[accountID];
+                registeredAccounts.push(account);
+
+                accountSearchFilterRefresh(accountSearchPrefix);
+            },
+            failure: function (message) {
+                errorLineNotification('Failed to register student: ' + message);
+            },
+            error: function () {
+                errorLineNotification('Error while registering student, please try again later');
+            }
+        };
+
+        return callAPI('RegisterStudentForExam', params, callbacks);
+    }
+
+    function unregisterStudent(accountID) {
+        logLine('unregister student: ' + accountID);
+
+        var params = {
+            examID: exam,
+            studentID: accountID
+        };
+
+        var callbacks = {
+            success: function (message, data) {
+                logLineNotification('Successfully unregistered student');
+
+                var index = registeredAccounts.findIndex(
+                    function (account) {
+                        return (account.id === accountID);
+                    });
+
+                registeredAccounts.splice(index, 1);
+
+                accountSearchFilterRefresh(accountSearchPrefix);
+            },
+            failure: function (message) {
+                errorLineNotification('Failed to register student: ' + message);
+            },
+            error: function () {
+                errorLineNotification('Error while registering student, please try again later');
+            }
+        };
+
+        return callAPI('UnregisterStudentFromExam', params, callbacks);
+    }
+
+    function studentIsRegistered(accountID) {
+        var isRegistered = false;
+        _.each(registeredAccounts,
+            function (account) {
+                if (account.id === accountID) {
+                    isRegistered = true;
+                }
+            });
+        return isRegistered;
     }
 
     function setError(msg) {
@@ -47,10 +173,7 @@
     <button class='btn btn-primary' onclick="location.href='examDetails?exam={{examID}}'" >Exam Details</button>
     <br>
     <span class='label label-info' id='labelExamID'>Exam #ID</span>
-    <br>
-    <span class='label label-info'>Account Search component</span>
-    <br>
     <div id='search-students-component'>
-        {% include 'components/account-search.twig.html' with {'prefix': 'students', 'types': [ 'ACCOUNT_TYPE_STUDENT', 'ACCOUNT_TYPE_GRADER' ]} %}
+        {% include 'components/account-search.twig.html' with {'prefix': 'students', 'types': [ 'ACCOUNT_TYPE_STUDENT' ]} %}
     </div>
 </div>

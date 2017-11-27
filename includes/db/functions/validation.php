@@ -981,6 +981,23 @@ function validateExamAllowsRegistration(int $examID)
     return true;
 }
 
+function validateExamAllowsUnregistrations(int $examID)
+{
+    $examState = getExamState($examID);
+    if (!doesExamStateAllowUnregistration($examState)) {
+        // throw exception
+        throw new InvalidArgumentException(
+            sprintf(
+                "Invalid exam(%d) state(%s), does not allow unregistration",
+                $examID,
+                $examState
+            )
+        );
+    }
+
+    return true;
+}
+
 /**
  * Validate the student is registered for the given exam
  * Throws InvalidArgumentException if there is an issue

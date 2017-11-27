@@ -4,6 +4,7 @@
  * Operation for an Admin||Teacher to register a Student for an Exam
  *
  * @author         Curran Higgins
+ * @author         Mathew McCain
  * @category       APE
  * @package        APE_includes
  * @subpackage     Operation
@@ -28,7 +29,7 @@ class RegisterStudentForExam extends Operation
         );
 
         parent::registerValidation("validateExamIDExists", "examID");
-        parent::registerValidation("validateExamAllowsRegistration", "examID");
+        parent::registerValidation("doesExamStateAllowForcedRegistration", "examID");
         parent::registerValidation("validateExamRoomAvailable", "examID");
         parent::registerValidation('validateStudentIDCanRegister', 'studentID');
     }

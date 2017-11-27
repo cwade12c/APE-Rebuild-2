@@ -7,6 +7,16 @@ function initCAS()
     phpCAS::handleLogoutRequests(true, CAS_HOSTS);
 }
 
+function initApi()
+{
+    if(phpCAS::isAuthenticated()) {
+        $_SESSION['username'] = phpCAS::getUser();
+    }
+    else {
+        $_SESSION['username'] = 'Guest';
+    }
+}
+
 function enforceAuthentication()
 {
     phpCAS::forceAuthentication();

@@ -126,61 +126,15 @@ DEFINE("TEACHER_LINKS", array(
 //<editor-fold desc="Admin Links">
 DEFINE("ADMIN_LINKS", array(
     array(
-        'url' => '',
-        'title' => '',
-        'text' => 'Apes',
-        'children' => true,
-        'childLinks' => array(
-            array(
-                'url' => 'manageApes.php',
-                'title' => 'Manage Apes',
-                'text' => 'Manage'
-            ),
-
-            array(
-                'url' => 'viewUpcomingApes.php',
-                'title' => 'View Upcoming Apes',
-                'text' => 'Upcoming'
-            ),
-
-            array(
-                'url' => 'archivedExams.php',
-                'title' => 'View Archived Apes',
-                'text' => 'Archived'
-            ),
-
-            array(
-                'url' => 'examSearch.php',
-                'title' => 'Exam Search',
-                'text' => 'Search Exams'
-            )
-        )
+        'url' => 'exams',
+        'title' => 'Manage Exams',
+        'text' => 'Exams'
     ),
 
     array(
-        'url' => '',
-        'title' => '',
-        'text' => 'Grades',
-        'children' => true,
-        'childLinks' => array(
-            array(
-                'url' => 'gradeExams.php',
-                'title' => 'Grade Exams',
-                'text' => 'Grade Exams'
-            ),
-
-            array(
-                'url' => 'gradeSubmissions.php',
-                'title' => 'View Your Submissions',
-                'text' => 'Submitted Grades'
-            )
-        )
-    ),
-
-    array(
-        'url' => 'manageUsers.php',
+        'url' => 'accounts',
         'title' => 'Manage Users',
-        'text' => 'Users'
+        'text' => 'Accounts'
     ),
 
     array(

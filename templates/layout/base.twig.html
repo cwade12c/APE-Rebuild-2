@@ -55,25 +55,25 @@
             {{ include('layout/top-nav.twig.html') }}
         </div>
         <div class="row">
+            <div class="col-sm-1">
             {% if actions is defined %}
-                <div class="col-sm-1">
-                    <div class="btn-group-vertical action-bar" role="group" aria-label="...">
-                        {% for action in actions %}
-                            {% if action.type == constant('ACTION_CREATE') %}
-                                <button class="{{ action.type }}" id="action-create" onclick="{{ action.funcSignature}}">{{ action.text | raw}}</button>
-                            {% elseif action.type == constant('ACTION_UPDATE') %}
-                                <button class="{{ action.type }} action-select disabled" disabled id="action-update" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
-                            {% elseif action.type == constant('ACTION_DELETE') %}
-                                <button class="{{ action.type }} action-select disabled" disabled id="action-delete" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
-                            {% elseif action.type == constant('ACTION_ARCHIVE') %}
-                                <button class="{{ action.type }} action-select disabled" disabled id="action-archive" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
-                            {% else %}
-                                <button class="{{ action.type }} action-select" id="action-generic" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
+                <div class="btn-group-vertical action-bar" role="group" aria-label="...">
+                    {% for action in actions %}
+                        {% if action.type == constant('ACTION_CREATE') %}
+                            <button class="{{ action.type }}" id="action-create" onclick="{{ action.funcSignature}}">{{ action.text | raw}}</button>
+                        {% elseif action.type == constant('ACTION_UPDATE') %}
+                            <button class="{{ action.type }} action-select disabled" disabled id="action-update" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
+                        {% elseif action.type == constant('ACTION_DELETE') %}
+                            <button class="{{ action.type }} action-select disabled" disabled id="action-delete" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
+                        {% elseif action.type == constant('ACTION_ARCHIVE') %}
+                            <button class="{{ action.type }} action-select disabled" disabled id="action-archive" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
+                        {% else %}
+                            <button class="{{ action.type }} action-select" id="action-generic" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             {% endif %}
+            </div>
             <div class="col-sm-10 main">
 {#                <input id="datetimepicker" type="text" >
                 <a onclick="getExamInformation(10)">Get Exam Information</a>

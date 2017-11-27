@@ -1190,6 +1190,23 @@ function loadModal(modalName, modalId, modalParams) {
 }
 
 /**
+ * Includes a Twig component with optional parameters and injects it into the
+ * element containing the specified elementId
+ * @param componentName The filename (no extension) of the component located in ./templates/components/
+ * @param elementId The id associated with the element where you want the component to go
+ * @param componentParams An optional Object containing parameters that you want passed to the Twig component
+ */
+function loadComponent(componentName, elementId, componentParams) {
+    var query = 'componentName=' + componentName;
+
+    _.forEach(componentParams, function (value, key) {
+        query += '&' + key + '=' + value;
+    });
+
+    $('#' + elementId).load('api/component.php?' + query);
+}
+
+/**
  * Return all of the selected values from a <select multiple></select> ele
  * by id value
  * @param selectId The id value associated with the select element

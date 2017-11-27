@@ -11,6 +11,7 @@
     {#<title>Home</title>#}
 
     <!-- accountID : {{ params.id }} -->
+    <!-- multiplePermissions : {% if params.availableNavLinks|length > 1 %} true {% else %} false {% endif %} -->
 
     <link rel="stylesheet" type="text/css" href="vendor/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css">
@@ -40,7 +41,7 @@
     <script>
       $(document).ready(function () {
           /*Manipulate the DOM to choose the active link*/
-          //activeLink();
+          activeLink();
           /*setDateTimePicker('datetimepicker');*/
       });
     </script>

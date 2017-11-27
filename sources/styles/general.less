@@ -69,13 +69,17 @@ body {
         background-color: #ffffff;
         color: #2D3B45;
       }
-      &:active {
-        background-color: #ffffff;
-        color: #2D3B45;
-      }
       color: #f8f8f8;
       padding-right: 30px;
       padding-left: 30px;
+    }
+    .active-link {
+      a {
+        background-color: #ffffff;
+        color: #2D3B45;
+        padding-right: 30px;
+        padding-left: 30px;
+      }
     }
   }
 
@@ -189,4 +193,15 @@ body {
   .table;
   .table-striped;
   .table-bordered;
+}
+
+.active-link {
+  background-color: #FFF;
+  a {
+    color: #337ab7
+  }
+}
+
+.active-link-set {
+  /* optionally style this up - this is the collapsable link set, like "Admin", "Student", "Grader", etc. */
 }

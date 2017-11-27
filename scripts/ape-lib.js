@@ -333,7 +333,7 @@ function getAccountProperties() {
 function getAccountProperty(propertyName) {
     var properties = getAccountProperties();
     if (_.has(properties, propertyName)) {
-        return properties[propertyName]
+        return properties[propertyName];
     }
 
     return null;
@@ -980,15 +980,17 @@ function notification(message, type, url, canClose) {
  */
 function activeLink() {
     var url = window.location.href.split('/');
+    var multiplePermissions = getAccountProperty('multiplePermissions');
+
     url = url[url.length - 1].split('?')[0];
 
-    $('ul.nav a[href="' + url + '"]').parent().addClass('active');
+    $('ul.nav a[href="' + url + '"]').parent().addClass('active-link');
 
-    var targetUrl = $('ul.nav a').filter(function () {
-        return url.indexOf(this.href);
-    }).first();
-
-    targetUrl.parent().addClass('active').parent().parent().addClass('active');
+    if(url !== 'home' && multiplePermissions === 'true') {
+        $('ul.nav a[href="' + url + '"]').parent().parent().parent().attr('class', 'panel-collapse collapse in');
+        $('ul.nav a[href="' + url + '"]').parent().parent().parent().attr('aria-expanded', 'true');
+        $('ul.nav a[href="' + url + '"]').parent().parent().parent().parent().prev().addClass('active-link-set');
+    }
 }
 
 $.fn.getComments = function () {

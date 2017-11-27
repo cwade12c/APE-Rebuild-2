@@ -220,10 +220,12 @@ function updateAccountInfo(string $accountID,
 
 /**
  * To update the account type
+ *
  * @param string $accountID
  * @param int    $type
  */
-function updateAccountType(string $accountID, int $type) {
+function updateAccountType(string $accountID, int $type)
+{
     updateAccountTypeQuery($accountID, $type);
 }
 
@@ -444,18 +446,28 @@ function getAllAccounts()
     return getAccountsQuery();
 }
 
-// get all accounts by minimum type
-
 /**
- * @param int $type
- *
  * Get all information of all accounts belonging to a specified type
+ *
+ * @param int $type
  *
  * @return mixed
  */
 function getAllAccountsByType(int $type)
 {
     return getFullAccountInformationByTypeQuery($type);
+}
+
+/**
+ * get all accounts that have the given type
+ *
+ * @param int $type
+ *
+ * @return mixed
+ */
+function getAllAccountsWithType(int $type)
+{
+    return getFullAccountInformationWithTypeQuery($type);
 }
 
 /**
@@ -508,15 +520,6 @@ function getAllAdmins()
     return getAdminsQuery();
 }
 
-// search accounts by given identification exactly (including null)
-/// all identification used
-
-// search accounts by given identification (ignoring null)
-/// all identification used, if ignore if null
-
-// search accounts by given identification partial (any matches)
-/// match only 1 piece of identification
-
 /**
  * Check to see if the minimum number of admins exist as defined in the config
  * file
@@ -541,4 +544,39 @@ function hashAccountID(string $accountID)
     $hash = hash(ACCOUNT_ID_HASH_ALGORITHM, $accountID);
     $hash = substr($hash, 0, ACCOUNT_ID_HASH_LENGTH);
     return $hash;
+}
+
+/**
+ * Check if account type valid
+ * Currently limited to just checking if positive
+ *
+ * @param int $type
+ *
+ * @return bool
+ */
+function validAccountType(int $type)
+{
+    return $type > ACCOUNT_TYPE_NONE;
+}
+
+/**
+ * Check if type is a valid single account type
+ * Or temp student
+ *
+ * @param int $type
+ *
+ * @return bool
+ */
+function validSingleAccountType(int $type)
+{
+    switch ($type) {
+        case ACCOUNT_TYPE_STUDENT:
+        case ACCOUNT_TYPE_GRADER:
+        case ACCOUNT_TYPE_TEACHER:
+        case ACCOUNT_TYPE_ADMIN:
+        case (ACCOUNT_TYPE_TEMP + ACCOUNT_TYPE_STUDENT):
+            return true;
+        default:
+            return false;
+    }
 }

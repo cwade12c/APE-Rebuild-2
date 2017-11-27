@@ -1455,4 +1455,20 @@ function minutesAsMS(min) {
     return (min * (1000 * 60));
 }
 
+/**
+ * From https://stackoverflow.com/a/7394787
+ * To decode HTML strings, from twig usually
+ *
+ * @param html
+ */
+function decodeHtml(html) {
+    var tempHTML = document.createElement("textarea");
+    tempHTML.innerHTML = html;
+
+    var decoded = tempHTML.value;
+    tempHTML.remove();
+
+    return decoded;
+}
+
 //</editor-fold>

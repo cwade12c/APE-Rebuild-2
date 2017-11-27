@@ -1,0 +1,83 @@
+<script type="text/javascript">
+
+    document.addEventListener("DOMContentLoaded",
+        function () {
+            var prefix = '{{prefix}}';
+            hideAccountSearchPage(prefix);
+
+            var types = '{{types|json_encode()}}';
+
+            if (!searchParamAvailable('prefix', prefix) || !searchParamAvailable('account types', types)) {
+                return;
+            }
+
+            var typesValues = parseGetAccountTypes(types);
+            if (_.isUndefined(typesValues) || _.isEmpty(typesValues)) {
+                setSearchError(prefix, "Invalid account types value: " + types);
+                return;
+            }
+
+            // setup global store for this crap (prefix / types)
+        }
+    );
+
+    function hideAccountSearchPage(prefix) {
+        document.getElementById(prefix + "accountSearchError").style.visibility = 'hidden';
+        document.getElementById(prefix + "accountSearch").style.visibility = 'hidden';
+    }
+
+    function setSearchError(prefix, msg) {
+        errorLineNotification(msg);
+        document.getElementById(prefix + 'accountSearchErrorLabel').textContent = msg;
+        document.getElementById(prefix + 'accountSearchError').style.visibility = 'visible';
+    }
+
+    function searchParamAvailable(str, v) {
+        if (_.isUndefined(v) || _.isEmpty(v)) {
+            setError("Missing search parameter: " + str);
+            return false;
+        }
+        return true;
+    }
+
+    function parseGetAccountTypes(types) {
+        try {
+            typesHTMLDecode = decodeHtml(types);
+            parsedTypes = JSON.parse(typesHTMLDecode);
+        }catch(e) {
+            errorLine('failed to parse account types: ' + e);
+            return undefined;
+        }
+
+        accountTypes = [];
+        _.each(parsedTypes,
+            function (type) {
+                var parsedType = parseAccountType(type);
+                accountTypes.push(parsedType);
+            });
+
+        return accountTypes;
+    }
+
+</script>
+
+<div class='row' id='{{prefix}}accountSearchError'>
+    <span class='label label-danger'>Error</span>
+    <label id='{{prefix}}accountSearchErrorLabel'></label>
+</div>
+
+<div class='row' id='{{prefix}}accountSearch'>
+    <!-- search/filter controls -->
+
+    <!-- accounts table -->
+    <table class='table table-striped' id='{{prefix}}accountsTable'>
+        <thead>
+        <tr>
+            <th><span class='label label-info'>ID</span></th>
+            <th><span class='label label-info'>Name</span></th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>

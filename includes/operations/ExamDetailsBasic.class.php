@@ -8,7 +8,7 @@
  * @package        APE_includes
  * @subpackage     Operation
  */
-class ExamDetailsBasic extends Operation
+class ExamDetails extends Operation
 {
     function __construct()
     {
@@ -44,7 +44,6 @@ class ExamDetailsBasic extends Operation
             'length'       => $info['length'],
             'passingGrade' => $info['passingGrade'],
             'state'        => $info['state'],
-            'stateStr'     => examStateToString($info['state']),
             'isRegular'    => $isRegular,
             'teacherID'    => $teacherID
         );

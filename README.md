@@ -107,6 +107,8 @@ a2enmod rewrite; service apache2 restart
 
 Adding a new page consists of:
 * Creating a new php file (pages/pageName.php)
+    * Include `config.php`
+    * Invoke `enforceAuthentication();`
     * Create a `$parameters` array to send extra variables to Twig template (can be an empty array)
     * Invoke `renderPage("pages/pageName.twig.html", $parameters);`
 * Creating a new Twig file in `templates/pages`
@@ -143,6 +145,10 @@ Adding a new page consists of:
 * Create `pages/createAccount.php`
     ```
     <?php
+    
+    include("config.php");
+    enforceAuthentication();
+    
     $parameters = array();
     renderPage("pages/create-account.twig.html", $parameters);
     ```

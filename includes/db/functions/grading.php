@@ -662,20 +662,9 @@ function determineExamGrade(int $pointsToPass, array $categoryPoints)
 function createStudentExamGradeEntry(int $examID, string $studentID,
     int $points, bool $passed
 ) {
-    createStudentExamGradeQuery($examID, $studentID, $points, $passed);
-}
+    // TODO: validation
 
-/**
- * Set student exam grade
- *
- * @param int    $examID
- * @param string $studentID
- * @param int    $points
- * @param bool   $passed
- */
-function setStudentExamGrade(int $examID, string $studentID, int $points, bool $passed)
-{
-    setStudentExamGradeQuery($examID, $studentID, $points, $passed);
+    createStudentExamGradeQuery($examID, $studentID, $points, $passed);
 }
 
 /**
@@ -690,6 +679,8 @@ function setStudentExamGrade(int $examID, string $studentID, int $points, bool $
  */
 function getStudentCategoryGrades(int $examID, string $studentID)
 {
+    // TODO: validation
+
     $results = getStudentCategoryGradesQuery($examID, $studentID);
     $categoryGrades = array_map(
         function ($row) {
@@ -729,6 +720,8 @@ function getStudentCategoryGrade(int $examID, int $categoryID, string $studentID
  */
 function getStudentCommentGrade(int $examID, int $categoryID, string $studentID
 ) {
+    // TODO: validations
+
     return getStudentCategoryCommentQuery($examID, $categoryID, $studentID);
 }
 
@@ -755,6 +748,8 @@ function getStudentExamGrade(int $examID, string $studentID)
  */
 function getStudentExamComment(int $examID, string $studentID)
 {
+    // TODO: validations
+
     return getStudentExamGradeCommentQuery($examID, $studentID);
 }
 
@@ -917,6 +912,10 @@ function setStudentExamComment(int $examID, string $studentID,
  */
 function finalizeExam(int $examID)
 {
+    // TODO: validations
+    // validate in 'finalizing' state
+    // validate no conflicts exist
+
     transitionExamToArchived($examID);
 }
 

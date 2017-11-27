@@ -17,6 +17,9 @@ if (!empty($_POST)) {
     sendResponse(); //Invokes default Invalid Request error
 }
 
+/**
+ * @param $args
+ */
 function processRequest($args)
 {
     $operation = $args["operation"];
@@ -50,11 +53,21 @@ function processRequest($args)
     }
 }
 
+/**
+ * @param $operation
+ *
+ * @return bool
+ */
 function isValidOperation($operation)
 {
     return is_subclass_of($operation, 'Operation');
 }
 
+/**
+ * @param string $message
+ *
+ * @return string
+ */
 function convertToError(string $message) {
     $message = str_replace("Exception:", "", $message);
     if(strpos($message, "in /var")) {
@@ -63,6 +76,11 @@ function convertToError(string $message) {
     return trim($message);
 }
 
+/**
+ * @param array       $data
+ * @param bool|null   $success
+ * @param string|null $resultMessage
+ */
 function sendResponse($data = array(), bool $success = null,
     string $resultMessage = null
 ) {

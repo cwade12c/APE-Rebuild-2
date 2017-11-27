@@ -12,7 +12,6 @@
 abstract class Operation
 {
     private $parameters = array();
-    private $defaultParameters = array();
     private $staticParameters = array();
     private $validations = array();
     private $requiredLogin = true;
@@ -24,12 +23,12 @@ abstract class Operation
     /**
      * Register an optional parameter
      *
-     * @param string     $name
-     * @param string     $type
-     * @param mixed|null $default
+     * @param string $name
+     * @param string $type
+     * @param mixed  $default
      */
     protected function registerOptionalParameter(string $name, string $type,
-        $default = null
+        mixed $default
     ) {
         array_push(
             $this->parameters, array(
@@ -39,9 +38,6 @@ abstract class Operation
                 'optional' => true
             )
         );
-        $this->defaultParameters[strtolower($name)]
-            = array('isNull' => is_null($default),
-                    'value'  => $default);
     }
 
     /**
@@ -362,17 +358,13 @@ abstract class Operation
         }
 
         try {
-            if (!call_user_func_array(
-                $this->accountValidation, $validateArgs
-            )
-            ) {
+            if (!call_user_func_array($this->accountValidation, $validateArgs)) {
                 throw new InvalidArgumentException(
                     'False from user validation'
                 );
             }
         } catch (Exception $e) {
-            $message
-                = "Account ID ({$accountID}) failed operation account validation";
+            $message = "Account ID ({$accountID}) failed operation account validation";
             $id = reset($args);
 
             logSecurityIncident("ACCOUNT_HIJACK ($id)", $message);
@@ -447,11 +439,6 @@ abstract class Operation
                 } elseif (isset($this->staticParameters[$argName])) {
                     array_push(
                         $validationArgs, $this->staticParameters[$argName]
-                    );
-                } elseif (isset($this->defaultParameters[$argName])) {
-                    $default = $this->defaultParameters[$argName];
-                    array_push(
-                        $validationArgs, $default['value']
                     );
                 } else {
                     throw new LogicException(

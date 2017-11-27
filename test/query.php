@@ -12,12 +12,6 @@ require_once '../config.php';
 
 // TODO: remove
 
-function isPost()
-{
-    return (strtoupper($_SERVER['REQUEST_METHOD']) == 'POST');
-}
-
-
 if ( ! isPost()) {
     $queryResult = 'N/A';
 } else {

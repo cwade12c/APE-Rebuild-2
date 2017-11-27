@@ -8,24 +8,15 @@
 
 {% block content %}
     <div class="row">
-        {% for exam in exams %}
-                <div class="col-md-12">
-                    <h3 class="text-info">{{exam.start}}</h3>
-                    <div class="table">
-                        <p><span style='font-weight:bold;'>Location:</span> <span class="label label-warning">{{exam.location}}</span></p>
-                        <p><span style='font-weight:bold;'>Available Seats:</span> <span class="label label-info">{{exam.limitedSeats}}</span></p>
-                        <p><span style='font-weight:bold;'>Reserved Seats:</span> <span class="label label-primary">{{exam.reservedSeats}}</span></p>
-                    </div>
-                </div>
-        {% endfor %}
+        {% include 'components/exam-search.twig.html' with {'states' : 'GET_EXAMS_UPCOMING', 'types' : 'GET_EXAMS_TYPE_REGULAR', 'tableID': 'upcoming-exams'} %}
     </div>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-sm-12">
             <h3 class="text-info">Test</h3>
         </div>
 
         {% for resource in resources %}
-        <div class="col-md-6">
+        <div class="col-sm-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">{{resource.title}}</h3>

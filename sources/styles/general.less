@@ -32,7 +32,7 @@ body {
 }
 
 .navbar-inverse,
-.navbar-inverse .navbar-nav>.active>a {
+.navbar-inverse .navbar-nav > .active > a {
   color: #ffffff;
   background-color: #2D3B45;
 }
@@ -82,7 +82,6 @@ body {
       }
     }
   }
-
 }
 
 .nav-sidebar > .active > a,
@@ -91,8 +90,6 @@ body {
   li {
     text-align: center;
   }
-  color: #ffffff;
-  background-color: #2D3B45;
 }
 
 .homeLogo {
@@ -109,15 +106,18 @@ body {
 }
 
 .main {
-  padding: 10px;
+  //padding: 10px;
   //margin-left: 10%;
 }
+
 @media (min-width: 768px) {
   .main {
     //padding-right: 5px;
-    //padding-left: 5px;
+    top: 10px;
+    left: 15px;
   }
 }
+
 .main .page-header {
   margin-top: 0;
 }
@@ -130,17 +130,19 @@ body {
   margin-bottom: 30px;
   text-align: center;
 }
+
 .placeholders h4 {
   margin-bottom: 0;
 }
+
 .placeholder {
   margin-bottom: 20px;
 }
+
 .placeholder img {
   display: inline-block;
   border-radius: 50%;
 }
-
 
 .huge {
   font-size: 40px;
@@ -149,42 +151,53 @@ body {
 .panel-green {
   border-color: #5cb85c;
 }
+
 .panel-green > .panel-heading {
   border-color: #5cb85c;
   color: white;
   background-color: #5cb85c;
 }
+
 .panel-green > a {
   color: #5cb85c;
 }
+
 .panel-green > a:hover {
   color: #3d8b3d;
 }
+
 .panel-red {
   border-color: #d9534f;
 }
+
 .panel-red > .panel-heading {
   border-color: #d9534f;
   color: white;
   background-color: #d9534f;
 }
+
 .panel-red > a {
   color: #d9534f;
 }
+
 .panel-red > a:hover {
   color: #b52b27;
 }
+
 .panel-yellow {
   border-color: #f0ad4e;
 }
+
 .panel-yellow > .panel-heading {
   border-color: #f0ad4e;
   color: white;
   background-color: #f0ad4e;
 }
+
 .panel-yellow > a {
   color: #f0ad4e;
 }
+
 .panel-yellow > a:hover {
   color: #df8a13;
 }
@@ -204,4 +217,32 @@ body {
 
 .active-link-set {
   /* optionally style this up - this is the collapsable link set, like "Admin", "Student", "Grader", etc. */
+  li {
+    a {
+        background-color: #ffffff;
+        color: #2D3B45;
+      }
+      background-color: #ffffff;
+      color: #2D3B45;
+    }
+  }
+.dt-buttons,
+.dt-buttons.btn-group {
+  display: inline;
+  float: left;
+  vertical-align: middle;
+  padding-bottom: 10px;
+}
+
+.dataTables_wrapper .dataTables_filter {
+  //display: inline;
+  float: right;
+  vertical-align: middle;
+  padding-bottom: 10px;
+  height: 10px;
+}
+
+.data-table .dataTable {
+  //bottom: 10px;
+  //top: 10px;
 }

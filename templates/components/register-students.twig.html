@@ -46,6 +46,7 @@
                 logLine('Got registeredAccounts');
                 registeredAccounts = data.students;
                 setupAccountSearch();
+                showPage();
             },
             failure: function (message) {
                 setError('Failed to get currently registered accounts: ' + message);

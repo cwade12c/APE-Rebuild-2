@@ -467,7 +467,16 @@ function getAllAccountsByType(int $type)
  */
 function getAllAccountsWithType(int $type)
 {
-    return getFullAccountInformationWithTypeQuery($type);
+    $results = getFullAccountInformationWithTypeQuery($type);
+    foreach($results as &$account) {
+        $account['firstName'] = $account['f_name'];
+        unset($account['f_name']);
+
+        $account['lastName'] = $account['l_name'];
+        unset($account['l_name']);
+    }
+
+    return $results;
 }
 
 /**

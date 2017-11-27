@@ -1,4 +1,5 @@
 <script type="text/javascript">
+    var accountSearchGlobals = accountSearchGlobals || {};
 
     document.addEventListener("DOMContentLoaded",
         function () {
@@ -17,13 +18,17 @@
                 return;
             }
 
-            // setup global store for this crap (prefix / types)
+            initAccountSearch(prefix, typesValues);
         }
     );
 
     function hideAccountSearchPage(prefix) {
         document.getElementById(prefix + "accountSearchError").style.visibility = 'hidden';
         document.getElementById(prefix + "accountSearch").style.visibility = 'hidden';
+    }
+
+    function showAccountSearchPage(prefix) {
+        document.getElementById(prefix + "accountSearch").style.visibility = 'visible';
     }
 
     function setSearchError(prefix, msg) {
@@ -44,7 +49,7 @@
         try {
             typesHTMLDecode = decodeHtml(types);
             parsedTypes = JSON.parse(typesHTMLDecode);
-        }catch(e) {
+        } catch (e) {
             errorLine('failed to parse account types: ' + e);
             return undefined;
         }
@@ -59,6 +64,212 @@
         return accountTypes;
     }
 
+    function getAccountSearchTableID(prefix) {
+        return prefix + 'accountsTable';
+    }
+
+    function getAccountSearchRowID(prefix, accountID) {
+        return prefix + 'accountRow' + accountID;
+    }
+
+    function initAccountSearch(prefix, types) {
+        // init to global for storage
+        accountSearchGlobals[prefix] = {types: types};
+
+        // accountSearch(prefix);
+    }
+
+    function setAccountSearchGlobal(prefix, key, value) {
+        accountSearchGlobals[prefix][key] = value;
+    }
+
+    function getAccountSearchGlobal(prefix, key, defaultValue) {
+        return accountSearchGlobals[prefix][key] || defaultValue;
+    }
+
+    function accountSearch(prefix, callback) {
+        callback = callback || emptyFunction;
+
+        var types = getAccountSearchGlobal(prefix, 'types');
+
+        var params = {
+            allowedTypes: types
+        };
+
+        var callbacks = {
+            success: function (message, data) {
+                logLine('Retrieved ' + prefix + ' accounts');
+
+                var accounts = convertAccounts(data.accounts);
+                setAccountSearchGlobal(prefix, 'accounts', accounts);
+
+                fillAccountSearchTable(prefix);
+                showAccountSearchPage(prefix);
+                callback();
+            },
+            failure: function (message) {
+                errorLineNotification('Failed to search ' + prefix + ' accounts: ' + message);
+            },
+            error: function () {
+                setSearchError(prefix, 'Error searching accounts, please try again later');
+            }
+        };
+
+        return callAPI('AccountSearch', params, callbacks);
+    }
+
+    function convertAccounts(accounts) {
+        var converted = {};
+        _.each(accounts,
+            function (account) {
+                converted[account.id] = account;
+            });
+
+        return converted;
+    }
+
+    function fillAccountSearchTable(prefix) {
+        var accounts = getAccountSearchGlobal(prefix, 'accounts');
+        var tableName = getAccountSearchTableID(prefix);
+
+        $('#' + tableName).find("tr:gt(0)").remove();
+
+        // get filter id / name
+        var filterID = getAccountSearchFilterID(prefix);
+        var filterNames = getAccountSearchFilterName(prefix);
+
+        var filterFnc = getAccountSearchGlobal(prefix, 'filter', accountSearchFilterFiller);
+        var buildColumnFnc = getAccountSearchGlobal(prefix, 'buildColumn', accountBuildColumnFiller);
+
+        _.each(accounts,
+            function (account) {
+                if (!accountSearchFilterAccount(account, filterID, filterNames, filterFnc)) {
+                    var id = account.id;
+                    var name = account.lastName + ', ' + account.firstName;
+
+                    var rowID = getAccountSearchRowID(prefix, id);
+                    var row = [id, name];
+
+                    var extraColumn = buildColumnFnc(account);
+                    if (extraColumn) {
+                        row.push(extraColumn);
+                    }
+
+                    addRowToTable(tableName, row, rowID);
+                }
+            });
+    }
+
+    var length = document.getElementById('inputLength').value;
+
+    function accountSearchFilterAccount(account, filterID, filterNames, filterFnc) {
+        if ((filterID && !accountSearchFilterID(account.id, filterID)) ||
+            (filterNames && !accountSearchFilterName(account.firstName, account.lastName, filterNames))) {
+            return true;
+        }
+
+        return filterFnc(account);
+    }
+
+    function accountSearchFilterFiller(account) {
+        return false;
+    }
+
+    function accountBuildColumnFiller(account) {
+        return undefined;
+    }
+
+
+    function accountSearchFilterPress(prefix) {
+        fillAccountSearchTable(prefix);
+    }
+
+    function getAccountSearchFilterID(prefix) {
+        var inputID = prefix + 'accountSearchFilterID';
+        var input = document.getElementById(inputID);
+
+        var value = input.value;
+        if (_.isUndefined(value) || _.isEmpty(value)) {
+            return undefined;
+        }
+
+        // setup regex for match
+        return new RegExp('.*' + value + '.*', 'i');
+    }
+
+    function getAccountSearchFilterName(prefix) {
+        var inputID = prefix + 'accountSearchFilterName';
+        var input = document.getElementById(inputID);
+
+        var value = input.value;
+        if (_.isUndefined(value) || _.isEmpty(value)) {
+            return undefined;
+        }
+
+        // split names, setup regex
+        var names = value.split(" ");
+        names = _.map(names,
+            function (name) {
+                return new RegExp('.*' + name + '.*', 'i');
+            });
+
+        return names;
+    }
+
+    /**
+     * Just check if filtered ID is within the account ID
+     */
+    function accountSearchFilterID(accountID, filterID) {
+        return filterID.test(accountID);
+    }
+
+    /**
+     * Just check one of the names match the filter names
+     */
+    function accountSearchFilterName(firstName, lastName, filterNames) {
+        var ret = false;
+        _.each(filterNames,
+            function (name) {
+                if (name.test(firstName) || name.test(lastName)) {
+                    ret = true;
+                }
+            });
+        return ret;
+    }
+
+    /**
+     * Use to set the filter function separately
+     * @param prefix
+     * @param filterFnc
+     */
+    function accountSearchSetFilter(prefix, filterFnc) {
+        setAccountSearchGlobal(prefix, 'filter', filterFnc);
+    }
+
+    function accountSearchSetBuildExtraColumn(prefix, buildColumnFnc) {
+        setAccountSearchGlobal(prefix, 'buildColumn', buildColumnFnc);
+    }
+
+    function accountSearchGetAccounts(prefix) {
+        return getAccountSearchGlobal(prefix, 'accounts', []);
+    }
+
+    /**
+     * To only refresh the account search table
+     */
+    function accountSearchFilterRefresh(prefix) {
+        fillAccountSearchTable(prefix);
+    }
+
+    /**
+     * Use to manually refresh the accounts search table
+     * @param prefix    prefix for account search component
+     * @param callback  callback for successful search
+     */
+    function accountSearchRefresh(prefix, callback) {
+        accountSearch(prefix, callback);
+    }
+
 </script>
 
 <div class='row' id='{{prefix}}accountSearchError'>
@@ -68,7 +279,15 @@
 
 <div class='row' id='{{prefix}}accountSearch'>
     <!-- search/filter controls -->
-
+    <span class='label label-info'>Account filter options</span>
+    <br>
+    <span class='label label-info'>ID</span>
+    <input id="{{prefix}}accountSearchFilterID" type="text">
+    <br>
+    <span class='label label-info'>Name</span>
+    <input id="{{prefix}}accountSearchFilterName" type="text">
+    <br>
+    <button class='btn btn-primary' onclick='accountSearchFilterPress("{{prefix}}")'>Filter</button>
     <!-- accounts table -->
     <table class='table table-striped' id='{{prefix}}accountsTable'>
         <thead>

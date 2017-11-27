@@ -170,14 +170,13 @@ function registerStudentForExamForced(int $examID, string $studentID)
  */
 function deregisterStudentFromExam(int $examID, string $studentID)
 {
-    validateStudentID($studentID);
-    validateRegistrationStateIs($studentID, STUDENT_STATE_REGISTERED);
-    validateExamAllowsRegistration($examID);
-    validateStudentIsRegisteredFor($studentID, $examID);
+    startTransaction();
 
     deregisterStudentFromExamQuery($examID, $studentID);
 
     refreshRegistrationStateFromDeregister($studentID);
+
+    commit();
 }
 
 /**

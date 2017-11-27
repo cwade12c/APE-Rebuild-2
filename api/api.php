@@ -1,7 +1,12 @@
 <?php
 require_once('../config.php');
+
 initCAS();
-enforceAuthentication();
+initApi();
+
+if($_SESSION['username'] != 'Guest') {
+    enforceAuthentication();
+}
 
 $response = array(
     "data" => array(),

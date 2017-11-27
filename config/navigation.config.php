@@ -11,12 +11,6 @@ DEFINE("ACTION_GENERIC", "btn btn-secondary");
 //<editor-fold desc="Guest Links">
 DEFINE("GUEST_LINKS", array(
     array(
-        'url' => 'home',
-        'title' => 'Upcoming Apes',
-        'text' => 'Home'
-    ),
-
-    array(
         'url' => 'login',
         'title' => 'Login',
         'text' => 'Login'
@@ -26,13 +20,7 @@ DEFINE("GUEST_LINKS", array(
 
 //<editor-fold desc="Student Links">
 DEFINE("STUDENT_LINKS", array(
-    array(
-        'url' => 'home',
-        'title' => 'Student Home',
-        'text' => 'Home'
-    ),
-
-    array(
+   array(
         'url' => '',
         'title' => '',
         'text' => 'Apes',
@@ -50,24 +38,12 @@ DEFINE("STUDENT_LINKS", array(
         'url' => 'grades.php',
         'title' => 'View Your APE Grades',
         'text' => 'Grades'
-    ),
-
-    array(
-        'url' => 'logout',
-        'title' => 'Logout of Your Account',
-        'text' => 'Logout'
     )
 ));
 //</editor-fold>
 
 //<editor-fold desc="Grader Links">
 DEFINE("GRADER_LINKS", array(
-    array(
-        'url' => 'graderHome',
-        'title' => 'Grader Home',
-        'text' => 'Home'
-    ),
-
     array(
         'url' => '',
         'title' => '',
@@ -88,22 +64,11 @@ DEFINE("GRADER_LINKS", array(
         'text' => 'Grading'
     ),
 
-    array(
-        'url' => 'logout',
-        'title' => 'Logout of Your Account',
-        'text' => 'Logout'
-    )
 ));
 //</editor-fold>
 
 //<editor-fold desc="Teacher Links">
 DEFINE("TEACHER_LINKS", array(
-    array(
-        'url' => 'home',
-        'title' => 'Teacher Home',
-        'text' => 'Home'
-    ),
-
     array(
         'url' => '',
         'title' => '',
@@ -154,24 +119,12 @@ DEFINE("TEACHER_LINKS", array(
                 'text' => 'Register Class'
             )
         )
-    ),
-
-    array(
-        'url' => 'logout',
-        'title' => 'Logout',
-        'text' => 'Logout'
     )
 ));
 //</editor-fold>
 
 //<editor-fold desc="Admin Links">
 DEFINE("ADMIN_LINKS", array(
-    array(
-        'url' => 'home',
-        'title' => 'Admin Home',
-        'text' => 'Home'
-    ),
-
     array(
         'url' => '',
         'title' => '',
@@ -254,12 +207,6 @@ DEFINE("ADMIN_LINKS", array(
                 'text' => 'Register Class'
             )
         )
-    ),
-
-    array(
-        'url' => 'logout',
-        'title' => 'Logout',
-        'text' => 'Logout'
     )
 ));
 //</editor-fold>

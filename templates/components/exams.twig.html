@@ -35,6 +35,30 @@
       clickTab('archived', ['GET_EXAMS_ARCHIVED', 'archived-exams']);
   };
 
+  var viewDetails = function() {
+      var tableId = $('.active a').first().text().toLowerCase() + '-exams';
+
+      var table = $('#' + tableId).DataTable();
+      var examId = getSelectedRowByIndex(table, 0);
+      var html = $.parseHTML(examId.replace(/\\\//g, "/"));
+      examId = parseInt(_.first(html).innerText);
+
+      notification('Redirecting to view the exam details...', 'info');
+      window.location.href = 'examDetails?exam=' + examId;
+  };
+
+  var editExam = function() {
+      var tableId = $('.active a').first().text().toLowerCase() + '-exams';
+
+      var table = $('#' + tableId).DataTable();
+      var examId = getSelectedRowByIndex(table, 0);
+      var html = $.parseHTML(examId.replace(/\\\//g, "/"));
+      examId = parseInt(_.first(html).innerText);
+
+      notification('Redirecting to edit the exam...', 'info');
+      window.location.href = 'editExam?exam=' + examId;
+  };
+
 
 </script>
 

@@ -29,7 +29,7 @@ class RegisterStudentForExam extends Operation
         );
 
         parent::registerValidation("validateExamIDExists", "examID");
-        parent::registerValidation("doesExamStateAllowForcedRegistration", "examID");
+        parent::registerValidation("validateExamAllowsForcedRegistrations", "examID");
         parent::registerValidation("validateExamRoomAvailable", "examID");
         parent::registerValidation('validateStudentIDCanRegister', 'studentID');
     }

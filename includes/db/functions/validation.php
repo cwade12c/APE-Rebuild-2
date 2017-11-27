@@ -981,6 +981,37 @@ function validateExamAllowsRegistration(int $examID)
     return true;
 }
 
+/**
+ * Validates if exam state allows forced registration
+ *
+ * @param int $examID
+ *
+ * @return bool
+ */
+function validateExamAllowsForcedRegistrations(int $examID)
+{
+    $examState = getExamState($examID);
+    if (!doesExamStateAllowForcedRegistration($examState)) {
+        // throw exception
+        throw new InvalidArgumentException(
+            sprintf(
+                "Invalid exam(%d) state(%s), does not allow forced registration",
+                $examID,
+                $examState
+            )
+        );
+    }
+
+    return true;
+}
+
+/**
+ * Validates if exam state allows unregistration
+ *
+ * @param int $examID
+ *
+ * @return bool
+ */
 function validateExamAllowsUnregistrations(int $examID)
 {
     $examState = getExamState($examID);

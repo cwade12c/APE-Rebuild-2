@@ -38,6 +38,7 @@ try {
 setParam('isLoggedIn', false);
 setParam('availableNavLinks', getAvailableNavigationLinks());
 setParam('query', getParseQuery());
+setParam('firstName','Guest');
 
 function displayDebugAlert() {
     echo "<div class=\"alert alert-danger\" style=\"text-align:center;\" role=\"alert\">

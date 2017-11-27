@@ -2,7 +2,7 @@
     <li>
         <a class="homeLogo" href="home"><img src="sources/images/ewu_logo.png"></a>
     </li>
-    {% if params.availableNavLinks|length > 1 %}
+    {% if params.availableNavLinks|length > 0 %}
         {% for key,linkSet in params.availableNavLinks %}
             <li>
                 <a data-toggle="collapse" href="#{{key}}-tree">{{ key }}</a>

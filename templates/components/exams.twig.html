@@ -6,33 +6,33 @@
     var params = {
       states: options[0],
       types: getSelectValues('exam-types'),
-      tableID: options[2]
+      tableID: options[1]
     };
     loadComponent('exam-search', tabId, params);
   };
 
   var clickOpen = function() {
-      clickTab('open', ['GET_EXAMS_OPEN', 'GET_EXAMS_TYPE_BOTH', 'open-exams']);
+      clickTab('open', ['GET_EXAMS_OPEN', 'open-exams']);
   };
 
   var clickUpcoming = function() {
-    clickTab('upcoming', ['GET_EXAMS_UPCOMING', 'GET_EXAMS_TYPE_BOTH', 'upcoming-exams']);
+    clickTab('upcoming', ['GET_EXAMS_UPCOMING', 'upcoming-exams']);
   };
 
   var clickGrading = function() {
-      clickTab('grading', ['GET_EXAMS_GRADING', 'GET_EXAMS_TYPE_BOTH', 'grading-exams']);
+      clickTab('grading', ['GET_EXAMS_GRADING', 'grading-exams']);
   };
 
   var clickFinalizing = function() {
-      clickTab('finalizing', ['GET_EXAMS_FINALIZING', 'GET_EXAMS_TYPE_BOTH', 'finalizing-exams']);
+      clickTab('finalizing', ['GET_EXAMS_FINALIZING', 'finalizing-exams']);
   };
 
   var clickNonArchived = function() {
-      clickTab('non-archived', ['GET_EXAMS_NON_ARCHIVED', 'GET_EXAMS_TYPE_BOTH', 'non-archived-exams']);
+      clickTab('non-archived', ['GET_EXAMS_NON_ARCHIVED', 'non-archived-exams']);
   };
 
   var clickArchived = function() {
-      clickTab('archived', ['GET_EXAMS_ARCHIVED', 'GET_EXAMS_TYPE_BOTH', 'archived-exams']);
+      clickTab('archived', ['GET_EXAMS_ARCHIVED', 'archived-exams']);
   };
 
 

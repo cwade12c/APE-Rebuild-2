@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    {#<title>Home</title>#}
+    <title>{% block title %}{% endblock %}</title>
 
     <!-- accountID : {{ params.id }} -->
     <!-- multiplePermissions : {% if params.availableNavLinks|length > 1 %} true {% else %} false {% endif %} -->
@@ -21,7 +21,6 @@
 
     <link rel="stylesheet/less" type="text/css" href="sources/styles/general.less" />
     <link rel="stylesheet" type="text/css" href="sources/styles/animate.css" />
-
 
     <script src="vendor/jquery/dist/jquery.min.js"></script>
     <script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -40,9 +39,7 @@
 
     <script>
       $(document).ready(function () {
-          /*Manipulate the DOM to choose the active link*/
           activeLink();
-          /*setDateTimePicker('datetimepicker');*/
       });
     </script>
 </head>
@@ -75,36 +72,6 @@
             {% endif %}
             </div>
             <div class="col-sm-10 main">
-{#                <input id="datetimepicker" type="text" >
-                <a onclick="getExamInformation(10)">Get Exam Information</a>
-                <a onclick="getMyExams()">Get My Exams</a>
-                <a onclick="getGraderExamDetails(1)">Get Exam Details</a>
-                <a onclick="createAccount('00599461', 'John', 'Doe', 'johndoe@eagles.ewu.edu', 2)">Create Account</a>
-                <a onclick="createAccounts()">Create Accounts</a>
-                <a onclick="getLocations()">Get Locations</a><br />
-                <a onclick="getLocation(1)">Get Location</a><br />
-                <a onclick="createLocation('My Location', 66, 66)">Create Location</a><br />
-                <a onclick="deleteLocation(14)">Delete Location</a><br />
-                <a onclick="updateLocationName(1, 'CEB 288')">Update Location Name</a><br />
-                <a onclick="updateLocationRooms(1, 23, 23)">Update Location Rooms</a><br />
-                <a onclick="getRooms()">Get Rooms</a><br />
-                <a onclick="getRoom(1)">Get Room</a><br />
-                <a onclick="createRoom('My Room', 50)">Create Room</a><br />
-                <a onclick="deleteRoom(10)">Delete Room</a><br />
-                <a onclick="updateRoom(1, '212C', 12)">Update Room</a><br />
-                <a onclick="getCategories()">Get Categories</a><br />
-                <a onclick="getDefaultCategories()">Get Default Categories</a><br />
-                <a onclick="getCategory(1)">Get Category(1)</a><br />
-                <a onclick="createCategory('My Category', 500)">Create Category</a><br />
-                <a onclick="deleteCategory(9)">Delete Category</a><br />
-                <a onclick="updateCategory(1, 'Recursion2', 40)">Update Category</a><br />
-                <a onclick="updateDefaultCategories([1,2,3])">Update Default Categories</a><br />
-                <a onclick="getReportTypes()">Get Report Types</a>
-                <a onclick="getReports()">Get Reports</a>
-                <a onclick="generateReport(7, [1,2,3,4])">Generate Report</a>
-                <a onclick="createReport('Mass Report', [1,2,3,4])">Create Report</a>
-                <a onclick="updateReport(8, 'Massive Report', [1,2,3,4,5,6,7])">Update Report</a>
-                <a onclick="registerForExam(7)">Register for Exam</a>#}
                 {% block content %}{% endblock %}
             </div>
         </div>

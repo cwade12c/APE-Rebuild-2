@@ -318,7 +318,7 @@ function getIdsByTypeQuery(int $type)
 function getFullAccountInformationByTypeQuery(int $type)
 {
     $query
-        = "SELECT 'id', 'f_name', 'l_name', 'email' "
+        = "SELECT `id`, `f_name`, `l_name`, `email` "
         . " FROM `accounts` WHERE `type`=:type";
     $sql = executeQuery(
         $query, array(
@@ -329,6 +329,26 @@ function getFullAccountInformationByTypeQuery(int $type)
     return getQueryResults($sql);
 }
 
+/**
+ * Query to get all accounts with the given type
+ *
+ * @param int $type
+ *
+ * @return mixed
+ */
+function getFullAccountInformationWithTypeQuery(int $type)
+{
+    $query
+        = "SELECT `id`, `f_name`, `l_name`, `email` "
+        . " FROM `accounts` WHERE (`type` & :type) = :type";
+    $sql = executeQuery(
+        $query, array(
+            array(':type', $type, PDO::PARAM_INT)
+        )
+    );
+
+    return getQueryResults($sql);
+}
 
 /**
  * Get all temporary student account IDs

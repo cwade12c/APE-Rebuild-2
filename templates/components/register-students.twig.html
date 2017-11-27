@@ -3,8 +3,7 @@
 
     document.addEventListener("DOMContentLoaded",
         function () {
-            document.getElementById('registerStudentsSection').style.visibility = 'hidden';
-            document.getElementById('registerStudentsSection').style.visibility = 'hidden';
+            hidePage();
 
             account = '{{accountID}}';
             exam = parseInt('{{examID}}');
@@ -14,9 +13,22 @@
                 return;
             }
 
-            setError("TODO: component (register students)");
+            refreshPage();
         }
     );
+
+    function hidePage() {
+        document.getElementById('registerStudentsError').style.visibility = 'hidden';
+        document.getElementById('registerStudentsSection').style.visibility = 'hidden';
+    }
+
+    function refreshPage() {
+        hidePage();
+
+        document.getElementById('labelExamID').textContent = 'Exam #' + exam;
+
+        document.getElementById('registerStudentsSection').style.visibility = 'visible';
+    }
 
     function setError(msg) {
         errorLineNotification(msg);
@@ -31,10 +43,14 @@
     <label id='labelRegisterStudentsError'></label>
 </div>
 
-<button class='btn btn-primary' onclick="location.href='examDetails?exam={{examID}}'" >Exam Details</button>
-<br>
-
 <div class='row' id='registerStudentsSection'>
+    <button class='btn btn-primary' onclick="location.href='examDetails?exam={{examID}}'" >Exam Details</button>
+    <br>
     <span class='label label-info' id='labelExamID'>Exam #ID</span>
     <br>
+    <span class='label label-info'>Account Search component</span>
+    <br>
+    <div id='search-students-component'>
+        {% include 'components/account-search.twig.html' with {'prefix': 'students', 'types': [ 'ACCOUNT_TYPE_STUDENT', 'ACCOUNT_TYPE_GRADER' ]} %}
+    </div>
 </div>

@@ -28,8 +28,10 @@
                 <a href="{{ link.url }}" title="{{ link.title }}">{{ link.text }}</a>
             </li>
         {% endfor %}
-        <li>
-            <a href="logout">Logout</a>
-        </li>
+        {% if params.isLoggedIn == true %}
+            <li>
+                <a href="logout">Logout</a>
+            </li>
+        {% endif %}
     {% endif %}
 </ul>

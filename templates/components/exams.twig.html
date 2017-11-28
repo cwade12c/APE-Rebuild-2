@@ -6,7 +6,8 @@
     var params = {
       states: options[0],
       types: getSelectValues('exam-types'),
-      tableID: options[1]
+      tableID: options[1],
+      dataTable: true
     };
     loadComponent('exam-search', tabId, params);
   };
@@ -84,7 +85,7 @@
 
 <div class="tab-content">
   <div id="all" class="tab-pane fade in active">
-      {% include 'components/exam-search.twig.html' with {'states' : 'GET_EXAMS_ALL', 'types' : 'GET_EXAMS_TYPE_BOTH', 'tableID': 'all-exams'} %}
+      {% include 'components/exam-search.twig.html' with {'states' : 'GET_EXAMS_ALL', 'types' : 'GET_EXAMS_TYPE_BOTH', 'tableID': 'all-exams', 'dataTable': 'true'} %}
   </div>
 
   <div id="open" class="tab-pane fade">

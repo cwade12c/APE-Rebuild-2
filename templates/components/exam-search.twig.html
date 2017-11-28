@@ -63,7 +63,13 @@
         }
 
         fillInfo(exams);
-        initializeDataTableById('{% if tableID is defined %}{{tableID}}{% else %}examsTable{% endif %}');
+
+        var initDataTable = '{{ dataTable }}';
+
+        if(initDataTable === 'true' || initDataTable === 1 || initDataTable === true) {
+            initializeDataTableById('{% if tableID is defined %}{{tableID}}{% else %}examsTable{% endif %}');
+        }
+
         document.getElementById('{% if tableID is defined %}{{tableID}}-results{% else %}examSearchResults{% endif %}').style.visibility = 'visible';
     }
 

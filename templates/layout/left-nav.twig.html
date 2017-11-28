@@ -8,7 +8,7 @@
                 <a data-toggle="collapse" href="#{{key}}-tree">{{ key }}</a>
             </li>
             <li>
-                <div id="{{key}}-tree" class="panel-collapse `collapse">
+                <div id="{{key}}-tree" class="panel-collapse collapse">
                     <ul class="nav nav-sidebar nav-child">
                         {% for link in linkSet %}
                             <li>
@@ -19,11 +19,17 @@
                 </div>
             </li>
         {% endfor %}
+        <li>
+            <a href="logout">Logout</a>
+        </li>
     {% else %}
         {% for link in params.availableNavLinks|first %}
             <li>
                 <a href="{{ link.url }}" title="{{ link.title }}">{{ link.text }}</a>
             </li>
         {% endfor %}
+        <li>
+            <a href="logout">Logout</a>
+        </li>
     {% endif %}
 </ul>

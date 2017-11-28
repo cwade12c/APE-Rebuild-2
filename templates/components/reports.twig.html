@@ -1,0 +1,108 @@
+<script type="text/javascript">
+  searchExams({{ constant('GET_EXAMS_ALL') }}, {{ constant('GET_EXAMS_TYPE_BOTH') }}, null, {}).then(function (response) {
+    var options = [];
+    _.each(response.data.exams, function (exam, index) {
+      options.push({
+        value: exam.examID,
+        text: 'Exam (' + exam.examID + ') @ ' + exam.start.date
+      });
+
+      if(index === response.data.exams.length - 1) {
+        addOptionToSelect('examSelect', options);
+        $('.selectpicker-exam').selectpicker();
+      }
+    });
+  });
+
+  getReportTypes().then(function (response) {
+    var reportTypeOptions = [];
+    _.each(response.data.reportTypes, function (reportType, index) {
+      reportTypeOptions.push({
+        value: reportType.id,
+        text: '' + reportType.name
+      });
+
+      if(index === response.data.reportTypes.length - 1) {
+        addOptionToSelect('reportTypesSelect', reportTypeOptions);
+        $('.selectpicker-types').selectpicker();
+      }
+    });
+  });
+
+  var previewReport = function() {
+    var selections = getSelectValues('reportTypesSelect');
+    var types = [];
+    _.each(selections, function (selection, index) {
+      types.push(parseInt(selection));
+      if(index === selections.length - 1) {
+        generateReport(getElementValue('examSelect', 'integer'), types).then(function (response) {
+          buildReport(response.data.reportHeaders, response.data.reportRows);
+        })
+      }
+    });
+  };
+
+  var buildReport = function (reportHeaders, reportRows) {
+    var html = '<table id="reports-table" class="data-table">' +
+          '<thead>' +
+          '<tr>';
+    _.each(reportHeaders, function (reportHeader, index) {
+      html += '<th>' + reportHeader + '</th>';
+      if(index === reportHeaders.length - 1) {
+        html += '</tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '</tbody>' +
+                '</table>';
+        $('#reportPreview').html(html);
+
+        _.each(reportRows, function (reportRow, index) {
+          var rowValues = [];
+          var count = -1;
+          _.each(reportRow, function (val, key) {
+            if(val !== null && val !== 'null') {
+              rowValues.push(val);
+            }
+
+            count++;
+            if(count === Object.keys(reportRow).length - 1) {
+              count = -1;
+              addRowToTable('reports-table', rowValues);
+            }
+          });
+
+          if(index === reportRows.length - 1) {
+              initializeDataTableById('reports-table');
+              $('#reportPreview').removeClass('hidden');
+          }
+        });
+      }
+    });
+  };
+</script>
+
+<h2>Reports</h2>
+
+<select class="selectpicker-exam" id="examSelect" name="examSelect" title="Select exam...">
+
+</select>
+
+<select class="selectpicker-types" id="reportTypesSelect" name="reportTypesSelect" multiple title="Select report types..." data-selected-text-format="count">
+
+</select>
+
+<button class="btn btn-primary" onclick="previewReport()"><i class="fa fa-envelope-open"></i> Generate Report</button>
+
+<div id="reportPreview" class="hidden">
+
+</div>
+
+{#<div class="modal fade" id="locationModal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+    </div>
+  </div>
+</div>#}
+
+{% include 'modals/modal.twig.html' with {'modalId': 'roomModal'} %}

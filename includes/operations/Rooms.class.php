@@ -29,8 +29,8 @@ class Rooms extends Operation
         $rooms = array();
 
         foreach($roomIDs as $roomID) {
-            $room = getRoomInformation($roomID['id']);
-            $room['id'] = $roomID['id'];
+            $room = getRoomInformation($roomID);
+            $room['id'] = $roomID;
 
             array_push($rooms, $room);
         }

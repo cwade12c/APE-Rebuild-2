@@ -2,7 +2,7 @@
 
 $actions = array();
 
-registerAction($actions, ACTION_CREATE, "Add", "addExam()");
+registerAction($actions, ACTION_CREATE, "Add", "addRoom()");
 registerAction($actions, ACTION_UPDATE, "Edit", "editRoom()");
 registerAction($actions, ACTION_DELETE, "Delete", "");
 

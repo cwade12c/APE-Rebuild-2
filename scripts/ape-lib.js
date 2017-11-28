@@ -638,7 +638,15 @@ function updateRoom(roomId, roomName, seatCount) {
         seats: seatCount
     };
 
-    return callAPI('UpdateRoom', params);
+    var callbacks = {
+        success: function (message, data) {
+            if (message === 'OK') {
+              notification('Successfully updated the room information! Please refresh the page to view the changes.', 'success');
+            }
+        }
+    };
+
+    return callAPI('UpdateRoom', params, callbacks);
 }
 
 function updateCategory(categoryId, categoryName, points) {

@@ -26,7 +26,11 @@
     };
 
     var editRoom = function() {
-
+      var table = $('#room-table').DataTable();
+      var params = {
+          roomId: parseInt(getSelectedRowByIndex(table, 0))
+      };
+      loadModal('edit-room-modal', 'roomModal', params);
     };
 
     var removeRoom = function() {

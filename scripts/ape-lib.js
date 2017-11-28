@@ -1063,6 +1063,7 @@ function initializeDataTableById(tableId, dataTableOptions, overrideOptions) {
     dataTable.on('deselect', function () {
         toggleSelectorActions(false);
     });
+    $('.dataTables_filter input').attr("placeholder", "Search all columns");
     return dataTable;
 }
 

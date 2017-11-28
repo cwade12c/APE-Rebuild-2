@@ -1,0 +1,14 @@
+{% extends "modals/modal-body.twig.html" %}
+
+{% block modalTitle %}
+  Create Room
+{% endblock %}
+
+{% block modalBody %}
+    {% include 'components/create-room.twig.html' %}
+{% endblock %}
+
+{% block modalFooter %}
+    {# Define the save() function in components/create-room.twig.html #}
+  <button onclick="makeRoom()" data-dismiss="modal" class="btn btn-primary pull-right"><i class="fa fa-check"></i> Create</button>
+{% endblock %}

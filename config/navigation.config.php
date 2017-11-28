@@ -70,6 +70,12 @@ DEFINE("ADMIN_LINKS", array(
     ),
 
     array(
+        'url' => 'rooms',
+        'title' => 'Manage Rooms',
+        'text' => 'Rooms'
+    ),
+
+    array(
         'url' => 'reports',
         'title' => 'Generate Reports',
         'text' => 'Reports'

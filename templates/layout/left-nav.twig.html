@@ -19,11 +19,19 @@
                 </div>
             </li>
         {% endfor %}
+        <li>
+            <a href="logout">Logout</a>
+        </li>
     {% else %}
         {% for link in params.availableNavLinks|first %}
             <li>
                 <a href="{{ link.url }}" title="{{ link.title }}">{{ link.text }}</a>
             </li>
         {% endfor %}
+        {% if params.isLoggedIn == true %}
+            <li>
+                <a href="logout">Logout</a>
+            </li>
+        {% endif %}
     {% endif %}
 </ul>

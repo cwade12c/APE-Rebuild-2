@@ -526,6 +526,31 @@ function getGraderCategoryGradesQuery(int $examID, int $categoryID,
 }
 
 /**
+ * Query to get students grade for grader/category
+ *
+ * @param int    $examID
+ * @param int    $categoryID
+ * @param string $graderID
+ * @param string $studentID
+ *
+ * @return mixed
+ */
+function getGraderCategoryStudentGradeQuery(int $examID, int $categoryID, string $graderID, string $studentID)
+{
+    $query = "SELECT `points` "
+        . " FROM `grader_category_grades` "
+        . " WHERE `exam_id` = :examID AND `category_id` = :categoryID "
+        . " AND `grader_id` = :graderID AND `student_id` = :studentID";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':categoryID', $categoryID, PDO::PARAM_INT),
+                      array(':graderID', $graderID, PDO::PARAM_STR),
+                      array(':studentID', $studentID, PDO::PARAM_STR))
+    );
+    return getQueryResult($sql);
+}
+
+/**
  * Query to update points for student from a given grader in category/exam
  *
  * @param int    $examID

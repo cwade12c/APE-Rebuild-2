@@ -45,12 +45,16 @@ function isGraderAssignedExamCategory(string $graderID, int $examID, int $catego
  */
 function assignGrader(int $examID, int $categoryID, string $graderID)
 {
+    startTransaction();
+
     assignGraderQuery($examID, $categoryID, $graderID);
 
     $state = getExamState($examID);
     if ($state == EXAM_STATE_GRADING) {
         insertGraderDuringGrading($examID, $categoryID, $graderID);
     }
+
+    commit();
 }
 
 /**
@@ -140,10 +144,10 @@ function getAssignedExamGradersCategories(int $examID)
     $graders = getAssignedExamGraders($examID);
     foreach ($graders as $graderID) {
         $assignedCategories = array();
-        $assignedCategories["graderID"] = $graderID;
+        $assignedCategories['graderID'] = $graderID;
 
         $categories = getAssignedExamCategories($graderID, $examID);
-        $assignedCategories["categories"] = $categories;
+        $assignedCategories['categories'] = $categories;
 
         array_push($assigned, $assignedCategories);
     }
@@ -357,6 +361,21 @@ function getGraderCategoryGrades(int $examID, int $categoryID, string $graderID)
 }
 
 /**
+ * Get grader's category grade for a student
+ *
+ * @param int    $examID
+ * @param int    $categoryID
+ * @param string $graderID
+ * @param string $studentID
+ *
+ * @return int
+ */
+function getGraderCategoryStudentGrade(int $examID, int $categoryID, string $graderID, string $studentID)
+{
+    return getGraderCategoryStudentGradeQuery($examID, $categoryID, $graderID, $studentID);
+}
+
+/**
  * Sets the student points for a grader's assigned category
  *
  * @param int    $examID
@@ -376,8 +395,10 @@ function setGraderCategoryGrades(int $examID, int $categoryID, string $graderID,
         $studentID = $studentPoints['studentID'];
         $pointsSet = $studentPoints['points'];
         if ($pointsSet < 0) {
-            $pointsSet = null;
+            continue;
         }
+
+        error_log("Saving($examID, $categoryID, $graderID): $studentID, $pointsSet");
 
         setGraderCategoryStudentGradeQuery(
             $examID, $categoryID, $graderID, $studentID, $pointsSet
@@ -685,8 +706,6 @@ function getStudentCategoryGrades(int $examID, string $studentID)
  */
 function getStudentCategoryGrade(int $examID, int $categoryID, string $studentID
 ) {
-    // TODO: validations
-
     return getStudentCategoryGradeQuery($examID, $categoryID, $studentID);
 }
 

@@ -1,0 +1,69 @@
+<script type="text/javascript">
+    $(document).ready(function () {
+        getRooms().then(function (response) {
+            var promises = [];
+            if(response) {
+                _.each(response.data.rooms, function (currentRoom, index) {
+                    var roomId = currentRoom.id;
+                    var roomName = currentRoom.name;
+                    var roomSeats = currentRoom.seats;
+                    var tdCollection = [roomId, roomName, roomSeats];
+
+                    if(roomId && roomName && roomSeats) {
+                      addRowToTable('room-table', tdCollection);
+                    }
+
+                    if(index === response.data.rooms.length - 1) {
+                      initializeDataTableById('room-table');
+                    }
+                });
+            }
+        });
+    });
+
+    var addRoom = function() {
+      loadModal('create-room-modal', 'roomModal');
+    };
+
+    var editRoom = function() {
+      var table = $('#room-table').DataTable();
+      var params = {
+          roomId: parseInt(getSelectedRowByIndex(table, 0))
+      };
+      loadModal('edit-room-modal', 'roomModal', params);
+    };
+
+    var removeRoom = function() {
+      var table = $('#room-table').DataTable();
+      var id = parseInt(getSelectedRowByIndex(table, 0));
+      deleteRoom(id);
+      removeRowFromTable('room-table', 'row-' + id);
+    };
+
+    setConfirmationModal('action-delete', removeRoom);
+</script>
+
+<h2>Rooms</h2>
+
+<table id="room-table" class="data-table">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Seats</th>
+  </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+
+{#<div class="modal fade" id="locationModal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+    </div>
+  </div>
+</div>#}
+
+{% include 'modals/modal.twig.html' with {'modalId': 'roomModal'} %}

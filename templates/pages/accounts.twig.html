@@ -1,0 +1,12 @@
+
+{% extends "layout/base.twig.html" %}
+
+{% block title %}Accounts{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    {{ include('components/accounts.twig.html') }}
+{% endblock %}

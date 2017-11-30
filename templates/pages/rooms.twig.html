@@ -1,0 +1,11 @@
+{% extends "layout/base.twig.html" %}
+
+{% block title %}Rooms{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    {{ include('components/rooms.twig.html') }}
+{% endblock %}

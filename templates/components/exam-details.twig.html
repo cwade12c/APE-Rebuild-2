@@ -1,0 +1,323 @@
+<script type="text/javascript">
+    var account, exam;
+
+    document.addEventListener("DOMContentLoaded",
+        function () {
+            document.getElementById('examDetailsError').style.visibility = 'hidden';
+            document.getElementById('examSection').style.visibility = 'hidden';
+
+            account = '{{accountID}}';
+            exam = parseInt('{{examID}}');
+
+            if (!isValidIntID(exam)) {
+                setError('Invalid exam ID');
+                return;
+            }
+
+            getExamDetails();
+        }
+    );
+
+    function setError(msg) {
+        errorLineNotification(msg);
+        document.getElementById('detailsErrorLabel').textContent = msg;
+        document.getElementById('examDetailsError').style.visibility = 'visible';
+    }
+
+    function getExamDetails() {
+        logLineNotification("Retrieving exam details ...");
+
+        var params = {
+            id: exam
+        };
+
+        var callbacks = {
+            success: getDetailsSuccess,
+            failure: function (message) {
+                setError("Failed to get exam details: " + message);
+            },
+            error: function () {
+                setError("Error retrieving exam details, please try again later");
+            }
+        };
+
+        return callAPI('ExamDetailsFull', params, callbacks);
+    }
+
+    function getDetailsSuccess(message, data) {
+        logLine("Got exam details: " + message);
+
+        fillInfo(data);
+
+        logLineNotification("Finished loading exam details");
+    }
+
+    function fillInfo(data) {
+        fillInfoBasics(data.examID, data.state, data.stateStr,
+            data.isRegular, data.teacherID,
+            data.start, data.cutoff, data.length);
+        fillInfoCategoriesGrades(data.passingGrade, data.categories);
+        fillInfoGraders(data.graders);
+        fillInfoLocation(data.locationID, data.locationName,
+            data.maxSeats, data.reservedSeats, data.totalSeats,
+            data.takenSeats, data.rooms);
+        fillInfoRegistrations(data.registrations);
+
+        document.getElementById('examSection').style.visibility = 'visible';
+    }
+
+    function fillInfoBasics(examID, state, stateStr, isRegular, teacherID,
+                            start, cutoff, length) {
+        document.getElementById('labelExamID').textContent = 'Exam #' + examID;
+        document.getElementById('labelExamState').textContent = stateStr;
+
+        isRegular = parseInt(isRegular);
+        if (isValidInt(isRegular) && isRegular === 1) {
+            document.getElementById('labelExamType').textContent = 'Regular Exam';
+            document.getElementById('spanExamTeacherID').style.visibility = 'hidden';
+            document.getElementById('labelExamTeacherID').style.visibility = 'hidden';
+        } else {
+            document.getElementById('labelExamType').textContent = 'In-Class Exam';
+            document.getElementById('labelExamTeacherID').textContent = teacherID;
+        }
+
+        start = new Date(Date.parse(start.date));
+        cutoff = new Date(Date.parse(cutoff.date));
+        var times = buildExamDatesTimes(start, cutoff, length);
+        document.getElementById('labelCutoff').textContent = times.cutoff;
+        document.getElementById('labelTimes').textContent = times.times;
+
+        state = parseInt(state);
+        document.getElementById('buttonEditExam').disabled = !examStateCanEdit(state);
+        document.getElementById('buttonAssignGraders').disabled = !examStateCanAssign(state);
+        document.getElementById('buttonRegisterStudents').disabled = !examStateCanRegister(state);
+    }
+
+    function fillInfoCategoriesGrades(passingGrade, categories) {
+        passingGrade = parseInt(passingGrade);
+
+        _.forEach(categories,
+            function (category) {
+                var categoryName = '(' + category.id + ') ' + category.name;
+                var points = parseInt(category.points);
+
+                var row = [categoryName, points];
+
+                addRowToTable('categoriesTable', row);
+            });
+
+        document.getElementById('labelPassingGrade').textContent = passingGrade;
+    }
+
+    function fillInfoGraders(graders) {
+        if (graders.length === 0) {
+            document.getElementById('labelGradersError').textContent = 'No graders assigned';
+            document.getElementById('gradersTable').style.visibility = 'hidden';
+            return;
+        }
+
+        document.getElementById('spanGradersError').style.visibility = 'hidden';
+        document.getElementById('labelGradersError').style.visibility = 'hidden';
+
+        _.each(graders,
+            function (grader) {
+                var graderID = grader.graderID;
+                var name = grader.lastName + ", " + grader.firstName;
+
+
+                var categories = grader.categories;
+                var categoryEntries = [];
+                _.each(categories,
+                    function (category) {
+                        logLine('this category: ' + JSON.stringify(category));
+
+                        var categoryID = category.categoryID;
+                        var name = category.name;
+                        var submitted = category.submitted;
+
+                        logLine('ID: ' + categoryID);
+                        logLine('name: ' + name);
+                        logLine('submitted: ' + submitted);
+
+                        var entry = "<span class='label label-info'>"
+                            + '(' + categoryID + ') ' + name
+                            + "</span>";
+                        var status = submitted ? 'Submitted' : 'Grading';
+                        entry += "<label>" + status + "</label>";
+                        categoryEntries.push(entry);
+                    });
+                var categoriesEntry = categoryEntries.join('<br>');
+
+                var row = [graderID, name, categoriesEntry];
+                addRowToTable('gradersTable', row);
+            });
+    }
+
+    function fillInfoLocation(locationID, locationName, maxSeats,
+                              reservedSeats, totalSeats, takenSeats, rooms) {
+        locationID = parseInt(locationID);
+        if (!isValidInt(locationID)) {
+            document.getElementById('labelLocationError').textContent = 'No Location set';
+            document.getElementById('spanLocationIDName').style.visibility = 'hidden';
+            document.getElementById('labelLocationIDName').style.visibility = 'hidden';
+            document.getElementById('spanLocationSeatsTotal').style.visibility = 'hidden';
+            document.getElementById('labelLocationSeatsTotal').style.visibility = 'hidden';
+            document.getElementById('spanLocationSeatsReserved').style.visibility = 'hidden';
+            document.getElementById('labelLocationSeatsReserved').style.visibility = 'hidden';
+            document.getElementById('spanLocationSeatsMax').style.visibility = 'hidden';
+            document.getElementById('labelLocationSeatsMax').style.visibility = 'hidden';
+            document.getElementById('roomsTable').style.visibility = 'hidden';
+            return;
+        }
+
+        document.getElementById('spanLocationError').style.visibility = 'hidden';
+        document.getElementById('labelLocationError').style.visibility = 'hidden';
+
+
+        document.getElementById('labelLocationIDName').textContent = '(' + locationID + ') ' + locationName;
+
+        document.getElementById('labelLocationSeatsTotal').textContent = totalSeats;
+
+        document.getElementById('labelLocationSeatsReserved').textContent = reservedSeats;
+
+        document.getElementById('labelLocationSeatsMax').textContent = maxSeats;
+
+        _.each(rooms,
+            function (room) {
+                var id = room.id;
+                var name = room.name;
+                var seats = room.seats;
+                var roomName = '(' + id + ') ' + name;
+                var row = [roomName, seats];
+                addRowToTable('roomsTable', row);
+            });
+    }
+
+    function fillInfoRegistrations(registrations) {
+        if (registrations.length === 0) {
+            document.getElementById('labelRegistrationsError').textContent = 'No Registrations';
+            document.getElementById('spanRegistrationsCount').style.visibility = 'hidden';
+            document.getElementById('labelRegistrationsCount').style.visibility = 'hidden';
+            document.getElementById('registrationsTable').style.visibility = 'hidden';
+            return;
+        }
+
+        document.getElementById('spanRegistrationsError').style.visibility = 'hidden';
+        document.getElementById('labelRegistrationsError').style.visibility = 'hidden';
+
+        document.getElementById('labelRegistrationsCount').textContent = registrations.length;
+
+        _.each(registrations,
+            function (student) {
+                var id = student.studentID;
+                var firstName = student.firstName;
+                var lastName = student.lastName;
+
+                var studentName = lastName + ', ' + firstName;
+                var row = [id, studentName];
+                addRowToTable('registrationsTable', row);
+            });
+    }
+
+</script>
+
+<div class='row' id='examDetailsError'>
+    <span class='label label-danger'>Error</span>
+    <label id='detailsErrorLabel'></label>
+</div>
+
+<div class='row' id='examSection'>
+    <!-- Basic Info -->
+    <span class='label label-info' id='labelExamID'>Exam #ID</span>
+    <br>
+    <span class='label label-info'>State</span>
+    <label id='labelExamState'>ExamState</label>
+    <br>
+    <span class='label label-info' id='labelExamType'>Exam Type</span>
+    <br>
+    <span class='label label-info' id='spanExamTeacherID'>Teacher ID</span>
+    <label id='labelExamTeacherID'>TeacherID</label>
+    <br>
+    <span class='label label-info'>Registration Cutoff</span>
+    <label id='labelCutoff'>cutoff</label>
+    <br>
+    <span class='label label-info'>Time</span>
+    <label id='labelTimes'>time</label>
+    <br>
+    <button class='btn btn-primary' onclick="location.href='editExam?exam={{examID}}'" id='buttonEditExam' >Edit</button>
+    <!-- Categories, grades -->
+    <table class='table table-striped' id='categoriesTable'>
+        <thead>
+        <tr>
+            <th>Category</th>
+            <th>Points</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <span class='label label-info'>Passing Grade</span>
+    <label id='labelPassingGrade'>passingGrade</label>
+    <br>
+    <!-- Graders -->
+    <span class='label label-danger' id='spanGradersError'>Error</span>
+    <label id='labelGradersError'>grader error</label>
+    <br>
+    <button class='btn btn-primary' onclick="location.href='assignGraders?exam={{examID}}'" id='buttonAssignGraders' >Assign Graders</button>
+    <table class='table table-striped' id='gradersTable'>
+        <thead>
+        <tr>
+            <th>Grader ID</th>
+            <th>Name</th>
+            <th>Categories</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <!-- Location info -->
+    <span class='label label-danger' id='spanLocationError'>Error</span>
+    <label id='labelLocationError'>grader error</label>
+    <br>
+    <span class='label label-info' id='spanLocationIDName'>Location</span>
+    <label id='labelLocationIDName'>location</label>
+    <br>
+    <span class='label label-info' id='spanLocationSeatsTotal'>Registration Seats Cap</span>
+    <label id='labelLocationSeatsTotal'>total</label>
+    <br>
+    <span class='label label-info' id='spanLocationSeatsReserved'>Reserved Seats</span>
+    <label id='labelLocationSeatsReserved'>reserved</label>
+    <br>
+    <span class='label label-info' id='spanLocationSeatsMax'>Max Seats</span>
+    <label id='labelLocationSeatsMax'>max</label>
+    <br>
+    <table class='table table-striped' id='roomsTable'>
+        <thead>
+        <tr>
+            <th>Room</th>
+            <th>Seats</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <!-- Registrations -->
+    <span class='label label-danger' id='spanRegistrationsError'>Error</span>
+    <label id='labelRegistrationsError'>registrations error</label>
+    <br>
+    <button class='btn btn-primary' onclick="location.href='registerStudents?exam={{examID}}'" id='buttonRegisterStudents' >Register Students</button>
+    <br>
+    <span class='label label-info' id='spanRegistrationsCount'>Registrations</span>
+    <label id='labelRegistrationsCount'>registrations</label>
+    <br>
+    <table class='table table-striped' id='registrationsTable'>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>

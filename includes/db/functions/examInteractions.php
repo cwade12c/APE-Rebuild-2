@@ -23,8 +23,6 @@
  */
 function getExamsRegisteredFor(string $studentID)
 {
-    validateStudentID($studentID);
-
     $results = getExamsRegisteredForQuery($studentID);
     $exams = array_column($results, 'exam_id');
 
@@ -41,8 +39,6 @@ function getExamsRegisteredFor(string $studentID)
  */
 function getActiveExamsRegisteredFor(string $studentID)
 {
-    validateStudentID($studentID);
-
     $results = getActiveExamsRegisteredForQuery($studentID);
     $exams = array_column($results, 'exam_id');
 
@@ -58,14 +54,8 @@ function getActiveExamsRegisteredFor(string $studentID)
  */
 function getExamRegistrations(int $examID)
 {
-    validateExamID($examID);
-
     $results = getAllExamRegistrationsQuery($examID);
-    $studentIDs = array_map(
-        function ($row) {
-            return $row['student_id'];
-        }, $results
-    );
+    $studentIDs = array_column($results, 'student_id');
 
     return $studentIDs;
 }
@@ -134,9 +124,6 @@ function getRegistrationState(string $studentID)
  */
 function setRegistrationState(string $studentID, int $state)
 {
-    validateStudentID($studentID);
-    validateRegistrationState($state);
-
     setRegistrationStateQuery($studentID, $state);
 }
 
@@ -183,14 +170,13 @@ function registerStudentForExamForced(int $examID, string $studentID)
  */
 function deregisterStudentFromExam(int $examID, string $studentID)
 {
-    validateStudentID($studentID);
-    validateRegistrationStateIs($studentID, STUDENT_STATE_REGISTERED);
-    validateExamAllowsRegistration($examID);
-    validateStudentIsRegisteredFor($studentID, $examID);
+    startTransaction();
 
     deregisterStudentFromExamQuery($examID, $studentID);
 
     refreshRegistrationStateFromDeregister($studentID);
+
+    commit();
 }
 
 /**
@@ -281,9 +267,6 @@ function deregisterStudentFromAllExams(string $studentID)
  */
 function getAssignedSeat(string $studentID, int $examID)
 {
-    validateExamID($examID);
-    validateStudentIsRegisteredFor($studentID, $examID);
-
     return getAssignedSeatQuery($studentID, $examID);
 }
 
@@ -515,7 +498,7 @@ function examRegistrationSpaceAvailable(int $examID)
 {
     $info = getLocationInformation($examID);
     $maxSeats = getLocationRoomsMaxSeats($info['locationID']);
-    $reservedSeats = $info['reserved_seats'];
+    $reservedSeats = $info['reservedSeats'];
 
     $maxSeats -= $reservedSeats;
     $registeredAmount = getAssignedSeatCount($examID);
@@ -565,7 +548,7 @@ function examLocationAvailable(int $examID)
  */
 function isSeatSet(int $roomID, int $seat)
 {
+    // TODO: check if seat number is within the room seat max
     return !(is_null($roomID) || is_null($seat) || ($roomID <= 0)
         || ($seat <= 0));
-    // TODO: check if seat number is within the room seat max
 }

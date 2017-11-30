@@ -24,6 +24,10 @@ class GraderProgress extends Operation
             'allowedExamStates', array(EXAM_STATE_GRADING)
         );
 
+        parent::registerAccountIDValidation(
+            'validateAccountsMatch', 'graderID'
+        );
+
         parent::registerValidation('validateGraderID', 'graderID');
         parent::registerValidation('validateExamIDExists', 'examID');
         parent::registerValidation('validateCategoryID', 'categoryID');
@@ -37,6 +41,10 @@ class GraderProgress extends Operation
             'validateGraderAssignedToExamCategory',
             array('graderID', 'examID', 'categoryID')
         );
+        parent::registerValidation(
+            'validateGraderNotSubmitted',
+            array('graderID', 'examID', 'categoryID')
+        );
     }
 
     public function execute(array $args, string $accountID = null)
@@ -44,6 +52,20 @@ class GraderProgress extends Operation
         return parent::execute($args, $accountID);
     }
 
+    /**
+     * @param string $graderID
+     * @param int    $examID
+     * @param int    $categoryID
+     *
+     * @return array             Resulting progress, format
+     *                           'grades' => grades progress
+     *                           'categoryName'
+     *                           'categoryPoints'
+     *                           grades progress format
+     *                           'studentID' => hash of student ID
+     *                           'points' => points saved by grader
+     *                                       (-1) if not set
+     */
     public static function getGraderProgress(string $graderID, int $examID,
         int $categoryID
     ) {
@@ -58,6 +80,11 @@ class GraderProgress extends Operation
             }, $grades
         );
 
-        return array('grades' => $grades);
+        $categoryName = getCategoryName($categoryID);
+        $categoryPoints = getExamCategoryPoints($examID, $categoryID);
+
+        return array('grades'         => $grades,
+                     'categoryName'   => $categoryName,
+                     'categoryPoints' => $categoryPoints);
     }
 }

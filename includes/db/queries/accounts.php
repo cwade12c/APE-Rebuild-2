@@ -107,6 +107,7 @@ function updateAccountInfoQuery(string $accountID,
 
     // get set string and params
     $ret = buildUpdateAccountParamStringArr($firstName, $lastName, $email);
+
     if (!$ret) {
         return;
     }
@@ -119,9 +120,27 @@ function updateAccountInfoQuery(string $accountID,
         . " SET %s "
         . " WHERE `id`=:id;", $setStr
     );
+
     $sql = executeQuery($query, $params);
 
     // TODO: check for success (PDO->rowCount()) ?
+}
+
+/**
+ * Update the type field for given account
+ * @param string $accountID
+ * @param int    $type
+ */
+function updateAccountTypeQuery(string $accountID, int $type) {
+    $query = "UPDATE `accounts` "
+        . " SET `type`=:type "
+        . " WHERE `id`=:accountID;";
+    $sql = executeQuery(
+        $query, array(
+            array(':accountID', $accountID, PDO::PARAM_STR),
+            array(':type', $type, PDO::PARAM_INT)
+        )
+    );
 }
 
 /**
@@ -143,22 +162,22 @@ function buildUpdateAccountParamStringArr(
     $updateLName = is_null($lastName);
     $updateEmail = is_null($email);
 
-    if (!$updateFName && !$updateLName && !$updateEmail) {
+    if ($updateFName && !$updateLName && !$updateEmail) {
         return false;
     }
 
     // build query set string, and param array
     $params = array();
     $setArr = array();
-    if ($updateFName) {
+    if (!$updateFName) {
         array_push($setArr, array('f_name', ':fName'));
         array_push($params, array(':fName', $firstName, PDO::PARAM_STR));
     }
-    if ($updateLName) {
+    if (!$updateLName) {
         array_push($setArr, array('l_name', ':lName'));
         array_push($params, array(':lName', $lastName, PDO::PARAM_STR));
     }
-    if ($updateEmail) {
+    if (!$updateEmail) {
         array_push($setArr, array('email', ':email'));
         array_push($params, array(':email', $email, PDO::PARAM_STR));
     }
@@ -298,7 +317,9 @@ function getIdsByTypeQuery(int $type)
  */
 function getFullAccountInformationByTypeQuery(int $type)
 {
-    $query = "SELECT * FROM `accounts` WHERE `type`=:type";
+    $query
+        = "SELECT `id`, `f_name`, `l_name`, `email` "
+        . " FROM `accounts` WHERE `type`=:type";
     $sql = executeQuery(
         $query, array(
             array(':type', $type, PDO::PARAM_INT)
@@ -308,6 +329,26 @@ function getFullAccountInformationByTypeQuery(int $type)
     return getQueryResults($sql);
 }
 
+/**
+ * Query to get all accounts with the given type
+ *
+ * @param int $type
+ *
+ * @return mixed
+ */
+function getFullAccountInformationWithTypeQuery(int $type)
+{
+    $query
+        = "SELECT `id`, `f_name`, `l_name`, `email` "
+        . " FROM `accounts` WHERE (`type` & :type) = :type";
+    $sql = executeQuery(
+        $query, array(
+            array(':type', $type, PDO::PARAM_INT)
+        )
+    );
+
+    return getQueryResults($sql);
+}
 
 /**
  * Get all temporary student account IDs

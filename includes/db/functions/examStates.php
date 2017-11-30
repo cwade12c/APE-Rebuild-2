@@ -93,13 +93,46 @@ function doesExamStateAllowForcedRegistration(int $state)
 
     switch ($state) {
         // allows
-        case EXAM_STATE_OPEN:
-            return true;
-        // does not allow
         case EXAM_STATE_HIDDEN:
         case EXAM_STATE_CLOSED:
+        case EXAM_STATE_OPEN:
         case EXAM_STATE_IN_PROGRESS:
         case EXAM_STATE_GRADING:
+            return true;
+        // does not allow
+        case EXAM_STATE_FINALIZING:
+        case EXAM_STATE_ARCHIVED:
+            return false;
+        // invalid state
+        default:
+            throw new InvalidArgumentException(
+                'Unhandled exam state: ' . $state
+            );
+    }
+}
+
+/**
+ * Check if exam state allows unregistration for any reason
+ *
+ * @param int $state
+ *
+ * @return bool
+ */
+function doesExamStateAllowUnregistration(int $state)
+{
+    if (!isExamStateValid($state)) {
+        throw new InvalidArgumentException('Invalid exam state: ' . $state);
+    }
+
+    switch ($state) {
+        // allows
+        case EXAM_STATE_HIDDEN:
+        case EXAM_STATE_CLOSED:
+        case EXAM_STATE_OPEN:
+        case EXAM_STATE_IN_PROGRESS:
+        case EXAM_STATE_GRADING:
+            return true;
+        // does not allow
         case EXAM_STATE_FINALIZING:
         case EXAM_STATE_ARCHIVED:
             return false;
@@ -128,10 +161,10 @@ function doesExamStateAllowEdits(int $state)
         // allows
         case EXAM_STATE_HIDDEN:
         case EXAM_STATE_OPEN:
-        case EXAM_STATE_CLOSED:
-        case EXAM_STATE_IN_PROGRESS:
             return true;
         // does not allow
+        case EXAM_STATE_CLOSED:
+        case EXAM_STATE_IN_PROGRESS:
         case EXAM_STATE_GRADING:
         case EXAM_STATE_FINALIZING:
         case EXAM_STATE_ARCHIVED:
@@ -383,6 +416,12 @@ function canStudentStateRegister(int $state)
         default:
             return false;
     }
+}
+
+
+function canStudentStateUnregister(int $state)
+{
+
 }
 
 

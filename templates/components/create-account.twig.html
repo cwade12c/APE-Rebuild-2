@@ -1,34 +1,23 @@
 <script type="text/javascript">
-  var createAccount = function() {
-    var params = {
-      id: getElementValue('accountID'),
-      firstName: getElementValue('firstName'),
-      lastName: getElementValue('lastName'),
-      email: getElementValue('email'),
-      type: getElementValue('accountType', 'integer')
-    };
+  var save = function() {
+    var id = getElementValue('accountID');
+    var firstName = getElementValue('firstName');
+    var lastName = getElementValue('lastName');
+    var email = getElementValue('email');
+    var selections = getSelectValues('accountTypeSelect');
 
-    var callbacks = {
-      success: function (response) {
-        if(response.success === true) {
-          notification('Successfully created ' + params.firstName + ' ' + params.lastName + '.',
-            'success');
-        }
-        else {
-          notification(response.message);
-        }
-      },
-      error: function (response) {
-        notification(response.message);
-      }
-    };
+    var type = 0;
+    _.each(selections, function(selection) {
+        type += parseInt(selection);
+    });
 
-    callAjax('post', 'CreateAccount', params, callbacks);
-  }
+    type = parseInt(type);
+
+    createAccount(id, firstName, lastName, email, type);
+    addRowToTable('accounts-table', [id, lastName, firstName, email, type]);
+  };
+  initializeSelectPicker();
 </script>
-
-
-
 
 <label for="accountID">ID: </label> <input type="text" class="form-control" id="accountID" name="accountID" />
 <br />
@@ -38,14 +27,12 @@
 <br />
 <label for="email">Email: </label> <input type="email" class="form-control" id="email" name="email" />
 <br />
-<label for="accountType">Account Type: </label>
-<select id="accountType">
-  <option value="1">Temp</option>
+<label for="accountTypeSelect">Account Type: </label>
+<br />
+<select class="selectpicker" id="accountTypeSelect" name="accountTypeSelect" multiple title="Add Types..." data-selected-text-format="count">
+  <option value="1">Temporary</option>
   <option value="2">Student</option>
   <option value="4">Grader</option>
   <option value="8">Teacher</option>
   <option value="16">Admin</option>
 </select>
-<button class="btn btn-primary pull-right" style="margin:10px;" onclick="createAccount()">Create
-  Account</button>
-<div class="clearfix"></div>

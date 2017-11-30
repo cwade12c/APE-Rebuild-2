@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>{% block title %}{% endblock %}</title>
+
+    <!-- accountID : {{ params.id }} -->
+    <!-- multiplePermissions : {% if params.availableNavLinks|length > 1 %} true {% else %} false {% endif %} -->
+
+    <link rel="stylesheet" type="text/css" href="vendor/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="vendor/jquery-datetimepicker/build/jquery.datetimepicker.min.css" />
+    <link rel="stylesheet" type="text/css" href="vendor/datatables/datatables.min.css"/>
+
+    <link rel="stylesheet/less" type="text/css" href="sources/styles/general.less" />
+    <link rel="stylesheet" type="text/css" href="sources/styles/animate.css" />
+
+    <script src="vendor/jquery/dist/jquery.min.js"></script>
+    <script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="vendor/bootstrap-confirm-delete/bootstrap-confirm-delete.js"></script>
+    <script src="vendor/datatables/datatables.min.js"></script>
+    <script src="vendor/less/dist/less.min.js"></script>
+    <script src="vendor/lodash/dist/lodash.js"></script>
+    <script src="vendor/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js"></script>
+    <script src="vendor/remarkable-bootstrap-notify/dist/bootstrap-notify.min.js"></script>
+    <script src="vendor/jszip/dist/jszip.min.js"></script>
+    <script src="vendor/pdfmake/build/pdfmake.min.js"></script>
+    <script src="vendor/pdfmake/build/vfs_fonts.js"></script>
+
+    <script src="scripts/ape-lib.js"></script>
+
+    <script>
+      $(document).ready(function () {
+          activeLink();
+      });
+    </script>
+</head>
+<body>
+<div class="col-sm-1 sidebar">
+    {{ include('layout/left-nav.twig.html') }}
+</div>
+    <div class="col-sm-11 col-sm-offset-1">
+        <div class="row">
+            {{ include('layout/top-nav.twig.html') }}
+        </div>
+        <div class="row">
+            <div class="col-sm-1">
+            {% if actions is defined %}
+                <div class="btn-group-vertical action-bar" role="group" aria-label="...">
+                    {% for action in actions %}
+                        {% if action.type == constant('ACTION_CREATE') %}
+                            <button class="{{ action.type }}" id="action-create" onclick="{{ action.funcSignature}}">{{ action.text | raw}}</button>
+                        {% elseif action.type == constant('ACTION_UPDATE') %}
+                            <button class="{{ action.type }} action-select disabled" disabled id="action-update" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
+                        {% elseif action.type == constant('ACTION_DELETE') %}
+                            <button class="{{ action.type }} action-select disabled" disabled id="action-delete" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
+                        {% elseif action.type == constant('ACTION_ARCHIVE') %}
+                            <button class="{{ action.type }} action-select disabled" disabled id="action-archive" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
+                        {% else %}
+                            <button class="{{ action.type }} action-select" id="action-generic" onclick="{{action.funcSignature}}">{{ action.text | raw}}</button>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            </div>
+            <div class="col-sm-10 main">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

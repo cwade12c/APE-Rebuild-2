@@ -27,7 +27,6 @@
             "includes/db/queries/reports.php",
             "includes/fnc/exams.php",
             "includes/operations/include.php",
-            "includes/securityConstants.php",
             "includes/sso.inc.php",
             "includes/templates.inc.php",
             "includes/test.php",

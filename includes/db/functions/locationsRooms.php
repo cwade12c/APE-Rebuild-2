@@ -17,7 +17,6 @@
  */
 function locationNameExists(string $name)
 {
-    validateLocationName($name);
     return locationNameExistsQuery($name);
 }
 
@@ -30,7 +29,6 @@ function locationNameExists(string $name)
  */
 function locationExists(int $id)
 {
-    validateLocationID($id);
     return locationIDExistsQuery($id);
 }
 
@@ -41,7 +39,9 @@ function locationExists(int $id)
  */
 function getLocations()
 {
-    return getLocationsQuery();
+    $results = getLocationsQuery();
+    $ids = array_column($results, 'id');
+    return $ids;
 }
 
 /**
@@ -77,7 +77,6 @@ function createLocation(string $name, int $seatsReserved, int $limitedSeats,
  * @param string $name              new name of location
  */
 function updateLocationName(int $id, string $name) {
-    validateLocationIDExists($id);
     updateLocationNameQuery($id, $name);
 }
 
@@ -99,16 +98,14 @@ function updateLocationName(int $id, string $name) {
 function updateLocationFull(int $id, string $name, int $seatsReserved,
     int $limitedSeats, array $rooms
 ) {
-    validateLocationIDExists($id);
-    validateLocationRooms($seatsReserved, $limitedSeats, $rooms);
-
     // TODO: check for conflict with current seating assignments/registration
 
-    // TODO: multiple queries, transaction?
+    startTransaction();
+
     updateLocationInfoQuery($id, $name, $seatsReserved, $limitedSeats);
     updateLocationRoomsExt($id, $rooms);
 
-    // TODO: validate success?
+    commit();
 }
 
 /**
@@ -124,42 +121,7 @@ function updateLocationFull(int $id, string $name, int $seatsReserved,
 function updateLocation(int $id, string $name, int $seatsReserved,
     int $limitedSeats
 ) {
-    // validate info
-    validateLocationIDExists($id);
-    validateLocationNameDoesNotExist($name);
-
-    $rooms = getLocationRooms($id);
-    validateLocationRooms($seatsReserved, $limitedSeats, $rooms);
-
     updateLocationInfoQuery($id, $name, $seatsReserved, $limitedSeats);
-}
-
-/**
- * Helper function for updateLocationFull()
- * Not intended to outside use
- * Updates rooms for a location
- *
- * @param int   $id     location id
- * @param array $rooms  array of rooms to update/add
- *                      all must exist
- *                      element format:
- *                      array(
- *                      'id' => room id,
- *                      'seats' => overridden number of seats
- *                      )
- */
-function updateLocationRooms(int $id, array $rooms)
-{
-    // validate location info
-    validateLocationIDExists($id);
-
-    $info = getLocationInformation($id);
-
-    validateLocationRooms(
-        $info['seats_reserved'], $info['limited_seats'], $rooms
-    );
-
-    updateLocationRoomsExt($id, $rooms);
 }
 
 /**
@@ -306,8 +268,6 @@ function mapLocationRoomsBack(array $roomIDs, array $rooms)
  */
 function deleteLocation(int $id)
 {
-    validateLocationIDExists($id);
-
     // TODO: check if location is valid to be deleted
     /// not used in any non-archived exams
 
@@ -325,7 +285,6 @@ function deleteLocation(int $id)
  */
 function roomNameExists(string $name)
 {
-    validateRoomName($name);
     return roomNameExistsQuery($name);
 }
 
@@ -338,7 +297,6 @@ function roomNameExists(string $name)
  */
 function roomExists(int $id)
 {
-    validateRoomID($id);
     return roomIDExistsQuery($id);
 }
 
@@ -350,13 +308,8 @@ function roomExists(int $id)
 function getRooms()
 {
     $roomIDs = getRoomsQuery();
-    $ids = array();
-    foreach ($roomIDs as $roomIDArr) {
-        array_push($ids, $roomIDArr['id']);
-    }
+    $ids = array_column($roomIDs, 'id');
     return $ids;
-
-    // TODO: validate something is returned (no false, just empty array)
 }
 
 /**
@@ -367,13 +320,7 @@ function getRooms()
  */
 function createRoom(string $name, int $seats)
 {
-    validateRoomName($name);
-    // TODO: validate room w/ name does not exist?
-
     createRoomQuery($name, $seats);
-
-    // TODO: validate created?
-    // TODO: return room ID?
 }
 
 /**
@@ -385,15 +332,10 @@ function createRoom(string $name, int $seats)
  */
 function updateRoom(int $id, string $name, int $seats)
 {
-    validateRoomID($id);
-    validateRoomName($name);
-
     // check if seat numbers change
     /// check if changing seat numbers will cause issues
 
     updateRoomQuery($id, $name, $seats);
-
-    // TODO: validate worked?
 }
 
 /**
@@ -403,10 +345,6 @@ function updateRoom(int $id, string $name, int $seats)
  */
 function deleteRoom(int $id)
 {
-    validateRoomIDSafeDelete($id);
-
-    // TODO: check if room deletion affects locations/exams
-
     deleteRoomQuery($id);
 }
 
@@ -417,12 +355,20 @@ function deleteRoom(int $id)
  *
  * @return array    associative array w/ information
  *                  'name' => location name
- *                  'reserved_seats' => number of reserved seats
- *                  'limited_seats' => limit of maximum seats
+ *                  'reservedSeats' => number of reserved seats
+ *                  'limitedSeats' => limit of maximum seats
  */
 function getLocationInformation(int $id)
 {
-    return getLocationInformationQuery($id);
+    $info = getLocationInformationQuery($id);
+
+    $info['reservedSeats'] = $info['reserved_seats'];
+    unset($info['reserved_seats']);
+
+    $info['limitedSeats'] = $info['limited_seats'];
+    unset($info['limited_seats']);
+
+    return $info;
 }
 
 /**
@@ -475,8 +421,8 @@ function getLocationRoomsMaxSeats(int $id)
 
     // check for limited seating
     $info = getLocationInformation($id);
-    if ($info['limited_seats'] > 0) {
-        return min($roomsMax, $info['limited_seats']);
+    if ($info['limitedSeats'] > 0) {
+        return min($roomsMax, $info['limitedSeats']);
     }
 
     return $roomsMax;
@@ -494,6 +440,18 @@ function getLocationRoomsMaxSeats(int $id)
 function getRoomInformation(int $id)
 {
     return getRoomInformationQuery($id);
+}
+
+/**
+ * Get name for room ID
+ *
+ * @param int $id
+ *
+ * @return string
+ */
+function getRoomName(int $id)
+{
+    return getRoomNameQuery($id);
 }
 
 /**

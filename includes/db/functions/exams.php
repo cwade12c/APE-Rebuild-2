@@ -17,7 +17,6 @@
  */
 function examExists(int $id)
 {
-    validateExamID($id);
     return examExistsQuery($id);
 }
 
@@ -139,7 +138,7 @@ function getExamsExtended(int $state, int $type, string $teacherID = null)
 {
     if ($teacherID == null) {
         $exams = getExamsQuery($state, $type);
-    }else{
+    } else {
         $exams = getInClassExamsQuery($state, $type, $teacherID);
     }
 
@@ -200,7 +199,6 @@ function getExamLocationID(int $id)
  */
 function getExamState(int $id)
 {
-    validateExamID($id);
     return getExamStateQuery($id);
 }
 
@@ -218,33 +216,25 @@ function getExamCategories(int $id)
 {
     $categories = getExamCategoriesQuery($id);
 
-    normalizeExamCategoriesArray($categories);
+    foreach ($categories as &$category) {
+        $category['id'] = $category['category_id'];
+        unset($category['category_id']);
+    }
 
     return $categories;
 }
 
 /**
- * Helper function for getExamCategories()
- * Transforms category array format
- * Resulting array element format
- *  array(
- *  'id' => category id,
- *  'points' => category points
- *  )
+ * Get points for exam/category
  *
- * @param array $categories category array from getExamCategoriesQuery()
- *                          element format of
- *                          array(
- *                          'category_id' => category id,
- *                          'points' => category points
- *                          )
+ * @param int $examID
+ * @param int $categoryID
+ *
+ * @return int
  */
-function normalizeExamCategoriesArray(array &$categories)
+function getExamCategoryPoints(int $examID, int $categoryID)
 {
-    foreach ($categories as &$category) {
-        $category['id'] = $category['category_id'];
-        unset($category['category_id']);
-    }
+    return getExamCategoryPointsQuery($examID, $categoryID);
 }
 
 /**
@@ -368,32 +358,13 @@ function createExamExtended(DateTime $start, DateTime $cutoff, int $minutes,
 function updateExam(int $id, DateTime $start, DateTime $cutoff, int $minutes,
     int $passingGrade, int $locationID, array $categories
 ) {
-    // validate arguments
-    validateExamID($id);
-    validateExamAttributes(
-        $start, $cutoff, $minutes, $passingGrade, $categories, $locationID
-    );
-
-
-    // TODO: validate exam state allows updates
-    // TODO: validate new location has enough space for current students
-
-
-    // TODO: create transaction ? race conditions possible
-
-    //$currentInfo = getExamInformation($id);
+    startTransaction();
 
     // update exam
     updateExamQuery($id, $start, $cutoff, $minutes, $passingGrade, $locationID);
     updateExamCategories($id, $categories);
 
-    // TODO: if location changed, reset seat assignments
-    // TODO: any changes necessary for graders assigned to categories
-    /// transfer graders if necessary
-
-    // TODO: validate success
-    // TODO: refresh exam ?
-    /// set 'dirty bit' to mark as needing refresh, such as assigned seats?
+    commit();
 }
 
 /**
@@ -410,22 +381,14 @@ function updateExamCategories(int $id, array $newCategories)
     // elements are associative array - 'category_id', 'points'
     $currentCategories = getExamCategories($id);
 
-    // determine changes necessary
     list(
         $categoriesToRemove, $categoriesToAdd, $categoriesToUpdate
         )
         = determineExamCategoryChanges($currentCategories, $newCategories);
 
-    // remove categories
     removeExamCategoriesQuery($id, $categoriesToRemove);
-
-    // update categories
     updateExamCategoriesQuery($id, $categoriesToUpdate);
-
-    // add categories
     createExamCategoriesQuery($id, $categoriesToAdd);
-
-    // TODO: check for success?
 }
 
 /**
@@ -558,6 +521,37 @@ function mapExamCategoriesBack(array $categoryIDs, array $categories)
 }
 
 /**
+ * Update time info for an exam
+ *
+ * @param int      $examID
+ * @param DateTime $start
+ * @param DateTime $cutoff
+ * @param int      $length
+ */
+function updateExamTime(int $examID, DateTime $start, DateTime $cutoff,
+    int $length
+) {
+    updateExamTimeQuery($examID, $start, $cutoff, $length);
+}
+
+/**
+ * Update exam grade related info
+ *
+ * @param int   $examID
+ * @param int   $passingGrade
+ * @param array $categories
+ */
+function updateExamGrades(int $examID, int $passingGrade, array $categories)
+{
+    startTransaction();
+
+    updateExamPassingGradeQuery($examID, $passingGrade);
+    updateExamCategories($examID, $categories);
+
+    commit();
+}
+
+/**
  * Set exam state
  *
  * @param int $id
@@ -577,6 +571,27 @@ function setExamState(int $id, int $state)
 function setExamLocation(int $id, int $locationID)
 {
     setExamLocationQuery($id, $locationID);
+}
+
+/**
+ * Check if user can edit the given exam
+ *
+ * @param string $accountID
+ * @param int    $examID
+ *
+ * @return bool
+ */
+function canEditExam(string $accountID, int $examID)
+{
+    $type = getAccountType($accountID);
+    if (typeHas($type, ACCOUNT_TYPE_ADMIN)) {
+        return true;
+    }else if (typeHas($type, ACCOUNT_TYPE_TEACHER)) {
+        $examTeacher = getInClassExamTeacher($examID);
+        return ($examTeacher && ($examTeacher == $accountID));
+    }
+
+    return false;
 }
 
 // TODO: have extended location check for setExamLocation() and updateExam()?

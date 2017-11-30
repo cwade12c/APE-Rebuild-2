@@ -1,0 +1,144 @@
+<script type="text/javascript">
+
+    $(function () {
+            document.getElementById('{% if tableID is defined %}{{tableID}}-error{% else %}examSearchError{% endif %}').style.visibility = 'hidden';
+            document.getElementById('{% if tableID is defined %}{{tableID}}-results{% else %}examSearchResults{% endif %}').style.visibility = 'hidden';
+
+            /*
+            search parameters
+            See Operation 'ExamSearch' for parameter explanations
+             */
+            var states = '{{states}}';
+            var types = '{{types}}';
+            var teacherID = '{{teacherID}}';
+
+            if (!searchParamAvailable('states', states)
+                || !searchParamAvailable('types', types)) {
+                return;
+            }
+
+            var statesVal = parseGetExamStates(states);
+
+            if (_.isUndefined(statesVal)) {
+                setError("Invalid states value: " + states);
+                return;
+            }
+
+            var typesVal = parseGetExamsType(types);
+            if (_.isUndefined(typesVal)) {
+                setError("Invalid types value: " + types);
+                return;
+            }
+
+            searchExams(statesVal, typesVal, teacherID, {
+                success: searchExamsSuccess,
+                failure: searchExamsFailure,
+                error: searchExamsError
+            });
+        }
+    );
+
+    function searchParamAvailable(str, v) {
+        if (_.isUndefined(v) || _.isEmpty(v)) {
+            setError("Missing search parameter: " + str);
+            return false;
+        }
+        return true;
+    }
+
+    function setError(msg) {
+        errorLineNotification(msg);
+        document.getElementById('{% if tableID is defined %}{{tableID}}-error-label{% else %}examSearchErrorLabel{% endif %}').textContent = msg;
+        document.getElementById('{% if tableID is defined %}{{tableID}}-error{% else %}examSearchError{% endif %}').style.visibility = 'visible';
+    }
+
+    function searchExamsSuccess(message, data) {
+        logLine("search exams success: " + message);
+        logLine("search data: " + JSON.stringify(data));
+
+        var exams = data.exams;
+        if (_.isEmpty(exams)) {
+            setError("No exams found");
+            return;
+        }
+
+        fillInfo(exams);
+
+        var initDataTable = '{{ dataTable }}';
+
+        if(initDataTable === 'true' || initDataTable === 1 || initDataTable === true) {
+            initializeDataTableById('{% if tableID is defined %}{{tableID}}{% else %}examsTable{% endif %}');
+        }
+
+        document.getElementById('{% if tableID is defined %}{{tableID}}-results{% else %}examSearchResults{% endif %}').style.visibility = 'visible';
+    }
+
+    function searchExamsFailure(message) {
+        setError('search failed: ' + message);
+    }
+
+    function searchExamsError() {
+        setError('Error while searching exams, please try again later');
+    }
+
+    function fillInfo(exams) {
+        // wipe table
+        $('{% if tableID is defined %}{{tableID}}{% else %}examsTable{% endif %}').find("tr:gt(0)").remove();
+
+        _.each(exams, fillExam);
+    }
+
+    function fillExam(examInfo) {
+        var examID = examInfo.examID;
+        var stateStr = examInfo.stateStr;
+
+        var start = new Date(Date.parse(examInfo.start.date));
+        var cutoff = new Date(Date.parse(examInfo.cutoff.date));
+        var length = examInfo.length;
+        var locationName = examInfo.locationName;
+
+        var totalSeats = examInfo.totalSeats;
+        var takenSeats = examInfo.takenSeats;
+
+        var examLink = "<a href='examDetails?exam=" + examID + "'>" + examID + "</a>";
+
+        var times = buildExamDatesTimes(start, cutoff, length);
+
+        var space;
+        if (!validSeatAmount(takenSeats) || !validSeatAmount(totalSeats)) {
+            space = "N/A";
+        }else{
+            space = takenSeats + "/" + totalSeats;
+        }
+
+        var $row = [examLink, stateStr, times.cutoff, times.times, locationName, space];
+        addRowToTable('{% if tableID is defined %}{{tableID}}{% else %}examsTable{% endif %}', $row);
+    }
+
+    function validSeatAmount(seats) {
+        return !_.isUndefined(seats) && _.isNumber(seats) && seats >= 0;
+    }
+
+</script>
+
+<div class='row' id='{% if tableID is defined %}{{tableID}}-error{% else %}examSearchError{% endif %}'>
+    <span class='label label-danger'>Error</span>
+    <label id='{% if tableID is defined %}{{tableID}}-error-label{% else %}examSearchErrorLabel{% endif %}'></label>
+</div>
+
+<div class='row' id='{% if tableID is defined %}{{tableID}}-results{% else %}examSearchResults{% endif %}'>
+    <table class='table table-striped' id='{% if tableID is defined %}{{tableID}}{% else %}examsTable{% endif %}'>
+        <thead>
+        <tr>
+            <th><span class='label label-info'>Exam</span></th>
+            <th><span class='label label-info'>State</span></th>
+            <th><span class='label label-info'>Cutoff</span></th>
+            <th><span class='label label-info'>Times</span></th>
+            <th><span class='label label-info'>Location</span></th>
+            <th><span class='label label-info'>Space</span></th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>

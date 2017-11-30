@@ -55,6 +55,30 @@ define('GET_EXAMS_TYPE_BOTH', 0);
 define('GET_EXAMS_TYPE_REGULAR', 1);
 define('GET_EXAMS_TYPE_IN_CLASS', 2);
 
+/* report types, used programmatically */
+define('REPORT_TYPE_NONE', 0);
+define('REPORT_TYPE_STUDENT_ID', 1);
+define('REPORT_TYPE_STUDENT_FIRST_NAME', 2);
+define('REPORT_TYPE_STUDENT_LAST_NAME', 3);
+define('REPORT_TYPE_STUDENT_EMAIL', 4);
+define('REPORT_TYPE_STUDENT_GRADE', 5);
+define('REPORT_TYPE_STUDENT_PASSED', 6);
+define('REPORT_TYPE_STUDENT_CATEGORY_GRADES', 7);
+define('REPORT_TYPE_STUDENT_HASH', 8);
+define('REPORT_TYPE_STUDENT_SEATING', 9);
+
+/* header name/key for a report type */
+define('REPORT_COLUMN_NONE', 'invalid');
+define('REPORT_COLUMN_STUDENT_ID', 'studentID');
+define('REPORT_COLUMN_STUDENT_FIRST_NAME', 'studentFirstName');
+define('REPORT_COLUMN_STUDENT_LAST_NAME', 'studentLastName');
+define('REPORT_COLUMN_STUDENT_EMAIL', 'studentEmail');
+define('REPORT_COLUMN_STUDENT_GRADE', 'studentGrade');
+define('REPORT_COLUMN_STUDENT_PASSED', 'studentPassed');
+define('REPORT_COLUMN_STUDENT_CATEGORY_GRADES', null);
+define('REPORT_COLUMN_STUDENT_HASH', 'studentHash');
+define('REPORT_COLUMN_STUDENT_SEATING', 'studentSeating');
+
 /* for general queries, datetime to/from php and mysql */
 /* php.net/manual/en/function.date.php */
 define('DATETIME_FORMAT', 'Y-m-d H:i:s');
@@ -95,9 +119,6 @@ define(
     'REGEX_TEMP_ID',
     '/^' . TEMP_ID_PREFIX . '[a-zA-Z0-9+\/=]{' . TEMP_ID_BYTES_GENERATED . '}$/'
 );
-
-/* hashing algorithm for account IDs, used to obfuscate IDs to graders */
-define('ACCOUNT_HASH_ALG', 'sha256');
 
 /* Error codes for exceptions */
 /* error code base */

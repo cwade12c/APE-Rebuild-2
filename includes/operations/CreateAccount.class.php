@@ -28,6 +28,7 @@ class CreateAccount extends Operation
             'lastName',
             'email'
         ));
+        parent::registerValidation('validateAccountType', 'type');
     }
 
     public function execute(array $args, string $accountID = null)
@@ -54,8 +55,8 @@ class CreateAccount extends Operation
             case ACCOUNT_TYPE_ADMIN:
                 createAdmin($id, $firstName, $lastName, $email);
                 break;
-            default:
-                throw new Exception('An invalid account type was specified.');
+            default: //some combination of types were passed
+                createAccount($id, $type, $firstName, $lastName, $email);
                 break;
         }
         return array(true);

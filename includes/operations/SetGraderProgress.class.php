@@ -25,6 +25,10 @@ class SetGraderProgress extends Operation
             'allowedExamStates', array(EXAM_STATE_GRADING)
         );
 
+        parent::registerAccountIDValidation(
+            'validateAccountsMatch', 'graderID'
+        );
+
         parent::registerValidation('validateGraderID', 'graderID');
         parent::registerValidation('validateExamIDExists', 'examID');
         parent::registerValidation('validateCategoryID', 'categoryID');
@@ -58,6 +62,8 @@ class SetGraderProgress extends Operation
         $studentMap = self::buildStudentIDMap($examID);
         self::mapGrades($studentMap, $grades);
 
+        error_log("grades to save: " . print_r($grades, true));
+
         setGraderCategoryGrades($examID, $categoryID, $graderID, $grades);
 
         return array('success' => true);
@@ -85,7 +91,7 @@ class SetGraderProgress extends Operation
                 );
             }
             $id = $map[$hash];
-            $grade['id'] = $id;
+            $grade['studentID'] = $id;
         }
     }
 
@@ -98,7 +104,7 @@ class SetGraderProgress extends Operation
         foreach ($grades as $i => $grade) {
             validateIsArray($grade, "grade index ($i)");
             validateKeysExist($grade, array('studentID', 'points'));
-            validateIsInt($grade['studentID'], "grade index ($i) student ID");
+            validateIsString($grade['studentID'], "grade index ($i) student ID");
             validateIsInt($grade['points'], "grade index ($i) points");
         }
 

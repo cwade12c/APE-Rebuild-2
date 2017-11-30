@@ -1,85 +1,126 @@
+@import (reference) '../../vendor/bootstrap/less/bootstrap.less';
+
 #debug {
   border: 1px solid #000;
 }
 
 .bg {
-  background-color: #fffef7;
+  background-color: #ffffff;
 }
 
 body {
-  padding-top: 50px;
+  padding-top: 0px;
 }
 
 .sub-header {
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  padding-bottom: 0;
+  border-bottom: 0;
 }
 
-.navbar-fixed-top {
+.navbar-fixed-top,
+.navbar-header,
+.navbar-default {
+  background-color: #ffffff;
+  color: #f8f8f8;
   border: 0;
+  top: 20px;
+  //text-align: center;
+  border-bottom: 1px solid #e7e7e7;
+  min-height: 52px;
+  //font-size: 30px;
+  //position: fixed;
+}
+
+.navbar-inverse,
+.navbar-inverse .navbar-nav > .active > a {
+  color: #ffffff;
+  background-color: #2D3B45;
 }
 
 .sidebar {
   display: none;
 }
+
 @media (min-width: 768px) {
   .sidebar {
     position: fixed;
-    top: 47px;
+    top: 0;
     bottom: 0;
     left: 0;
     z-index: 1000;
     display: block;
-    padding: 20px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    background-color: #fff;
-    border-right: 2px solid #eee;
+    //padding: 20px;
+    //overflow-x: hidden;
+    //overflow-y: auto;
+    background-color: #2D3B45;
+    text-align: center;
+    border-right: 1px #e7e7e7;
   }
 }
 
 .nav-sidebar {
-  margin-right: -21px;
+  margin-right: -20px;
   margin-bottom: 20px;
   margin-left: -20px;
 
   li {
     a {
-      padding-right: 20px;
-      padding-left: 20px;
+      &:hover {
+        background-color: #ffffff;
+        color: #2D3B45;
+      }
+      color: #f8f8f8;
+      padding-right: 30px;
+      padding-left: 30px;
+    }
+    .active-link {
+      a {
+        background-color: #ffffff;
+        color: #2D3B45;
+        padding-right: 30px;
+        padding-left: 30px;
+      }
     }
   }
-
 }
 
 .nav-sidebar > .active > a,
 .nav-sidebar > .active > a:hover,
 .nav-sidebar > .active > a:focus {
-  color: #fff;
-  background-color: #c8313f;
+  li {
+    text-align: center;
+  }
 }
 
-.nav-child {
-  li {
-    a {
-      text-align: center;
-    }
+.homeLogo {
+  img {
+    height: 52px;
+    text-align: center;
   }
+}
+
+.action-bar {
+  /*border-right: 1px solid #2d3b45;*/
+  padding: 10px;
+  //position: fixed;
 }
 
 .main {
-  padding: 20px;
+  //padding: 10px;
+  //margin-left: 10%;
 }
+
 @media (min-width: 768px) {
   .main {
-    padding-right: 40px;
-    padding-left: 40px;
+    //padding-right: 5px;
+    top: 10px;
+    left: 15px;
   }
 }
+
 .main .page-header {
   margin-top: 0;
 }
-
 
 /*
  * Placeholder dashboard ideas
@@ -89,17 +130,19 @@ body {
   margin-bottom: 30px;
   text-align: center;
 }
+
 .placeholders h4 {
   margin-bottom: 0;
 }
+
 .placeholder {
   margin-bottom: 20px;
 }
+
 .placeholder img {
   display: inline-block;
   border-radius: 50%;
 }
-
 
 .huge {
   font-size: 40px;
@@ -108,42 +151,107 @@ body {
 .panel-green {
   border-color: #5cb85c;
 }
+
 .panel-green > .panel-heading {
   border-color: #5cb85c;
   color: white;
   background-color: #5cb85c;
 }
+
 .panel-green > a {
   color: #5cb85c;
 }
+
 .panel-green > a:hover {
   color: #3d8b3d;
 }
+
 .panel-red {
   border-color: #d9534f;
 }
+
 .panel-red > .panel-heading {
   border-color: #d9534f;
   color: white;
   background-color: #d9534f;
 }
+
 .panel-red > a {
   color: #d9534f;
 }
+
 .panel-red > a:hover {
   color: #b52b27;
 }
+
 .panel-yellow {
   border-color: #f0ad4e;
 }
+
 .panel-yellow > .panel-heading {
   border-color: #f0ad4e;
   color: white;
   background-color: #f0ad4e;
 }
+
 .panel-yellow > a {
   color: #f0ad4e;
 }
+
 .panel-yellow > a:hover {
   color: #df8a13;
+}
+
+.data-table {
+  .table;
+  .table-striped;
+  .table-bordered;
+}
+
+.active-link {
+  background-color: #FFF;
+  a {
+    color: #337ab7
+  }
+}
+
+.active-link-set {
+  /* optionally style this up - this is the collapsable link set, like "Admin", "Student", "Grader", etc. */
+  li {
+    a {
+        background-color: #ffffff;
+        color: #2D3B45;
+      }
+      background-color: #ffffff;
+      color: #2D3B45;
+    }
+  }
+.dt-buttons,
+.dt-buttons.btn-group {
+  display: inline;
+  float: left;
+  vertical-align: middle;
+  padding-bottom: 10px;
+}
+
+.dataTables_wrapper .dataTables_filter {
+  //display: inline;
+  float: right;
+  vertical-align: middle;
+  padding-bottom: 10px;
+  height: 10px;
+}
+
+.data-table .dataTable {
+  //bottom: 10px;
+  //top: 10px;
+}
+
+.dataTables_wrapper {
+  margin-left: 15px;
+}
+
+#upcoming-exams-guest {
+  margin-left: 15px;
+  width: 97%;
 }

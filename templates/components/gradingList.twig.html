@@ -1,0 +1,109 @@
+<script type="text/javascript">
+    var grader;
+
+    document.addEventListener("DOMContentLoaded",
+        function () {
+            document.getElementById('gradingListError').style.visibility = 'hidden';
+            document.getElementById('assignedSection').style.visibility = 'hidden';
+
+            grader = '{{graderID}}';
+
+            getAssigned();
+        }
+    );
+
+    function setError(msg) {
+        errorLineNotification(msg);
+        document.getElementById('gradingErrorLabel').textContent = msg;
+        document.getElementById('gradingListError').style.visibility = 'visible';
+    }
+
+    function getAssigned() {
+        var params = {
+            graderID: grader
+        };
+
+        var callbacks = {
+            success: getAssignedSuccess,
+            failure: function (message) {
+                setError('Failed to get assigned exams: ' + message);
+            },
+            error: function () {
+                setError('Error while retrieving progress, please try again later');
+            }
+        };
+
+        return callAPI('GraderAssignedExams', params, callbacks);
+    }
+
+    function getAssignedSuccess(message, data) {
+        logLine("Get assigned success: " + message);
+        logLine("assigned data: " + JSON.stringify(data));
+
+        var info = data.assignedInfo;
+        if (info.length === 0) {
+            setError("Nothing assigned to grade");
+            return;
+        }
+
+        fillInfo(info);
+        document.getElementById('assignedSection').style.visibility = 'visible';
+    }
+
+    function fillInfo(exams) {
+        // wipe table
+        $('#assignedTable').find("tr:gt(0)").remove();
+
+        _.each(exams, fillExam);
+    }
+
+    function fillExam(examInfo) {
+        var examID = examInfo.examID;
+        var categories = examInfo.categories;
+
+        _.each(categories,
+            function (category) {
+                var $row = buildExamRow(examID, category);
+                addRowToTable('assignedTable', $row);
+            }
+        )
+    }
+
+    function buildExamRow(examID, category) {
+        var categoryID = category.categoryID;
+        var categoryName = category.categoryName;
+        var submitted = parseInt(category.submitted);
+        var gradesSet = category.gradesSet;
+        var gradesTotal = category.gradesTotal;
+
+        var grades = gradesSet + ' / ' + gradesTotal;
+
+        var status = 'submitted';
+        if (!submitted) {
+            status = "<a href='examCategoryGrading?exam=" + examID + "&category=" + categoryID + "'>grading</a>";
+        }
+
+        return [examID, categoryName, grades, status];
+    }
+
+</script>
+
+<div class='row' id='gradingListError'>
+    <span class='label label-danger'>Error</span>
+    <label id='gradingErrorLabel'></label>
+</div>
+
+<div class='row' id='assignedSection'>
+    <table class='table table-striped' id='assignedTable'>
+        <thead>
+        <tr>
+            <th><span class='label label-info'>Exam</span></th>
+            <th><span class='label label-info'>Category</span></th>
+            <th><span class='label label-info'>Grades Set / Total</span></th>
+            <th><span class='label label-info'>Status</span></th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>

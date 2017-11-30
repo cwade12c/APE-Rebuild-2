@@ -1,0 +1,114 @@
+<script type="text/javascript">
+  $('.selectpicker').selectpicker();
+
+  var clickTab = function(tabId, options) {
+    var types = getSelectValues('exam-types');
+    var params = {
+      states: options[0],
+      types: getSelectValues('exam-types'),
+      tableID: options[1],
+      dataTable: true
+    };
+    loadComponent('exam-search', tabId, params);
+  };
+
+  var clickOpen = function() {
+      clickTab('open', ['GET_EXAMS_OPEN', 'open-exams']);
+  };
+
+  var clickUpcoming = function() {
+    clickTab('upcoming', ['GET_EXAMS_UPCOMING', 'upcoming-exams']);
+  };
+
+  var clickGrading = function() {
+      clickTab('grading', ['GET_EXAMS_GRADING', 'grading-exams']);
+  };
+
+  var clickFinalizing = function() {
+      clickTab('finalizing', ['GET_EXAMS_FINALIZING', 'finalizing-exams']);
+  };
+
+  var clickNonArchived = function() {
+      clickTab('non-archived', ['GET_EXAMS_NON_ARCHIVED', 'non-archived-exams']);
+  };
+
+  var clickArchived = function() {
+      clickTab('archived', ['GET_EXAMS_ARCHIVED', 'archived-exams']);
+  };
+
+  var viewDetails = function() {
+      var tableId = $('.active a').first().text().toLowerCase() + '-exams';
+
+      var table = $('#' + tableId).DataTable();
+      var examId = getSelectedRowByIndex(table, 0);
+      var html = $.parseHTML(examId.replace(/\\\//g, "/"));
+      examId = parseInt(_.first(html).innerText);
+
+      notification('Redirecting to view the exam details...', 'info');
+      window.location.href = 'examDetails?exam=' + examId;
+  };
+
+  var editExam = function() {
+      var tableId = $('.active a').first().text().toLowerCase() + '-exams';
+
+      var table = $('#' + tableId).DataTable();
+      var examId = getSelectedRowByIndex(table, 0);
+      var html = $.parseHTML(examId.replace(/\\\//g, "/"));
+      examId = parseInt(_.first(html).innerText);
+
+      notification('Redirecting to edit the exam...', 'info');
+      window.location.href = 'editExam?exam=' + examId;
+  };
+
+
+</script>
+
+<div>
+  <h2 style="display:inline;">Exams</h2>
+  <select class="selectpicker pull-right" id="exam-types" name="exam-types" title="Exam Types">
+    <option value="GET_EXAMS_TYPE_BOTH" selected>Both</option>
+    <option value="GET_EXAMS_TYPE_REGULAR">Regular</option>
+    <option value="GET_EXAMS_TYPE_IN_CLASS">In-Class</option>
+  </select>
+  <br />
+</div>
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#all">All</a></li>
+  <li><a data-toggle="tab" href="#open" onclick="clickOpen()">Open</a></li>
+  <li><a data-toggle="tab" href="#upcoming" onclick="clickUpcoming()">Upcoming</a></li>
+  <li><a data-toggle="tab" href="#grading" onclick="clickGrading()">Grading</a></li>
+  <li><a data-toggle="tab" href="#finalizing" onclick="clickFinalizing()">Finalizing</a></li>
+  <li><a data-toggle="tab" href="#non-archived" onclick="clickNonArchived()">Non-Archived</a></li>
+  <li><a data-toggle="tab" href="#archived" onclick="clickArchived()">Archived</a></li>
+</ul>
+
+<div class="tab-content">
+  <div id="all" class="tab-pane fade in active">
+      {% include 'components/exam-search.twig.html' with {'states' : 'GET_EXAMS_ALL', 'types' : 'GET_EXAMS_TYPE_BOTH', 'tableID': 'all-exams', 'dataTable': 'true'} %}
+  </div>
+
+  <div id="open" class="tab-pane fade">
+
+  </div>
+
+  <div id="upcoming" class="tab-pane fade">
+
+  </div>
+
+  <div id="grading" class="tab-pane fade">
+
+  </div>
+
+  <div id="finalizing" class="tab-pane fade">
+
+  </div>
+
+  <div id="non-archived" class="tab-pane fade">
+
+  </div>
+
+  <div id="archived" class="tab-pane fade">
+
+  </div>
+</div>

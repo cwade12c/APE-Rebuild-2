@@ -1,0 +1,298 @@
+{% extends "layout/base.twig.html" %}
+
+{% block title %}Upcoming Apes{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-header">
+                <h1>EWU Advancement Programming Exam</h1>
+                <p>
+                    Please log in to complete online registration. If you show up to an exam without registering
+                    first, you may be turned away.
+                </p>
+                <p style="color:red">
+                    Any student requesting DSS accommodations must send an email to tcapaul@ewu.edu at least one
+                    week prior to the exam.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-header">
+                <h2>Upcoming Exams</h2>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            {% include 'components/exam-search.twig.html' with {'states' : 'GET_EXAMS_UPCOMING', 'types' : 'GET_EXAMS_TYPE_REGULAR', 'tableID': 'upcoming-exams-guest'} %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-header">
+                <h2>Exam Information</h2>
+                <p>The following is available as a PDF. Access it using the resources tab after logging in.</p>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Environment</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li><strong>OS:</strong> Linux</li>
+                        <li><strong>IDE:</strong> JGrasp, GEdit, Eclipse</li>
+                        <li><strong>JDK:</strong> 8.0 (1.8.x)</li>
+                        <li><strong>Duration:</strong> 4 hours</li>
+                        <li><strong>No:</strong> Internet, notes, text</li>
+                        <li>Java API provided</li>
+                        <li>The exam uses Test Driven Design, where you are writing code based on the provided tests.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-header">
+                <h3>Sections</h3>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">General Program Design: 30%</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>Penalty points can be assessed in this category for grossly inefficient code</li>
+                        <li>File input and output</li>
+                        <li>Exception handling</li>
+                        <li>Order-related manipulations, e.g. <strong>addOrdered</strong>, <strong>sort</strong>,
+                            <strong>search</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Data Abstraction and Class Design: 30%</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>Creating a class</li>
+                        <li>Extending a class</li>
+                        <li>Overriding a method, e.g. <strong>toString</strong></li>
+                        <li>Accessing super class methods and/or fields</li>
+                        <li>Implementing an interface, e.g. <strong>Comparable</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Linked List Manipulation: 20%</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>Creating a non-circular singly linked list, with or without a header/sentinel node</li>
+                        <li>Adding and removing nodes</li>
+                        <li>Retrieving data based on an index or conditions</li>
+                        <li>Order-related manipulations</li>
+                        <li>Generate a sub list based on conditions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Recursion: 20%</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>Simple recursive methods to accomplish a task</li>
+                        <li>Printing a linked list in reverse</li>
+                        <li>Computation of factorials</li>
+                        <li>Any recursive algorithm covered in CSCD 210, 211, or 300</li>
+                        <li>Example: <a href="http://penguin.ewu.edu/cscd300/Topic/Recursion/AdditiveSquares.java"
+                                        target="_blank">Additive Squares</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-header">
+                <h3>Resources</h3>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Practice Exams</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>
+                            Winter 2011:
+                            <a href="http://penguin.ewu.edu/advancement_exam/practice_exams/W11APE.zip"
+                               target="_blank">Exam</a> |
+                            <a href="http://penguin.ewu.edu/advancement_exam/practice_exams/W11FullAPE.zip"
+                               target="_blank">Solution</a>
+                        </li>
+                        <li>
+                            Winter 2012:
+                            <a href="http://penguin.ewu.edu/advancement_exam/practice_exams/W12APE.zip"
+                               target="_blank">Exam</a>
+                        </li>
+                        <li>
+                            Summer 2013:
+                            <a href="http://penguin.ewu.edu/advancement_exam/practice_exams/Summer2013APE.zip"
+                               target="_blank">Exam</a>
+                        </li>
+                        <li>
+                            Summer 2017:
+                            <a href="http://penguin.ewu.edu/advancement_exam/practice_exams/Summer2017APE.zip"
+                               target="_blank">Exam</a> |
+                            <a href="http://penguin.ewu.edu/advancement_exam/practice_exams/Summer2017APESolution.zip"
+                               target="_blank">Solution</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Basic Strategies</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>Stub all required methods, then fill them in as you progress through the exam</li>
+                        <li>Carefully read the directions, and look at the sample input and output before you begin
+                            writing code
+                        </li>
+                        <li>Temporarily comment out items that don't compile so you can test parts of your solution</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Frequent Problems</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>Not following directions</li>
+                        <li>Not reading the specifications in their entirety</li>
+                        <li>Ignoring specifications related to header/sentinel nodes</li>
+                        <li>Incorrect file naming/placement</li>
+                        <li>Modifying files that were to be left alone</li>
+                        <li>Unfamiliarity with keywords in Java, e.g. extends, implements</li>
+                        <li>Spending too much time on one item</li>
+                        <li>Inability to implement simple recursion</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Additional Information</h3>
+                </div>
+                <div class="panel-body">
+                    <p>An expanded list of topics follows. You should make sure you are proficient in each area to
+                        ensure success.</p>
+                    <ul>
+                        <li>
+                            Input via Scanner
+                            <ul>
+                                <li>Input files will be well formed</li>
+                                <li>Know how to stop when end of file is reached</li>
+                                <li>Remember to close input files</li>
+                            </ul>
+                        </li>
+                        <li>
+                            Output via PrintWriter
+                            <ul>
+                                <li>Know how to format output (decimal points, columns, etc.</li>
+                                <li>Remember to close output files</li>
+                            </ul>
+                        </li>
+                        <li>
+                            Inheritance
+                            <ul>
+                                <li>Understand base/derived relationship</li>
+                                <li>Know how to override methods to enable polymorphic behavior</li>
+                                <li>Understand abstract classes and interfaces</li>
+                                <li>Know how to derive a class from an existing class</li>
+                                <li>Know how to call base/parent/super class methods (requires use of keyword super)
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            Comparable Interface
+                            <ul>
+                                <li>Know how to implement for a given class, including multiple-key comparisons</li>
+                                <li>Know how to utilize when searching and sorting (i.e. call the compareTo method)</li>
+                            </ul>
+                        </li>
+                        <li>
+                            Basic Exception Handling
+                            <ul>
+                                <li>Know how to designate a section of code as possibly throwing an execption (via a try
+                                    block)
+                                </li>
+                                <li>Know how to handle and exception (via a catch block)</li>
+                                <li>Know how to propagate an exception from a method (by using throws and the end of the
+                                    method signature)
+                                </li>
+                                <li>Know how to generically handle an exception (use Exception to do this)</li>
+                            </ul>
+                        </li>
+                        <li>
+                            toString
+                            <ul>
+                                <li>Know how to implement properly for a given class</li>
+                                <li>Know how to utilize an existing toString provided by a class (recall that it returns
+                                    a String representing data in the object you'd like printed and that it is
+                                    automatically invoked whenever you try and print an object using print, println, or
+                                    printf with the "%s" format specifier)
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p>This exam covers material very similar to that in the warm-up assignment in Data Structures
+                        (CSCD300), or possibly the warm-up assignment and the second programming assignment.
+                        You will not have to start from scratch on the exam. You will be given a (previously) working
+                        program that has had functionality removed. It is your job to reinsert that functionality. For
+                        the most part, this will be done via adding methods. You will be told in some way what methods
+                        are required. You may be asked to write a class in its entirety. However, if you are asked to
+                        write an entire class the amount of code you will be required to write is not intended to be
+                        “large.” Questions will be asked in “parts” that can be done separately. This means if you mess
+                        up on part 1, and part 2 requires something from part 1, you will not need to have completed
+                        part 1 successfully to do part 2.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

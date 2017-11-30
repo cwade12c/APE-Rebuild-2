@@ -1,0 +1,83 @@
+<script type="text/javascript">
+    $(document).ready(function () {
+        var accountId = '{{ accountId }}';
+        var promises = [];
+
+        var accountInfo = getAccountInfo(accountId.toString());
+        var accountDetails = getAccountDetails(accountId.toString());
+
+        promises.push(accountInfo);
+        promises.push(accountDetails);
+
+        Promise.all(promises).then(function() {
+          accountInfo = accountInfo.responseJSON.data;
+          accountDetails = accountDetails.responseJSON.data;
+
+          setElementValueById('accountID', '{{ accountId }}');
+          setElementValueById('firstName', accountInfo.firstName);
+          setElementValueById('lastName', accountInfo.lastName);
+          setElementValueById('email', accountInfo.email);
+
+            var values = [];
+
+            if(accountDetails.isAdmin) {
+                values.push({{ constant('ACCOUNT_TYPE_ADMIN') }});
+            }
+
+            if(accountDetails.isTeacher) {
+                values.push({{ constant('ACCOUNT_TYPE_TEACHER') }});
+            }
+
+            if(accountDetails.isGrader) {
+                values.push({{ constant('ACCOUNT_TYPE_GRADER') }});
+            }
+
+            if(accountDetails.isStudent) {
+                values.push({{ constant('ACCOUNT_TYPE_STUDENT') }});
+            }
+
+            if(accountDetails.isTemp) {
+                values.push({{ constant('ACCOUNT_TYPE_TEMP') }});
+            }
+
+            initializeSelectPicker();
+            setSelectPickerValues(values);
+        });
+    });
+
+    var save = function() {
+      var id = getElementValue('accountID');
+      var firstName = getElementValue('firstName');
+      var lastName = getElementValue('lastName');
+      var email = getElementValue('email');
+
+      var selections = getSelectValues('accountTypeSelect');
+
+      var type = 0;
+      _.each(selections, function(selection) {
+          type += parseInt(selection);
+      });
+
+      type = parseInt(type);
+
+      updateAccount(id.toString() + '', firstName, lastName, email, type);
+    };
+</script>
+
+<label for="accountID">ID: </label> <input type="text" class="form-control disabled" disabled id="accountID" name="accountID" />
+<br />
+<label for="firstName">First Name: </label> <input type="text" class="form-control" id="firstName" name="firstName" />
+<br />
+<label for="lastName">Last Name: </label> <input type="text" class="form-control" id="lastName" name="lastName" />
+<br />
+<label for="email">Email: </label> <input type="email" class="form-control" id="email" name="email" />
+<br />
+<label for="accountTypeSelect">Account Type: </label>
+<br />
+<select class="selectpicker" id="accountTypeSelect" name="accountTypeSelect" multiple title="Add Types..." data-selected-text-format="count">
+  <option value="1">Temporary</option>
+  <option value="2">Student</option>
+  <option value="4">Grader</option>
+  <option value="8">Teacher</option>
+  <option value="16">Admin</option>
+</select>

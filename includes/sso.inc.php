@@ -1,13 +1,27 @@
 <?php
 
-function enforceAuthentication()
+function initCAS()
 {
     phpCAS::client(SAML_VERSION_1_1, CAS_DOMAIN, 443, '/cas', false);
     phpCAS::setCasServerCACert(CAS_CERT_PATH);
     phpCAS::handleLogoutRequests(true, CAS_HOSTS);
+}
+
+function initApi()
+{
+    if(phpCAS::isAuthenticated()) {
+        $_SESSION['username'] = phpCAS::getUser();
+    }
+    else {
+        $_SESSION['username'] = 'Guest';
+    }
+}
+
+function enforceAuthentication()
+{
     phpCAS::forceAuthentication();
 
-    $_SESSION['username']        = phpCAS::getUser();
+    $_SESSION['username'] = phpCAS::getUser();
     $_SESSION['loggedInLocally'] = true;
 
     if (isset($_SESSION['username'])) {
@@ -25,10 +39,6 @@ function enforceAuthentication()
 
 function userIsLoggedIn()
 {
-    phpCAS::client(SAML_VERSION_1_1, CAS_DOMAIN, 443, '/cas', false);
-    phpCAS::setCasServerCACert(CAS_CERT_PATH);
-    phpCAS::handleLogoutRequests(true, CAS_HOSTS);
-
     return phpCAS::isAuthenticated();
 }
 
@@ -38,109 +48,107 @@ function setSessionVariables()
     $samlAttribs = phpCAS::getAttributes();
 
     //TODO remove this debug code before production
-    if(DEBUG) {
-        if(DEBUG_ROLE == ACCOUNT_TYPE_TEMP) {
+    if (DEBUG) {
+        if (DEBUG_ROLE == ACCOUNT_TYPE_TEMP) {
             $_SESSION['firstName'] = 'Temporary';
-            $_SESSION['lastName']  = 'Account';
-            $_SESSION['userType']  = 'Temporary';
-            $_SESSION['ewuid']     = '00111111';
-            $_SESSION['email']     = 'temporary.a@eagles.ewu.edu';
-        }
-        else if(DEBUG_ROLE == ACCOUNT_TYPE_STUDENT) {
+            $_SESSION['lastName'] = 'Account';
+            $_SESSION['userType'] = 'Temporary';
+            $_SESSION['ewuid'] = '00111111';
+            $_SESSION['email'] = 'temporary.a@eagles.ewu.edu';
+        } elseif (DEBUG_ROLE == ACCOUNT_TYPE_STUDENT) {
             $_SESSION['firstName'] = 'Student';
-            $_SESSION['lastName']  = 'Account';
-            $_SESSION['userType']  = 'Student';
-            $_SESSION['ewuid']     = '00111113';
-            $_SESSION['email']     = 'student.a@eagles.ewu.edu';
-        }
-        else if(DEBUG_ROLE == ACCOUNT_TYPE_GRADER) {
+            $_SESSION['lastName'] = 'Account';
+            $_SESSION['userType'] = 'Student';
+            $_SESSION['ewuid'] = '00111113';
+            $_SESSION['email'] = 'student.a@eagles.ewu.edu';
+        } elseif (DEBUG_ROLE == ACCOUNT_TYPE_GRADER) {
             $_SESSION['firstName'] = 'Grader';
-            $_SESSION['lastName']  = 'Account';
-            $_SESSION['userType']  = 'Grader';
-            $_SESSION['ewuid']     = '00111128';
-            $_SESSION['email']     = 'grader.a@eagles.ewu.edu';
-        }
-        else if(DEBUG_ROLE == ACCOUNT_TYPE_TEACHER) {
+            $_SESSION['lastName'] = 'Account';
+            $_SESSION['userType'] = 'Grader';
+            $_SESSION['ewuid'] = '00111128';
+            $_SESSION['email'] = 'grader.a@eagles.ewu.edu';
+        } elseif (DEBUG_ROLE == ACCOUNT_TYPE_TEACHER) {
             $_SESSION['firstName'] = 'Teacher';
-            $_SESSION['lastName']  = 'Account';
-            $_SESSION['userType']  = 'Teacher';
-            $_SESSION['ewuid']     = '00111131';
-            $_SESSION['email']     = 'teacher.a@eagles.ewu.edu';
-        }
-        else if(DEBUG_ROLE == ACCOUNT_TYPE_ADMIN) {
+            $_SESSION['lastName'] = 'Account';
+            $_SESSION['userType'] = 'Teacher';
+            $_SESSION['ewuid'] = '00111131';
+            $_SESSION['email'] = 'teacher.a@eagles.ewu.edu';
+        } elseif (DEBUG_ROLE == ACCOUNT_TYPE_ADMIN) {
             $_SESSION['firstName'] = 'Admin';
-            $_SESSION['lastName']  = 'Account';
-            $_SESSION['userType']  = 'Admin';
-            $_SESSION['ewuid']     = '00111133';
-            $_SESSION['email']     = 'admin.a@eagles.ewu.edu';
+            $_SESSION['lastName'] = 'Account';
+            $_SESSION['userType'] = 'Admin';
+            $_SESSION['ewuid'] = '00111133';
+            $_SESSION['email'] = 'admin.a@eagles.ewu.edu';
         }
-    }
-    else {
+    } else {
         $_SESSION['firstName'] = $samlAttribs['FirstName'];
-        $_SESSION['lastName']  = $samlAttribs['LastName'];
-        $_SESSION['userType']  = $samlAttribs['UserType'];
-        $_SESSION['ewuid']     = $samlAttribs['Ewuid'];
-        $_SESSION['email']     = $samlAttribs["Email"];
+        $_SESSION['lastName'] = $samlAttribs['LastName'];
+        $_SESSION['userType'] = $samlAttribs['UserType'];
+        $_SESSION['ewuid'] = $samlAttribs['Ewuid'];
+        $_SESSION['email'] = $samlAttribs["Email"];
     }
 
     if ($_SESSION['ewuid'] && $_SESSION['username']) {
-        $id     = $_SESSION['ewuid'];
-        $sql    = executeQuery("SELECT type FROM accounts WHERE id = $id");
-        $result = getQueryResult($sql);
-        $_SESSION['userGroup'] = $result;
+        $id = $_SESSION['ewuid'];
+        $_SESSION['userGroup'] = getAccountType($id);
     }
 
-    global $params;
-    $params = array(
-        'isLoggedIn' => true,
-        'firstName' => $_SESSION['firstName'],
-        'lastName' => $_SESSION['lastName'],
-        'type' => getAccountTypeQuery((string)$_SESSION['ewuid']),
-        'id' => $_SESSION['ewuid'],
-        'email' => $_SESSION['email'],
-        'availableNavLinks' => getAvailableNavigationLinks()
-    );
-
+    setParam('isLoggedIn', true);
+    setParam('firstName', $_SESSION['firstName']);
+    setParam('lastName', $_SESSION['lastName']);
+    setParam('type', getAccountType((string)$_SESSION['ewuid']));
+    setParam('id', $_SESSION['ewuid']);
+    setParam('email', $_SESSION['email']);
+    setParam('availableNavLinks', getAvailableNavigationLinks());
 }
 
 function getAvailableNavigationLinks()
 {
-    if(accountIsStudent((string)$_SESSION['ewuid'])) {
-        return STUDENT_LINKS;
+    $links = array();
+
+    if (accountIsStudent((string)$_SESSION['ewuid'])) {
+        $links["Student"] = STUDENT_LINKS;
     }
-    else if(accountIsGrader((string)$_SESSION['ewuid'])) {
-        return GRADER_LINKS;
+    if (accountIsGrader((string)$_SESSION['ewuid'])) {
+        $links["Grader"] = GRADER_LINKS;
     }
-    else if(accountIsTeacher((string)$_SESSION['ewuid'])) {
-        return TEACHER_LINKS;
+    if (accountIsTeacher((string)$_SESSION['ewuid'])) {
+        $links["Teacher"] = TEACHER_LINKS;
     }
-    else if(accountIsAdmin((string)$_SESSION['ewuid'])) {
-        return ADMIN_LINKS;
+    if (accountIsAdmin((string)$_SESSION['ewuid'])) {
+        $links["Admin"] = ADMIN_LINKS;
     }
 
-    return GUEST_LINKS;
+    if(empty($links)) {
+        $links["Guest"] = GUEST_LINKS;
+    }
+
+    return $links;
 }
 
 function checkFirstTimeLogin()
 {
+    $id = $_SESSION['ewuid'];
+    $lastName = $_SESSION['lastName'];
+    $firstName = $_SESSION['firstName'];
+    $email = $_SESSION['email'];
+
     if ($_SESSION['userType'] == "Student") {
-
-        $id        = $_SESSION['ewuid'];
-        $type      = ACCOUNT_TYPE_STUDENT;
-        $lastName  = $_SESSION['lastName'];
-        $firstName = $_SESSION['firstName'];
-        $email     = $_SESSION['email'];
-
-        $sql    = executeQuery("SELECT * FROM accounts WHERE id = $id");
-        $result = getQueryResult($sql);
-
-        if ($result == false) {
-            $sql = executeQuery(
-                "INSERT INTO accounts(id, type, f_name, l_name, email) values('$id', '$type', '$firstName', '$lastName', '$email');"
-            );
+        if (accountExists($id)) {
+            //updateAccountInfo($id, $firstName, $lastName, $email);
+        } else {
+            createStudent($id, $firstName, $lastName, $email);
         }
-    } else if ($_SESSION['userType'] == "Teacher") {
-
+    } else {
+        if ($_SESSION['userType'] == "Teacher") {
+            if (accountExists($id)) {
+                //updateAccountInfo($id, $firstName, $lastName, $email);
+            } else {
+                createAccount(
+                    $id, ACCOUNT_TYPE_NONE, $firstName, $lastName, $email
+                );
+            }
+        }
     }
 }
 

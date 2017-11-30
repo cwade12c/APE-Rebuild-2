@@ -45,8 +45,8 @@ class ExamLocation extends Operation
 
         return array('locationID'    => $locationID,
                      'name'          => $info['name'],
-                     'reservedSeats' => $info['reserved_seats'],
-                     'limitedSeats'  => $info['limited_seats'],
+                     'reservedSeats' => $info['reservedSeats'],
+                     'limitedSeats'  => $info['limitedSeats'],
                      'rooms'         => $rooms);
     }
 }

@@ -319,8 +319,12 @@ abstract class Operation
                 return;
             }
         }
+
+        $message = "Account type ({$type}) does not match any acceptable types";
+
+        logSecurityIncident("INVALID_PERMISSION", $message);
         throw new InvalidArgumentException(
-            "Account type ({$type}) does not match any acceptable types"
+            $message
         );
     }
 
@@ -341,10 +345,10 @@ abstract class Operation
         $validateArgs = array($accountID);
         foreach ($this->accountValidationParameterNames as $parameterName) {
             if (isset($args[$parameterName])) {
-                array_push($validationArgs, $args[$parameterName]);
+                array_push($validateArgs, $args[$parameterName]);
             } elseif (isset($this->staticParameters[$parameterName])) {
                 array_push(
-                    $validationArgs, $this->staticParameters[$parameterName]
+                    $validateArgs, $this->staticParameters[$parameterName]
                 );
             } else {
                 throw new LogicException(
@@ -354,14 +358,18 @@ abstract class Operation
         }
 
         try {
-            if (!call_user_func($this->accountValidation, $validateArgs)) {
+            if (!call_user_func_array($this->accountValidation, $validateArgs)) {
                 throw new InvalidArgumentException(
                     'False from user validation'
                 );
             }
         } catch (Exception $e) {
+            $message = "Account ID ({$accountID}) failed operation account validation";
+            $id = reset($args);
+
+            logSecurityIncident("ACCOUNT_HIJACK ($id)", $message);
             throw new InvalidArgumentException(
-                "Account ID ({$accountID}) failed operation account validation"
+                $message
             );
         }
     }

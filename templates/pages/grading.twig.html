@@ -1,0 +1,13 @@
+{% extends "layout/base.twig.html" %}
+
+{% block title %}Grading{% endblock %}
+
+{% block head %}
+{{ parent() }}
+{% endblock %}
+
+{% block content %}
+<div id='grading-list-component'>
+    {% include 'components/gradingList.twig.html' with {'graderID' : graderID} %}
+</div>
+{% endblock %}

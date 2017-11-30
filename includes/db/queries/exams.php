@@ -182,7 +182,7 @@ function buildFindExamStateString(int $state)
     } elseif ($state == GET_EXAMS_ARCHIVED) {
         // archived state
         // comparison
-        array_push($stateCompares, "`state` != :state_archived");
+        array_push($stateCompares, "`state` = :state_archived");
         // params
         array_push(
             $params,
@@ -291,6 +291,28 @@ function getExamCategoriesQuery(int $id)
 }
 
 /**
+ * Get points for exam/category
+ *
+ * @param int $examID
+ * @param int $categoryID
+ *
+ * @return int
+ */
+function getExamCategoryPointsQuery(int $examID, int $categoryID)
+{
+    $query
+        = "SELECT `points` "
+        . " FROM `exam_categories` WHERE  "
+        . " (`id` = :examID) AND (`category_id` = :categoryID)";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':categoryID', $categoryID, PDO::PARAM_INT))
+    );
+
+    return getQueryResult($sql);
+}
+
+/**
  * Get teacher id for an in class exam
  *
  * @param int $id
@@ -341,14 +363,14 @@ function createExamQuery(DateTime $start, DateTime $cutoff, int $length,
  * @param int $id
  * @param int $teacherID
  */
-function createExamInClassQuery(int $id, int $teacherID)
+function createExamInClassQuery(int $id, string $teacherID)
 {
     $query = "INSERT INTO `in_class_exams`(`id`,`teacher_id`) "
         . " VALUES (:id, :teacherID);";
     $sql = executeQuery(
         $query, array(
             array(':id', $id, PDO::PARAM_INT),
-            array(':teacherID', $teacherID, PDO::PARAM_INT)
+            array(':teacherID', $teacherID, PDO::PARAM_STR)
         )
     );
 }
@@ -631,6 +653,49 @@ function updateExamQuery(int $id, DateTime $start, DateTime $cutoff,
             array(':len', $length, PDO::PARAM_INT),
             array(':passingGrade', $passingGrade, PDO::PARAM_INT),
             array(':locationID', $locationID, PDO::PARAM_INT)
+        )
+    );
+}
+
+/**
+ * Query to update exam time attributes
+ *
+ * @param int      $examID
+ * @param DateTime $start
+ * @param DateTime $cutoff
+ * @param int      $length
+ */
+function updateExamTimeQuery(int $examID, DateTime $start, DateTime $cutoff,
+    int $length
+) {
+    $query = "UPDATE `exams` "
+        . " SET `start` = :start, `cutoff` = :cutoff, `length` = :len "
+        . " WHERE `id` = :id";
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $examID, PDO::PARAM_INT),
+            buildDateTimeStrParam(':start', $start),
+            buildDateTimeStrParam(':cutoff', $cutoff),
+            array(':len', $length, PDO::PARAM_INT)
+        )
+    );
+}
+
+/**
+ * Query to only set the exam passing grade
+ *
+ * @param int $examID
+ * @param int $passingGrade
+ */
+function updateExamPassingGradeQuery(int $examID, int $passingGrade)
+{
+    $query = "UPDATE `exams` "
+        . " SET `passing_grade` = :passingGrade "
+        . " WHERE `id` = :id";
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $examID, PDO::PARAM_INT),
+            array(':passingGrade', $passingGrade, PDO::PARAM_INT)
         )
     );
 }

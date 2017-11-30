@@ -1,0 +1,665 @@
+<script type="text/javascript">
+    var account, exam;
+    var examData;
+    var selectedState;
+    var selectedStart, selectedCutoff;
+    var currentCategories, availableCategories;
+    var selectedCategoryID;
+    var availableLocations;
+    var selectedLocationID;
+
+    document.addEventListener("DOMContentLoaded",
+        function () {
+            account = '{{accountID}}';
+            exam = parseInt('{{examID}}');
+
+            hidePage();
+
+            if (!isValidIntID(exam)) {
+                setError('Invalid exam ID');
+                return;
+            }
+
+            refreshPage();
+        }
+    );
+
+    function setError(msg) {
+        errorLineNotification(msg);
+        document.getElementById('labelEditExamError').textContent = msg;
+        document.getElementById('editExamError').style.visibility = 'visible';
+    }
+
+    function hidePage() {
+        document.getElementById('editExamError').style.visibility = 'hidden';
+        document.getElementById('examSection').style.visibility = 'hidden';
+    }
+
+    function refreshPage() {
+        hidePage();
+        getExamDetails();
+    }
+
+    function getExamDetails() {
+        logLineNotification("Retrieving exam details ...");
+
+        var params = {
+            id: exam
+        };
+
+        var callbacks = {
+            success: getDetailsSuccess,
+            failure: function (message) {
+                setError("Failed to get exam details: " + message);
+            },
+            error: function () {
+                setError("Error retrieving exam details, please try again later");
+            }
+        };
+
+        return callAPI('ExamDetailsFull', params, callbacks);
+    }
+
+    function getDetailsSuccess(message, data) {
+        logLine("Got exam details: " + message);
+
+        examData = data;
+        getAvailableCategories();
+
+        logLineNotification("Finished loading exam details");
+    }
+
+    function getAvailableCategories() {
+        var callbacks = {
+            success: getAvailableCategoriesSuccess,
+            failure: function (message) {
+                setError("Failed to get available categories: " + message);
+            },
+            error: function () {
+                setError("Error retrieving available categories, please try again later");
+            }
+        };
+        callAPI('Categories', {}, callbacks);
+    }
+
+    function getAvailableCategoriesSuccess(message, data) {
+        availableCategories = [];
+        _.each(data.categories,
+            function (category) {
+                var id = parseInt(category.id);
+                var name = category.name;
+                var points = parseInt(category.points);
+
+                availableCategories.push({
+                    id: id,
+                    name: name,
+                    points: points
+                });
+            });
+
+        fillInfo();
+    }
+
+    function fillInfo() {
+        data = examData;
+
+        fillInfoBasics(data.examID, data.state, data.stateStr,
+            data.isRegular, data.teacherID);
+
+        fillInfoTimes(data.start, data.cutoff, data.length);
+
+        fillInfoCategoriesGrades(data.passingGrade, data.categories);
+
+        fillInfoLocation(data.locationID, data.locationName,
+            data.maxSeats, data.reservedSeats, data.totalSeats,
+            data.takenSeats, data.rooms);
+
+        document.getElementById('examSection').style.visibility = 'visible';
+    }
+
+    function fillInfoBasics(examID, state, stateStr, isRegular, teacherID) {
+        document.getElementById('labelExamID').textContent = 'Exam #' + examID;
+        document.getElementById('labelExamState').textContent = stateStr;
+
+        isRegular = parseInt(isRegular);
+        if (isValidInt(isRegular) && isRegular === 1) {
+            document.getElementById('labelExamType').textContent = 'Regular Exam';
+            document.getElementById('spanExamTeacherID').style.visibility = 'hidden';
+            document.getElementById('labelExamTeacherID').style.visibility = 'hidden';
+        } else {
+            document.getElementById('labelExamType').textContent = 'In-Class Exam';
+            document.getElementById('labelExamTeacherID').textContent = teacherID;
+        }
+
+        state = parseInt(state);
+        // TODO disable any changes due to state
+    }
+
+    function fillInfoTimes(start, cutoff, length) {
+        start = start.date;
+        cutoff = cutoff.date;
+
+        start = new Date(Date.parse(start));
+        cutoff = new Date(Date.parse(cutoff));
+
+        selectedStart = start;
+        selectedCutoff = cutoff;
+        determineTimes(start, cutoff, length);
+
+        // editable values
+        setDateTimePicker('pickerCutoff');
+        $('#pickerCutoff').on('change.dp',
+            function (e) {
+                selectedCutoff = $('#pickerCutoff').val();
+                logLine('Selected cutoff: ' + selectedCutoff);
+                updateDeterminedTimes();
+            });
+
+        setDateTimePicker('pickerStart');
+        $('#pickerStart').on('change.dp',
+            function (e) {
+                selectedStart = $('#pickerStart').val();
+                logLine('Selected start: ' + selectedStart);
+                updateDeterminedTimes();
+            });
+
+        document.getElementById('inputLength').value = length;
+        document.getElementById('inputLength').onchange = updateDeterminedTimes;
+
+        updateDeterminedTimes();
+
+        document.getElementById('buttonUpdateTimes').disabled = true;
+    }
+
+    function updateDeterminedTimes() {
+        var cutoff = new Date(Date.parse(selectedCutoff));
+        var start = new Date(Date.parse(selectedStart));
+
+        var length = document.getElementById('inputLength').value;
+        length = parseInt(length);
+        if (!isValidInt(length)) {
+            errorLineNotification('Invalid length');
+            return;
+        }
+
+        determineTimes(start, cutoff, length);
+        document.getElementById('buttonUpdateTimes').disabled = false;
+    }
+
+    function determineTimes(start, cutoff, length) {
+        var times = buildExamDatesTimes(start, cutoff, length);
+
+        document.getElementById('labelCutoff').textContent = times.cutoff;
+        document.getElementById('labelTimes').textContent = times.times;
+        document.getElementById('pickerCutoff').value = times.cutoff;
+        document.getElementById('pickerStart').value = times.start;
+    }
+
+    function updateTimePress() {
+        var cutoff = selectedCutoff;
+        var start = selectedStart;
+
+        var length = document.getElementById('inputLength').value;
+        length = parseInt(length);
+        if (!isValidInt(length)) {
+            errorLineNotification('Invalid length');
+            return;
+        }
+
+        logLine('cutoff: ' + cutoff + ', type: ' + typeof cutoff);
+        logLine('start: ' + start + ', type: ' + typeof start);
+
+        updateTime(start, cutoff, length);
+    }
+
+    function updateTime(start, cutoff, length) {
+        logLineNotification("Updating exam times...");
+
+        var params = {
+            examID: exam,
+            start: start,
+            cutoff: cutoff,
+            length: length
+        };
+
+        var callbacks = {
+            success: function (message, data) {
+                logLineNotification("Successfully updated exam time");
+                document.getElementById('buttonUpdateTimes').disabled = true;
+                refreshPage();
+            },
+            failure: function (message) {
+                errorLineNotification("Failed to update times: " + message);
+            },
+            error: function () {
+                errorLineNotification("Error updating times, please try again later");
+            }
+        };
+
+        return callAPI('UpdateExamTime', params, callbacks);
+    }
+
+    function fillInfoCategoriesGrades(passingGrade, categories) {
+        passingGrade = parseInt(passingGrade);
+
+        // wipe table
+        $('#categoriesTable').find("tr:gt(0)").remove();
+
+        currentCategories = [];
+
+        _.forEach(categories, addCategory);
+
+        setupAddRow();
+
+        document.getElementById('inputPassingGrade').onchange = gradesChange;
+        document.getElementById('inputPassingGrade').value = passingGrade;
+
+        document.getElementById('buttonUpdateGrades').disabled = true;
+    }
+
+    function addCategory(category) {
+        var id = parseInt(category.id);
+        var categoryName = '(' + id + ') ' + category.name;
+        var points = parseInt(category.points);
+
+        var pointsInputID = getInputCategoryPointsID(id);
+        var pointsInput = "<input type='number' class='form-control' id='" + pointsInputID + "' "
+            + " onchange='gradesChange()' " + " value='" + points + "' " + ">";
+
+        var removeButton = "<button class='btn btn-primary' onclick='removeCategoryRow( "
+            + id + ")' >Remove</button>";
+
+        var rowID = getCategoryRowID(id);
+        var row = [categoryName, pointsInput, removeButton];
+
+        addRowToTable('categoriesTable', row, rowID);
+
+        var categoryInfo = {
+            id: id,
+            points: points
+        };
+        currentCategories.push(categoryInfo);
+    }
+
+    function setupAddRow() {
+        addCategoryAddRow();
+    }
+
+    function addCategoryAddRow() {
+        var categorySelect = buildCategorySelect();
+        var pointsInput = "<input type='number' class='form-control' id='" + getAddCategoryPointsID() + "' >";
+        var addButton = "<button class='btn btn-primary' onclick='addCategoryPress()'>Add</button>";
+
+        var id = getAddRowID();
+        var row = [categorySelect, pointsInput, addButton];
+
+        addRowToTable('categoriesTable', row, id);
+
+        selectedCategoryID = 1;
+        var picker = $('#' + getSelectCategoryID());
+
+        picker.change(
+            function () {
+                var selectedID = $('#' + getSelectCategoryID()).find("option:selected").val();
+                selectedCategoryID = parseInt(selectedID);
+
+                document.getElementById(getAddCategoryPointsID()).value = availableCategories.find(
+                    function (category) {
+                        return category.id === selectedCategoryID;
+                    }).points;
+            }
+        );
+
+        picker.val(selectedCategoryID).trigger('change');
+        picker.selectpicker("refresh");
+    }
+
+    function buildCategorySelect() {
+        var id = getSelectCategoryID();
+        var categorySelect = "";
+
+        categorySelect += "<div class='form-group'>";
+        categorySelect += "<select class='form-control' id='" + id + "'>";
+
+        _.each(availableCategories,
+            function (category) {
+                categorySelect += "<option value='" + category.id + "'>(" + category.id + ") " + category.name + "</option>";
+            });
+
+        categorySelect += "</select>";
+        categorySelect += "</div>";
+
+        return categorySelect;
+    }
+
+    function addCategoryPress() {
+        var id = selectedCategoryID;
+        if (!isValidIntID(id)) {
+            errorLineNotification('Invalid category selection');
+            return;
+        }
+
+        var name = availableCategories.find(
+            function (category) {
+                return category.id === id;
+            }).name;
+
+        var inputID = getAddCategoryPointsID();
+        var points = parseInt(document.getElementById(inputID).value);
+        if (!isValidInt(points)) {
+            errorLineNotification('Invalid points value');
+            return;
+        }
+
+        var category = {
+            id: id,
+            name: name,
+            points: points
+        };
+        addCategory(category);
+
+        $('#' + getAddRowID()).remove();
+        addCategoryAddRow();
+        gradesChange();
+    }
+
+    function getInputCategoryPointsID(id) {
+        return 'inputCategoryPoints' + id;
+    }
+
+    function getCategoryRowID(id) {
+        return 'categoryRow' + id;
+    }
+
+    function getAddRowID() {
+        return 'categoryAddRow';
+    }
+
+    function getSelectCategoryID() {
+        return 'categoryAddSelect'
+    }
+
+    function getAddCategoryPointsID() {
+        return 'categoryAddPoints';
+    }
+
+    function removeCategoryRow(id) {
+        var rowID = getCategoryRowID(id);
+
+        $('#' + rowID).remove();
+
+        var index = currentCategories.findIndex(
+            function (category) {
+                return (category.id === id);
+            });
+
+        currentCategories.splice(index, 1);
+
+        gradesChange();
+    }
+
+    function gradesChange() {
+        document.getElementById('buttonUpdateGrades').disabled = false;
+    }
+
+    function updateGradesPress() {
+        var passingGrade = parseInt(document.getElementById('inputPassingGrade').value);
+        if (!isValidInt(passingGrade)) {
+            errorLineNotification('Invalid passing grade value');
+            return;
+        }
+
+        var categories = _.map(currentCategories,
+            function (category) {
+                var id = category.id;
+                var inputID = getInputCategoryPointsID(id);
+                var points = parseInt(document.getElementById(inputID).value);
+                return {id: id, points: points};
+            });
+
+        updateGrades(passingGrade, categories);
+    }
+
+    function updateGrades(passingGrade, categories) {
+        logLineNotification("Updating exam times...");
+
+        var params = {
+            examID: exam,
+            passingGrade: passingGrade,
+            categories: categories
+        };
+
+        var callbacks = {
+            success: function (message, data) {
+                logLineNotification("Successfully updated exam grades");
+                document.getElementById('buttonUpdateGrades').disabled = true;
+                refreshPage();
+            },
+            failure: function (message) {
+                errorLineNotification("Failed to update grades: " + message);
+            },
+            error: function () {
+                errorLineNotification("Error updating grades, please try again later");
+            }
+        };
+
+        return callAPI('UpdateExamGrades', params, callbacks);
+    }
+
+    function fillInfoLocation(locationID, locationName, maxSeats,
+                              reservedSeats, totalSeats, takenSeats, rooms) {
+        locationID = parseInt(locationID);
+        if (!isValidIntID(locationID)) {
+            selectedLocationID = 0;
+
+            document.getElementById('labelLocationError').textContent = 'No Location set';
+            document.getElementById('spanLocationIDName').style.visibility = 'hidden';
+            document.getElementById('labelLocationIDName').style.visibility = 'hidden';
+            document.getElementById('spanLocationSeatsTotal').style.visibility = 'hidden';
+            document.getElementById('labelLocationSeatsTotal').style.visibility = 'hidden';
+            document.getElementById('spanLocationSeatsReserved').style.visibility = 'hidden';
+            document.getElementById('labelLocationSeatsReserved').style.visibility = 'hidden';
+            document.getElementById('spanLocationSeatsMax').style.visibility = 'hidden';
+            document.getElementById('labelLocationSeatsMax').style.visibility = 'hidden';
+            document.getElementById('roomsTable').style.visibility = 'hidden';
+        } else {
+            selectedLocationID = locationID;
+
+            document.getElementById('spanLocationError').style.visibility = 'hidden';
+            document.getElementById('labelLocationError').style.visibility = 'hidden';
+
+            document.getElementById('labelLocationIDName').textContent = '(' + locationID + ') ' + locationName;
+
+            document.getElementById('labelLocationSeatsTotal').textContent = totalSeats;
+
+            document.getElementById('labelLocationSeatsReserved').textContent = reservedSeats;
+
+            document.getElementById('labelLocationSeatsMax').textContent = maxSeats;
+
+            $('#roomsTable').find("tr:gt(0)").remove();
+
+            _.each(rooms,
+                function (room) {
+                    var id = room.id;
+                    var name = room.name;
+                    var seats = room.seats;
+                    var roomName = '(' + id + ') ' + name;
+                    var row = [roomName, seats];
+                    addRowToTable('roomsTable', row);
+                });
+        }
+
+        getAvailableLocations();
+
+        document.getElementById('buttonUpdateLocation').disabled = true;
+    }
+
+    function getAvailableLocations() {
+        var callbacks = {
+            success: function (message, data) {
+                availableLocations = [];
+                _.each(data.locations,
+                    function (location) {
+                        location.id = parseInt(location.id);
+                        availableLocations.push(location);
+                    });
+                setupLocationSelect();
+            },
+            failure: function (message) {
+                setError('Failed to get available locations: ' + message);
+            },
+            error: function () {
+                setError('Error getting available locations, please try again later');
+            }
+        };
+        callAPI('Locations', {}, callbacks);
+    }
+
+    function setupLocationSelect() {
+        if (!isValidIntID(selectedLocationID)) {
+            selectedLocationID = availableLocations[0].id;
+        }
+
+        var picker = $('#locationChangeSelect');
+
+        $('#locationChangeSelect option').remove();
+
+        _.each(availableLocations,
+            function (location) {
+                var locationOption = "<option value='" + location.id + "'>(" + location.id + ") " + location.name + "</option>";
+                picker.append(locationOption);
+            });
+
+        picker.change(
+            function () {
+                var selectedID = picker.find("option:selected").val();
+                selectedLocationID = parseInt(selectedID);
+                document.getElementById('buttonUpdateLocation').disabled = false;
+            }
+        );
+
+        picker.val(selectedLocationID);
+        picker.selectpicker("refresh");
+    }
+
+    function updateLocationPress() {
+        logLineNotification("updating location...");
+
+        updateLocation(selectedLocationID)
+    }
+
+    function updateLocation(id) {
+        var params = {
+            examID: exam,
+            locationID: id
+        };
+
+        var callbacks = {
+            success: function (message, data) {
+                logLineNotification('Successfully updated');
+                refreshPage();
+            },
+            failure: function (message) {
+                errorLineNotification('Failed to update location, message: ' + message);
+            },
+            error: function () {
+                errorLineNotification('Error while updating location, please try again later');
+            }
+        };
+
+        return callAPI('UpdateExamLocation', params, callbacks);
+    }
+
+</script>
+
+<div class='row' id='editExamError'>
+    <span class='label label-danger'>Error</span>
+    <label id='labelEditExamError'></label>
+</div>
+
+<div class='row' id='examSection'>
+    <!-- general -->
+    <button class='btn btn-primary' onclick="location.href='examDetails?exam={{examID}}'">Exam Details</button>
+    <br>
+    <span class='label label-info' id='labelExamID'>Exam #ID</span>
+    <br>
+    <span class='label label-info'>State</span>
+    <label id='labelExamState'>ExamState</label>
+    <br>
+    <span class='label label-info' id='labelExamType'>Exam Type</span>
+    <br>
+    <span class='label label-info' id='spanExamTeacherID'>Teacher ID</span>
+    <label id='labelExamTeacherID'>TeacherID</label>
+    <br>
+    <!-- state change -->
+    <!-- TODO stretch goal -->
+    <!-- times -->
+    <!-- editable -->
+    <span class='label label-info'>Registration Cutoff</span>
+    <input id="pickerCutoff" type="text">
+    <br>
+    <span class='label label-info'>Start</span>
+    <input id="pickerStart" type="text">
+    <br>
+    <span class='label label-info'>Length (minutes)</span>
+    <input type='number' class='form-control' id='inputLength'>
+    <br>
+    <!-- determined times -->
+    <span class='label label-info'>Registration Cutoff</span>
+    <label id='labelCutoff'>cutoff</label>
+    <br>
+    <span class='label label-info'>Time</span>
+    <label id='labelTimes'>time</label>
+    <br>
+    <button class='btn btn-primary' onclick='updateTimePress()' id='buttonUpdateTimes'>Update Times</button>
+    <br>
+    <!-- grading / categories -->
+    <span class='label label-info'>Passing Grade</span>
+    <input type='number' class='form-control' id='inputPassingGrade'>
+    <br>
+    <table class='table table-striped' id='categoriesTable'>
+        <thead>
+        <tr>
+            <th>Category</th>
+            <th>Points</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <button class='btn btn-primary' onclick='updateGradesPress()' id='buttonUpdateGrades'>Update Grades</button>
+    <br>
+    <!-- location -->
+    <span class='label label-danger' id='spanLocationError'>Error</span>
+    <label id='labelLocationError'>location error</label>
+    <br>
+    <span class='label label-info' id='spanLocationIDName'>Location</span>
+    <label id='labelLocationIDName'>location</label>
+    <br>
+    <span class='label label-info' id='spanLocationSeatsTotal'>Registration Seats Cap</span>
+    <label id='labelLocationSeatsTotal'>total</label>
+    <br>
+    <span class='label label-info' id='spanLocationSeatsReserved'>Reserved Seats</span>
+    <label id='labelLocationSeatsReserved'>reserved</label>
+    <br>
+    <span class='label label-info' id='spanLocationSeatsMax'>Max Seats</span>
+    <label id='labelLocationSeatsMax'>max</label>
+    <br>
+    <table class='table table-striped' id='roomsTable'>
+        <thead>
+        <tr>
+            <th>Room</th>
+            <th>Seats</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class='form-group'>
+        <select class='form-control' id='locationChangeSelect'>
+        </select>
+    </div>
+    <button class='btn btn-primary' onclick='updateLocationPress()' id='buttonUpdateLocation'>Update Location</button>
+    <br>
+    <br>
+</div>

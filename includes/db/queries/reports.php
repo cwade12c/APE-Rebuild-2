@@ -130,6 +130,47 @@ function addReportRowsQuery(int $id, array $rows)
 }
 
 /**
+ * Update name given report ID
+ *
+ * @param int   $id
+ */
+function updateReportNameQuery(int $id, string $name) {
+    $query = "UPDATE `reports` "
+        . " SET `name` = :name"
+        . " WHERE `id` = :id";
+
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $id, PDO::PARAM_INT),
+            array(':name', $name, PDO::PARAM_STR)
+        )
+    );
+}
+
+/**
+ * Update rows for given report ID
+ *
+ * @param int   $id
+ * @param array $rows
+ */
+function updateReportTypesQuery(int $id, array $rows) {
+    wipeReportRowsQuery($id);
+    addReportRowsQuery($id, $rows);
+}
+
+function reportExistsQuery(int $id) {
+    $query = "SELECT (:id IN (SELECT `id` FROM `reports`))";
+
+    $sql = executeQuery(
+        $query, array(
+            array(':id', $id, PDO::PARAM_INT)
+        )
+    );
+
+    return getQueryResult($sql);
+}
+
+/**
  * Builds the parameters and values string for the insert query
  * for function addReportRowsQuery()
  * Only intended for that function

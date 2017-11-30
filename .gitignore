@@ -1,13 +1,7 @@
 *.sql
 *.lock
 .idea/
-credentials.php
-creds.php
-config.php
+config/base.config.php
 vendor/
-config/db.config.php
-config/general.config.php
-config/host.config.php
-config/path.config.php
 cache/
 node_modules/

@@ -1,0 +1,66 @@
+<script type="text/javascript">
+    var account, exam;
+    var categories, assignedGraders, unassignedGraders;
+    var accountSearchPrefixAssigned = 'gradersAssigned';
+    var accountSearchPrefixUnassigned = 'gradersUnassigned';
+
+    document.addEventListener("DOMContentLoaded",
+        function () {
+            hidePage();
+
+            account = '{{accountID}}';
+            exam = parseInt('{{examID}}');
+
+            if (!isValidIntID(exam)) {
+                setError('Invalid exam ID');
+                return;
+            }
+
+            refreshPage();
+        }
+    );
+
+    function setError(msg) {
+        errorLineNotification(msg);
+        document.getElementById('labelAssignGradersError').textContent = msg;
+        document.getElementById('assignGradersError').style.visibility = 'visible';
+    }
+
+    function hidePage() {
+        document.getElementById('assignGradersError').style.visibility = 'hidden';
+        document.getElementById('assignGradersSection').style.visibility = 'hidden';
+    }
+
+    function showPage() {
+        document.getElementById('assignGradersSection').style.visibility = 'visible';
+    }
+
+    function refreshPage() {
+        hidePage();
+
+        document.getElementById('labelExamID').textContent = 'Exam #' + exam;
+
+        // TODO get categories, assigned graders
+        // TODO setup assigned graders component
+        // TODO setup unassigned graders component
+        showPage();
+    }
+
+</script>
+
+<div class='row' id='assignGradersError'>
+    <span class='label label-danger'>Error</span>
+    <label id='labelAssignGradersError'></label>
+</div>
+
+<div class='row' id='assignGradersSection'>
+    <button class='btn btn-primary' onclick="location.href='examDetails?exam={{examID}}'" >Exam Details</button>
+    <br>
+    <span class='label label-info' id='labelExamID'>Exam #ID</span>
+    <div id='search-graders-assigned-component'>
+        {% include 'components/account-search.twig.html' with {'prefix': 'gradersAssigned', 'types': [ 'ACCOUNT_TYPE_GRADER' ]} %}
+    </div>
+    <div id='search-graders-unassigned-component'>
+        {% include 'components/account-search.twig.html' with {'prefix': 'gradersUnassigned', 'types': [ 'ACCOUNT_TYPE_GRADER' ]} %}
+    </div>
+</div>

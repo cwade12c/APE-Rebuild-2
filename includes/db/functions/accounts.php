@@ -9,6 +9,16 @@
  * @subpackage     Database
  */
 
+/**
+ * Get basic account info
+ *
+ * @param string $accountID
+ *
+ * @return array            associative array of info
+ *                          'firstName'
+ *                          'lastName'
+ *                          'email'
+ */
 function getAccountInfo(string $accountID)
 {
     $info = getAccountInfoQuery($accountID);
@@ -18,7 +28,7 @@ function getAccountInfo(string $accountID)
 
     $info['lastName'] = $info['l_name'];
     unset($info['l_name']);
-    
+
     return $info;
 }
 
@@ -191,9 +201,32 @@ function accountExists(string $accountID)
 function createAccount(string $accountID, int $type = ACCOUNT_TYPE_NONE,
     string $firstName = null, string $lastName = null, string $email = null
 ) {
-    validateAccountIDAndType($accountID, $type);
-
     createAccountQuery($accountID, $type, $firstName, $lastName, $email);
+}
+
+/**
+ * To update account information
+ *
+ * @param string      $accountID
+ * @param string|null $firstName
+ * @param string|null $lastName
+ * @param string|null $email
+ */
+function updateAccountInfo(string $accountID,
+    string $firstName = null, string $lastName = null, string $email = null
+) {
+    updateAccountInfoQuery($accountID, $firstName, $lastName, $email);
+}
+
+/**
+ * To update the account type
+ *
+ * @param string $accountID
+ * @param int    $type
+ */
+function updateAccountType(string $accountID, int $type)
+{
+    updateAccountTypeQuery($accountID, $type);
 }
 
 /**
@@ -207,8 +240,6 @@ function createAccount(string $accountID, int $type = ACCOUNT_TYPE_NONE,
 function createTempStudent(string $firstName = null, string $lastName = null,
     string $email = null
 ) {
-    validateTempStudentFields($firstName, $lastName, $email);
-
     $id = generateTempID();
 
     $type = ACCOUNT_TYPE_TEMP | ACCOUNT_TYPE_STUDENT;
@@ -226,8 +257,6 @@ function createTempStudent(string $firstName = null, string $lastName = null,
 function createStudent(string $id, string $firstName, string $lastName,
     string $email
 ) {
-    validateAccountFields($id, $firstName, $lastName, $email);
-
     createAccount($id, ACCOUNT_TYPE_STUDENT, $firstName, $lastName, $email);
 }
 
@@ -242,8 +271,6 @@ function createStudent(string $id, string $firstName, string $lastName,
 function createGrader(string $id, string $firstName, string $lastName,
     string $email
 ) {
-    validateAccountFields($id, $firstName, $lastName, $email);
-
     createAccount($id, ACCOUNT_TYPE_GRADER, $firstName, $lastName, $email);
 }
 
@@ -259,8 +286,6 @@ function createGrader(string $id, string $firstName, string $lastName,
 function createTeacher(string $id, string $firstName, string $lastName,
     string $email
 ) {
-    validateAccountFields($id, $firstName, $lastName, $email);
-
     createAccount(
         $id, ACCOUNT_TYPE_TEACHER | ACCOUNT_TYPE_GRADER, $firstName, $lastName,
         $email
@@ -279,8 +304,6 @@ function createTeacher(string $id, string $firstName, string $lastName,
 function createAdmin(string $id, string $firstName, string $lastName,
     string $email
 ) {
-    validateAccountFields($id, $firstName, $lastName, $email);
-
     createAccount($id, ACCOUNT_TYPE_ADMIN, $firstName, $lastName, $email);
 }
 
@@ -293,17 +316,14 @@ function createAdmin(string $id, string $firstName, string $lastName,
  */
 function promoteTempToStudent(string $tempID, string $id)
 {
-    validateTempStudentID($tempID);
-    validateAccountID($id);
-
     if (accountExists($id)) {
         combineStudent($tempID, $id);
-    }else{
+    } else {
         startTransaction();
 
         // strip off temp type - retain others
-        $type = getAccountType($id) & (~ACCOUNT_TYPE_TEMP);
-        setAccountType($id, $type);
+        $type = getAccountType($tempID) & (~ACCOUNT_TYPE_TEMP);
+        setAccountType($tempID, $type);
 
         updateAccountIDQuery($tempID, $id);
 
@@ -331,7 +351,10 @@ function combineStudent(string $tempID, string $id)
      *
      * should not have done the account ID as the primary keys
      *  would've solved a lot of issues.
-     * good enough for now though
+     *
+     * possible workaround,
+     * only allow if no registered exams are in grading/finalization
+     * once archived, just clean out all the old entries and do
      */
 }
 
@@ -423,18 +446,37 @@ function getAllAccounts()
     return getAccountsQuery();
 }
 
-// get all accounts by minimum type
-
 /**
- * @param int $type
- *
  * Get all information of all accounts belonging to a specified type
+ *
+ * @param int $type
  *
  * @return mixed
  */
 function getAllAccountsByType(int $type)
 {
     return getFullAccountInformationByTypeQuery($type);
+}
+
+/**
+ * get all accounts that have the given type
+ *
+ * @param int $type
+ *
+ * @return mixed
+ */
+function getAllAccountsWithType(int $type)
+{
+    $results = getFullAccountInformationWithTypeQuery($type);
+    foreach($results as &$account) {
+        $account['firstName'] = $account['f_name'];
+        unset($account['f_name']);
+
+        $account['lastName'] = $account['l_name'];
+        unset($account['l_name']);
+    }
+
+    return $results;
 }
 
 /**
@@ -460,7 +502,7 @@ function getAllStudents()
 /**
  * Get all grader accounts with full information
  *
- * @return mixed
+ * @return array
  */
 function getAllGraders()
 {
@@ -487,15 +529,6 @@ function getAllAdmins()
     return getAdminsQuery();
 }
 
-// search accounts by given identification exactly (including null)
-/// all identification used
-
-// search accounts by given identification (ignoring null)
-/// all identification used, if ignore if null
-
-// search accounts by given identification partial (any matches)
-/// match only 1 piece of identification
-
 /**
  * Check to see if the minimum number of admins exist as defined in the config
  * file
@@ -509,7 +542,7 @@ function doesMinimumNumberOfAdminsExist()
 }
 
 /**
- * Hash a given account ID according to the set algorithm
+ * Hash a given account ID according to the set algorithm and length
  *
  * @param string $accountID
  *
@@ -517,5 +550,42 @@ function doesMinimumNumberOfAdminsExist()
  */
 function hashAccountID(string $accountID)
 {
-    return hash(ACCOUNT_HASH_ALG, $accountID);
+    $hash = hash(ACCOUNT_ID_HASH_ALGORITHM, $accountID);
+    $hash = substr($hash, 0, ACCOUNT_ID_HASH_LENGTH);
+    return $hash;
+}
+
+/**
+ * Check if account type valid
+ * Currently limited to just checking if positive
+ *
+ * @param int $type
+ *
+ * @return bool
+ */
+function validAccountType(int $type)
+{
+    return $type > ACCOUNT_TYPE_NONE;
+}
+
+/**
+ * Check if type is a valid single account type
+ * Or temp student
+ *
+ * @param int $type
+ *
+ * @return bool
+ */
+function validSingleAccountType(int $type)
+{
+    switch ($type) {
+        case ACCOUNT_TYPE_STUDENT:
+        case ACCOUNT_TYPE_GRADER:
+        case ACCOUNT_TYPE_TEACHER:
+        case ACCOUNT_TYPE_ADMIN:
+        case (ACCOUNT_TYPE_TEMP + ACCOUNT_TYPE_STUDENT):
+            return true;
+        default:
+            return false;
+    }
 }

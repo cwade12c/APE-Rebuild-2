@@ -1,0 +1,12 @@
+#FallbackResource index.php
+#RewriteBase /
+#RedirectMatch ^/(.*?)/$ /$1
+#RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+RewriteEngine On
+RewriteRule ^login pages/login.php [L]
+RewriteRule ^logout pages/logout.php [L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]

@@ -535,8 +535,9 @@ function getGraderCategoryGradesQuery(int $examID, int $categoryID,
  *
  * @return mixed
  */
-function getGraderCategoryStudentGradeQuery(int $examID, int $categoryID, string $graderID, string $studentID)
-{
+function getGraderCategoryStudentGradeQuery(int $examID, int $categoryID,
+    string $graderID, string $studentID
+) {
     $query = "SELECT `points` "
         . " FROM `grader_category_grades` "
         . " WHERE `exam_id` = :examID AND `category_id` = :categoryID "
@@ -763,7 +764,30 @@ function createStudentExamGradeQuery(int $examID, string $studentID,
     $query
         = "INSERT INTO `exam_grades` "
         . " (`exam_id`, `student_id`, `points`, `passed`) "
-        . " VALUES (:examID, :studentID, :point, :passed)";
+        . " VALUES (:examID, :studentID, :point, :passed) ";
+    $sql = executeQuery(
+        $query, array(array(':examID', $examID, PDO::PARAM_INT),
+                      array(':studentID', $studentID, PDO::PARAM_STR),
+                      array(':points', $points, PDO::PARAM_INT),
+                      array(':passed', $passed, PDO::PARAM_BOOL))
+    );
+}
+
+/**
+ * Query to set a student's exam grade
+ *
+ * @param int    $examID
+ * @param string $studentID
+ * @param int    $points
+ * @param bool   $passed
+ */
+function setStudentExamGradeQuery(int $examID, string $studentID,
+    int $points, bool $passed
+) {
+    $query
+        = "UPDATE `exam_grades` "
+        . " SET `points` = :points, `passed` = :passed "
+        . " WHERE `exam_id` = :examID AND `student_id` = :studentID ";
     $sql = executeQuery(
         $query, array(array(':examID', $examID, PDO::PARAM_INT),
                       array(':studentID', $studentID, PDO::PARAM_STR),
